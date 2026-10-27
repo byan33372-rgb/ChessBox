@@ -19,10 +19,10 @@ export interface TestServer {
   url: string;
 }
 
-let dbCounter = 0;
-
 export async function startServer(dbPath?: string): Promise<TestServer> {
-  const store = new Store(dbPath ?? join(tmpdir(), `dual-chess-tt-${Date.now()}-${dbCounter++}.db`));
+  // 路径必须跨进程唯一：pid + 时间戳 + 随机后缀（多 worker 下同名会触发 database is locked）
+  const unique = dbPath ?? join(tmpdir(), `dual-chess-tt-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.db`);
+  const store = new Store(unique);
   const rooms = new RoomManager(store);
   rooms.loadPersisted();
   // 优先使用真实生产构建产物，让静态/SPA/安全头行为可被测试

@@ -93,6 +93,13 @@ tests/unit/chess-rules-deep.test.ts：兵双步/斜吃/前吃、吃过路兵（�
 **真实缺陷（P2）修复**：快速连点时第二个点击可能命中过期渲染闭包（丢步偶发，负荷下复现率约 40%）→ handleSquareClick 改为同步引用（engineRef/selectedRef）即时计算目标。另修脚本读值竞速（等最后一步渲染再计数）。
 最终回归（真实输出）：npm test **122/122**；playwright **7/7**；layout-check **20/20**；viewport-check **18/18**（6 连跑全绿）；typecheck 0 错误。
 
+## 阶段 10 补充：测试偶发根治（最终提交）
+
+最终回归曾出现 ~40% 偶发的文件级失败（tinypool "Channel closed" / SqliteError "database is locked"）。
+根因：多 worker（线程/进程）各自从 0 计数 + 同毫秒时间戳 → 临时 SQLite 路径碰撞 → 锁冲突 → worker 崩溃。
+修复：临时库路径加 pid + 随机后缀（helpers.ts 与 rooms.test.ts 两处）；集成项目改 forks 池 + 串行文件。
+验证：连续 5 次全量 `npx vitest run` 均 122/122。此为测试基建问题，不影响生产（生产用单一固定库路径）。
+
 ## 阶段 11：生产重建 + 公网全链路（已执行）
 
 - `npm run build` 全量重建 → 3001 生产服务：本地 / 与 /r/ 200、敏感路径 404、healthz OK

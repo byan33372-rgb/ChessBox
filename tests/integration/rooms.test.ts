@@ -20,10 +20,10 @@ interface TestServer {
   url: string;
 }
 
-let dbCounter = 0;
-
 async function startServer(dbPath?: string): Promise<TestServer> {
-  const store = new Store(dbPath ?? join(tmpdir(), `dual-chess-test-${Date.now()}-${dbCounter++}.db`));
+  // 路径跨进程唯一：pid+时间戳+随机后缀（防 database is locked）
+  const unique = dbPath ?? join(tmpdir(), `dual-chess-test-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.db`);
+  const store = new Store(unique);
   const rooms = new RoomManager(store);
   rooms.loadPersisted();
   const app = createHttpApp(join(tmpdir(), 'dual-chess-no-dist'));
