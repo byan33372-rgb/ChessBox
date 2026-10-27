@@ -88,10 +88,17 @@ npm run tunnel
 ## 7. 测试
 
 ```bash
-npm test          # 单元 + 集成（Vitest，共 70 项）
-npm run test:e2e  # 端到端（Playwright，需先 npm run build；首次会自动装 Chromium）
-npm run typecheck # TypeScript 前后端类型检查
+npm test                          # 单元 + 集成（Vitest，共 122 项）
+npm run test:e2e                  # 端到端（Playwright，7 项；使用系统 Chrome，需先 npm run build）
+npm run typecheck                 # TypeScript 前后端类型检查
+node scripts/layout-check.mjs     # UI 几何布局校验（20 项，需 3001 服务在线）
+npx tsx scripts/viewport-check.mjs # 视口矩阵/键盘/长内容（18 项，需 3001 服务在线）
+npx tsx scripts/perf-check.mjs    # 性能测量（首屏/资源/走棋耗时/广播体积）
 ```
+
+测试覆盖：国象规则 41 项（含易位资格/吃过路兵时机/升变/FEN 字段/PGN 往返）、中象规则 31 项、
+导出 9 项、联机协议与并发 27 项（幂等/乐观锁/席位原子性/断线重连/持久化）、聊天与安全 14 项、
+浏览器端到端 7 项（双浏览器同步/导出内容校验/移动端）。整夜审计记录见 docs/overnight-audit-log.md。
 
 ## 8. 故障排查
 
@@ -128,7 +135,15 @@ npm run typecheck # TypeScript 前后端类型检查
   长捉等其他复杂仲裁未实现，可用提和/认输解决
 - 中象 60 回合无吃子自动判和（简化自中国规则 60 回合自然限着）
 
-## 12. 架构与安全要点
+## 12. 环境变量
+
+| 变量 | 默认 | 说明 |
+|------|------|------|
+| PORT | 3001 | 生产监听端口 |
+| HOST | 127.0.0.1 | 监听地址；局域网联机设 0.0.0.0 |
+| DB_PATH | data/app.db | SQLite 文件路径 |
+
+## 13. 架构与安全要点
 
 ```
 src/client     React 前端（Vite + TS + 手写 CSS）
@@ -146,9 +161,13 @@ data/          SQLite 数据（.gitignore 已排除）
 - 同房间操作串行化；事件限流；Origin 与 Host 一致性校验；输入 zod 校验
 - 默认只监听 127.0.0.1；CSP/nosniff/frameguard 等安全头；不暴露任何调试/管理接口
 - 依赖：chess.js（BSD-2-Clause）、socket.io（MIT）、express（MIT）、
-  better-sqlite3（MIT）、zod（MIT）、React/Vite/Playwright 等（MIT）
+  better-sqlite3（MIT）、zod v4（MIT）、React/Vite/Playwright 等（MIT）；
+  `npm audit --omit=dev` 0 漏洞（dev 测试链 vitest 有 4 项告警，不随产品分发）
+- 敏感路径（/.env、/package.json、/node_modules、/data 等）一律 404；
+  玩家名过滤控制字符与引号（防 PGN/日志注入）；聊天历史断线/重启后自动恢复；
+  频繁重连触达限流时客户端自动退避重试而非报错
 
-## 13. 常用命令一览
+## 14. 常用命令一览
 
 | 命令 | 作用 |
 |------|------|
