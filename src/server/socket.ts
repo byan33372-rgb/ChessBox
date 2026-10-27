@@ -115,6 +115,7 @@ export function setupSocket(io: AppServer, rooms: RoomManager): void {
       socket.join(room.id);
       rooms.bindSocket(session, room, socket.id);
       if (session.seat === 'spectator') room.spectators.add(socket.id);
+      if (room.chat.length > 0) socket.emit('chat:history', { messages: room.chat });
       ack({ ok: true, token: session.token, seat: session.seat, state: rooms.publicState(room) });
       rooms.broadcast(room.id, rooms.publicState(room), 'join');
     });
@@ -132,6 +133,7 @@ export function setupSocket(io: AppServer, rooms: RoomManager): void {
       socket.join(room.id);
       rooms.bindSocket(session, room, socket.id);
       if (session.seat === 'spectator') room.spectators.add(socket.id);
+      if (room.chat.length > 0) socket.emit('chat:history', { messages: room.chat });
       ack({ ok: true, token: session.token, seat: session.seat, state: rooms.publicState(room) });
       rooms.broadcast(room.id, rooms.publicState(room), 'reconnect');
     });

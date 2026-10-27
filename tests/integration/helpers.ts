@@ -1,7 +1,8 @@
 /** 集成测试公共工具：临时服务器 + 客户端连接 + ack 发射 */
-import { createServer } from 'http';
+import { existsSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
+import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { io as ioClient, type Socket as ClientSocket } from 'socket.io-client';
 import { createHttpApp } from '../../src/server/http';
@@ -24,7 +25,9 @@ export async function startServer(dbPath?: string): Promise<TestServer> {
   const store = new Store(dbPath ?? join(tmpdir(), `dual-chess-tt-${Date.now()}-${dbCounter++}.db`));
   const rooms = new RoomManager(store);
   rooms.loadPersisted();
-  const app = createHttpApp(join(tmpdir(), 'dual-chess-no-dist'));
+  // 优先使用真实生产构建产物，让静态/SPA/安全头行为可被测试
+  const distDir = join(process.cwd(), 'dist-client');
+  const app = createHttpApp(existsSync(distDir) ? distDir : join(tmpdir(), 'dual-chess-no-dist'));
   const httpServer = createServer(app);
   const io = new Server(httpServer, { cors: { origin: false } });
   setupSocket(io, rooms);

@@ -16,6 +16,7 @@ export function createHttpApp(distDir: string): express.Express {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: wss:; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'",
@@ -43,9 +44,24 @@ export function createHttpApp(distDir: string): express.Express {
     // SPA 路由回退（/r/:roomId 等）。
     // 仅对"无扩展名的页面路径"回退 index.html；带扩展名或点开头的路径
     // （如 /package.json、/.env、/app.db）一律交给 404，避免敏感探测拿到 200。
+    // 另维护已知敏感目录的显式拒绝清单（目录名无扩展名，否则会落入 SPA 回退）。
+    const SENSITIVE_PREFIXES = [
+      '/node_modules',
+      '/data',
+      '/src',
+      '/tests',
+      '/tools',
+      '/docs',
+      '/scripts',
+      '/dist-server',
+      '/.git',
+    ];
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.method !== 'GET' && req.method !== 'HEAD') return next();
       if (req.path.startsWith('/socket.io/') || req.path.startsWith('/healthz') || req.path.startsWith('/api/')) {
+        return next();
+      }
+      if (SENSITIVE_PREFIXES.some((p) => req.path === p || req.path.startsWith(`${p}/`))) {
         return next();
       }
       const last = req.path.split('/').pop() ?? '';

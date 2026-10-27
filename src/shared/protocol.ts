@@ -149,6 +149,8 @@ export interface ClientToServerEvents {
 export interface ServerToClientEvents {
   'room:state': (p: { state: RoomState; reason: StateReason }) => void;
   'chat:message': (p: ChatMessage) => void;
+  /** 加入/重连时下发的历史聊天（仅发给该 socket） */
+  'chat:history': (p: { messages: ChatMessage[] }) => void;
 }
 
 export const ROOM_ID_PATTERN = /^[a-z2-9]{10}$/;

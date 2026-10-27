@@ -185,6 +185,10 @@ export function useRoom(roomId: string | null): RoomSession {
     socket.on('chat:message', (m: ChatMessage) => {
       setChat((c) => [...c.slice(-99), m]);
     });
+    socket.on('chat:history', (p: { messages: ChatMessage[] }) => {
+      // 加入/重连时一次性恢复历史（之后的新消息继续增量追加）
+      setChat(p.messages.slice(-99));
+    });
 
     return () => {
       socket.disconnect();
