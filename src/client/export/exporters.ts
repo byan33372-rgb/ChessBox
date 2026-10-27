@@ -20,6 +20,20 @@ function outcomeZh(outcome: GameOutcome | null): string {
   return `${winner}（${outcome.reason}）`;
 }
 
+function getSite(): string {
+  // Node 测试环境下无 window；浏览器返回当前站点
+  return typeof window !== 'undefined' ? window.location.origin : 'local';
+}
+
+/**
+ * PGN 标签值净化：移除双引号与反斜杠。
+ * 不用转义的原因：chess.js 1.4 的 PGN 解析器不支持 \" 转义（实测连自身输出都无法回读），
+ * 剥离字符可保证生成的 PGN 在主流解析器中均可读。
+ */
+function pgnTagValue(s: string): string {
+  return s.replace(/["\\]/g, '').trim();
+}
+
 export function buildPgn(state: RoomState): string {
   const chess = new Chess();
   for (const m of state.moves) {
@@ -33,15 +47,15 @@ export function buildPgn(state: RoomState): string {
     'Event',
     '双人对弈（本地服务）',
     'Site',
-    window.location.origin,
+    getSite(),
     'Date',
     new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
     'Round',
     '-',
     'White',
-    state.seats.a?.name ?? '白方',
+    pgnTagValue(state.seats.a?.name ?? '白方'),
     'Black',
-    state.seats.b?.name ?? '黑方',
+    pgnTagValue(state.seats.b?.name ?? '黑方'),
     'Result',
     resultString(state.outcome),
   );
