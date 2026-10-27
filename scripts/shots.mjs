@@ -32,6 +32,9 @@ async function main() {
   await pA.waitForURL(/\/r\//);
   await pA.locator('.waiting-overlay').waitFor({ state: 'visible' });
   const roomUrl = pA.url();
+  await pA.waitForTimeout(300);
+  // 等待对手状态（轻量遮罩 + 棋盘可见）
+  await pA.screenshot({ path: join(outDir, '02b-waiting-desktop.png'), fullPage: true });
 
   const pB = await newPage(browser);
   await pB.goto(roomUrl);

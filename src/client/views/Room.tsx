@@ -228,9 +228,16 @@ export function Room({ roomId, onExit }: RoomProps) {
                 </button>
               </div>
             )}
+            {state.outcome && isLive && (
+              <div className="game-over-banner" role="status">
+                <span className="go-text">
+                  {state.outcome.winner === null ? '和棋' : state.outcome.winner === 'a' ? '红方/白方获胜' : '黑方获胜'} · {state.outcome.reason}
+                </span>
+              </div>
+            )}
             {state.phase === 'waiting' && (
               <div className="waiting-overlay">
-                <div className="card">
+                <div className="card waiting-card">
                   <h3>等待对手加入</h3>
                   <p>把邀请链接发给朋友，TA 打开即可对弈</p>
                   <div className="invite-row">
@@ -286,7 +293,16 @@ export function Room({ roomId, onExit }: RoomProps) {
         </div>
 
         <aside className="side-col">
-          <StatusCard state={state} seat={seat} turnLabel={turnLabel} mySideLabel={mySideLabel} actions={actions} onRestartOffer={() => void actions.restartOffer()} />
+          <StatusCard
+            state={state}
+            seat={seat}
+            turnLabel={turnLabel}
+            mySideLabel={mySideLabel}
+            actions={actions}
+            onRestartOffer={() => void actions.restartOffer()}
+            inviteUrl={inviteUrl}
+            onCopyInvite={doCopyInvite}
+          />
 
           {seat !== 'spectator' && state.phase === 'playing' && (
             <div className="card actions-card">
@@ -464,6 +480,8 @@ function StatusCard({
   mySideLabel,
   actions,
   onRestartOffer,
+  inviteUrl,
+  onCopyInvite,
 }: {
   state: RoomState;
   seat: 'a' | 'b' | 'spectator' | null;
@@ -471,6 +489,8 @@ function StatusCard({
   mySideLabel: string;
   actions: ReturnType<typeof useRoom>['actions'];
   onRestartOffer(): void;
+  inviteUrl: string;
+  onCopyInvite(): void;
 }) {
   const offers = state.offers;
   const amPlayer = seat === 'a' || seat === 'b';
@@ -491,10 +511,18 @@ function StatusCard({
           )}
         </div>
       ) : state.phase === 'waiting' ? (
-        <p className="status-line">
-          <span className="pulse-dot" aria-hidden="true" />
-          等待对手加入…
-        </p>
+        <>
+          <p className="status-line">
+            <span className="pulse-dot" aria-hidden="true" />
+            等待对手加入…
+          </p>
+          <div className="invite-side">
+            <input readOnly value={inviteUrl} aria-label="邀请链接" onFocus={(e) => e.target.select()} />
+            <button type="button" className="btn small primary" onClick={onCopyInvite}>
+              复制链接
+            </button>
+          </div>
+        </>
       ) : (
         <p className={`status-line ${state.inCheck ? 'check' : ''}`}>{state.inCheck ? '将军！' : ''}{turnLabel}</p>
       )}

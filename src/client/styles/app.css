@@ -645,6 +645,26 @@ input:focus {
   margin-left: auto;
 }
 
+.game-over-banner {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: rgba(38, 29, 20, 0.86);
+  color: #f7efdd;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  max-width: 92%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
 .replay-banner {
   position: absolute;
   inset: 0;
@@ -661,25 +681,34 @@ input:focus {
   border-radius: 8px;
 }
 
+/* 等待遮罩：轻雾化处理，棋盘保持可见、不压暗侧栏与状态 */
 .waiting-overlay {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(38, 30, 20, 0.38);
+  background: rgba(246, 241, 230, 0.62);
+  backdrop-filter: blur(2.5px);
   z-index: 5;
   border-radius: 8px;
   padding: 16px;
 }
 
-.waiting-overlay .card {
-  max-width: 420px;
+.waiting-card {
+  max-width: 400px;
   text-align: center;
+  box-shadow: 0 8px 30px rgba(70, 50, 20, 0.18);
 }
 
-.waiting-overlay h3 {
+.waiting-card h3 {
   font-size: 17px;
+}
+
+.waiting-card p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .invite-row {
@@ -770,6 +799,21 @@ input:focus {
 
 .xq-piece.in-check .xq-piece-disc {
   box-shadow: 0 0 0 3px rgba(176, 58, 46, 0.9), 0 0 14px rgba(176, 58, 46, 0.65);
+  animation: check-pulse 1.1s ease-in-out infinite;
+}
+
+.chess-sq.in-check {
+  animation: check-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes check-pulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.35);
+  }
 }
 
 .xq-sel-ring {
@@ -961,6 +1005,21 @@ input:focus {
   color: var(--muted);
   font-size: 12.5px;
   margin: 6px 0 0;
+}
+
+.invite-side {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.invite-side input {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-family: ui-monospace, Consolas, monospace;
+  padding: 7px 10px;
+  min-height: 34px;
 }
 
 .game-over h3 {
@@ -1234,6 +1293,22 @@ input:focus {
 }
 
 /* ============ 响应式 ============ */
+/* 尊重用户"减少动态效果"设置：停用装饰性动画，保留功能性 spinner */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot,
+  .turn-badge,
+  .toast,
+  .xq-piece.in-check .xq-piece-disc,
+  .chess-sq.in-check {
+    animation: none !important;
+  }
+  .btn,
+  .create-card,
+  .move-btn {
+    transition: none !important;
+  }
+}
+
 @media (max-width: 980px) {
   .room-body {
     grid-template-columns: 1fr;
