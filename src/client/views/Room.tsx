@@ -71,6 +71,17 @@ export function Room({ roomId, onExit }: RoomProps) {
 
   const checkSquare = useMemo(() => engine?.checkedKingSquare() ?? null, [engine]);
 
+  /** 同步引用：点击处理器即时读取，避免快速连点命中过期闭包（丢步偶发缺陷修复） */
+  const engineRef = useRef(engine);
+  const selectedRef = useRef<string | null>(null);
+  useEffect(() => {
+    engineRef.current = engine;
+  }, [engine]);
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
+
+  /** 仅供渲染高亮；点击判定在 handler 内即时计算（见 handleSquareClick） */
   const targets = useMemo(() => {
     const map = new Map<string, boolean>();
     if (!engine || !selected) return map;
@@ -91,27 +102,42 @@ export function Room({ roomId, onExit }: RoomProps) {
     engine !== null;
 
   const handleSquareClick = (sq: string) => {
-    if (!engine || !state || !canMove) {
+    // 全部经由同步引用读取：不受 React 渲染时序影响
+    const eng = engineRef.current;
+    const sel = selectedRef.current;
+    if (!eng || !state || !canMove) {
+      selectedRef.current = null;
       setSelected(null);
       return;
     }
-    const piece = engine.pieceAt(sq);
+    const piece = eng.pieceAt(sq);
     const iAmFirst = seat === 'a';
     const isMine = piece !== null && (piece >= 'A' && piece <= 'Z') === iAmFirst;
-    if (selected && targets.has(sq)) {
-      const variants = engine.legalMoves().filter((m) => m.from === selected && m.to === sq);
+    const myTargets = new Map<string, boolean>();
+    if (sel) {
+      for (const m of eng.legalMoves()) {
+        if (m.from === sel) myTargets.set(m.to, m.capture);
+      }
+    }
+    if (sel && myTargets.has(sq)) {
+      const variants = eng.legalMoves().filter((m) => m.from === sel && m.to === sq);
       if (state.kind === 'chess' && variants.some((v) => v.promotion)) {
-        setPendingPromo({ from: selected, to: sq });
+        setPendingPromo({ from: sel, to: sq });
+        selectedRef.current = null;
         setSelected(null);
         return;
       }
-      void actions.move({ from: selected, to: sq });
+      void actions.move({ from: sel, to: sq });
+      selectedRef.current = null;
       setSelected(null);
       return;
     }
     if (isMine) {
-      setSelected(sq === selected ? null : sq);
+      const next = sq === sel ? null : sq;
+      selectedRef.current = next;
+      setSelected(next);
     } else {
+      selectedRef.current = null;
       setSelected(null);
     }
   };

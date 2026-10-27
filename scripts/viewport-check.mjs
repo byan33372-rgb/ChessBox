@@ -73,6 +73,8 @@ async function main() {
       await page.locator(`button[aria-label^="${seq[i][0]} "], button[aria-label="${seq[i][0]}"]`).first().click();
       await page.locator(`button[aria-label^="${seq[i][1]} "], button[aria-label="${seq[i][1]}"]`).first().click();
     }
+    // 等最后一步真正渲染后再计数（与 e2e 的自动等待语义一致，消除读值竞速）
+    await pB.locator('.move-btn').nth(seq.length - 1).waitFor({ timeout: 10000 });
     const count = await pB.locator('.move-btn').count();
     check('30 步后双方棋谱一致', count === 30, `count=${count}`);
     const overflow = await pB.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
