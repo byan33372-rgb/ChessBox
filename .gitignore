@@ -1,0 +1,12 @@
+node_modules/
+dist-client/
+dist-server/
+data/
+test-results/
+playwright-report/
+.env
+*.log
+shots/
+tools/
+shots/
+tools/

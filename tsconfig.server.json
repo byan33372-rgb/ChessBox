@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "types": ["node"],
+    "outDir": "dist-server",
+    "rootDir": "src",
+    "sourceMap": false,
+    "declaration": false,
+    "removeComments": true,
+    "noEmit": false
+  },
+  "include": ["src/server", "src/shared", "src/games"]
+}
