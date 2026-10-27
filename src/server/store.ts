@@ -195,6 +195,15 @@ export class Store {
     });
   }
 
+  /** 走棋与房间行保存同事务：崩溃时不出现"棋谱有而房间行落后"的半写状态 */
+  appendMoveAndSaveRoom(roomId: string, m: PublicMove, r: RoomPersist): void {
+    const tx = this.db.transaction(() => {
+      this.appendMove(roomId, m);
+      this.saveRoom(r);
+    });
+    tx();
+  }
+
   loadMoves(roomId: string): PublicMove[] {
     const rows = this.stmtLoadMoves.all(roomId) as Array<Record<string, unknown>>;
     return rows.map((row) => ({

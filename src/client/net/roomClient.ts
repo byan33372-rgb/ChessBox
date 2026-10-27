@@ -13,7 +13,6 @@ import type {
   JoinAck,
   MoveAck,
   RoomState,
-  StateReason,
 } from '../../shared/protocol';
 
 export type ConnState = 'connecting' | 'online' | 'reconnecting';
@@ -103,7 +102,11 @@ export function useRoom(roomId: string | null): RoomSession {
     setToasts((t) => t.filter((x) => x.id !== id));
   }, []);
 
-  const lastReason = useRef<StateReason>('init');
+  /** 最新权威局面引用：让 actions 保持稳定引用，避免每次广播重建 */
+  const stateRef = useRef<RoomState | null>(null);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
   useEffect(() => {
     if (!roomId) return;
@@ -118,14 +121,19 @@ export function useRoom(roomId: string | null): RoomSession {
     setStatus('joining');
     setFatal(null);
 
-    let joined = false;
+    let joinAttempts = 0;
 
     const doJoin = async () => {
+      if (joinAttempts > 8) {
+        setFatal('多次尝试加入失败，请刷新页面重试');
+        setStatus('fatal');
+        return;
+      }
+      joinAttempts++;
       const token = loadToken(roomId);
       if (token) {
         const ack = await emitWithAck<JoinAck>(socket, 'room:rejoin', { roomId, token });
         if (ack.ok) {
-          joined = true;
           setSeat(ack.seat ?? null);
           setState(ack.state ?? null);
           setStatus('ready');
@@ -137,16 +145,22 @@ export function useRoom(roomId: string | null): RoomSession {
           setStatus('fatal');
           return;
         }
+        if (ack.error?.code === 'RATE_LIMITED') {
+          // 频繁重连触达限流：退避后重试，不进入致命态
+          setTimeout(() => void doJoin(), 2500);
+          return;
+        }
         // 会话失效 → 以新身份加入
         window.localStorage.removeItem(tokenKey(roomId));
       }
       const join = await emitWithAck<JoinAck>(socket, 'room:join', { roomId, name: getSavedName() || undefined });
       if (join.ok) {
-        joined = true;
         setSeat(join.seat ?? null);
         setState(join.state ?? null);
         setStatus('ready');
         if (join.token) storeToken(roomId, join.token);
+      } else if (join.error?.code === 'RATE_LIMITED') {
+        setTimeout(() => void doJoin(), 2500);
       } else {
         setFatal(join.error?.message ?? '加入房间失败');
         setStatus('fatal');
@@ -164,8 +178,7 @@ export function useRoom(roomId: string | null): RoomSession {
     socket.on('connect_error', () => {
       setConn('reconnecting');
     });
-    socket.on('room:state', (p: { state: RoomState; reason: StateReason }) => {
-      lastReason.current = p.reason;
+    socket.on('room:state', (p: { state: RoomState; reason: string }) => {
       setState(p.state);
       if (p.reason === 'restart') setChat([]);
     });
@@ -190,11 +203,12 @@ export function useRoom(roomId: string | null): RoomSession {
     () => ({
       async move(input) {
         const socket = socketRef.current;
-        if (!socket || !state) return;
+        const current = stateRef.current;
+        if (!socket || !current) return;
         const requestId = crypto.randomUUID();
         const ack = await emitWithAck<MoveAck>(socket, 'game:move', {
           requestId,
-          revision: state.revision,
+          revision: current.revision,
           from: input.from,
           to: input.to,
           promotion: input.promotion,
@@ -278,7 +292,7 @@ export function useRoom(roomId: string | null): RoomSession {
         socket.disconnect();
       },
     }),
-    [state, showError, roomId],
+    [showError, toast, roomId],
   );
 
   return { conn, status, fatal, seat, state, chat, toasts, dismissToast, toast, actions };

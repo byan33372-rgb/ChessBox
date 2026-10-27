@@ -40,12 +40,17 @@ export function createHttpApp(distDir: string): express.Express {
         },
       }),
     );
-    // SPA 路由回退（/r/:roomId 等）
+    // SPA 路由回退（/r/:roomId 等）。
+    // 仅对"无扩展名的页面路径"回退 index.html；带扩展名或点开头的路径
+    // （如 /package.json、/.env、/app.db）一律交给 404，避免敏感探测拿到 200。
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.method !== 'GET' && req.method !== 'HEAD') return next();
       if (req.path.startsWith('/socket.io/') || req.path.startsWith('/healthz') || req.path.startsWith('/api/')) {
         return next();
       }
+      const last = req.path.split('/').pop() ?? '';
+      const hasExtension = last.includes('.') || req.path.includes('/.');
+      if (hasExtension) return next();
       res.sendFile(join(distDir, 'index.html'));
     });
   } else {

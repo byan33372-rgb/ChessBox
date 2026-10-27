@@ -23,7 +23,7 @@ import type {
   StateReason,
 } from '../shared/protocol';
 import { newRoomId, newSessionToken, randomNick, sha256 } from './ids';
-import { Store } from './store';
+import { Store, type RoomPersist } from './store';
 
 export interface SessionInfo {
   token: string;
@@ -31,6 +31,7 @@ export interface SessionInfo {
   name: string;
   seat: 'a' | 'b' | 'spectator';
   socketId: string | null;
+  roomId: string;
 }
 
 export interface Room {
@@ -109,6 +110,7 @@ export class RoomManager {
             name: s.name,
             seat,
             socketId: null,
+            roomId: room.id,
           };
           room.seats[seat] = info;
           this.sessions.set(s.tokenHash, info);
@@ -273,8 +275,7 @@ export class RoomManager {
       room.offers.draw = null;
       room.offers.undo = null;
     }
-    this.store.appendMove(room.id, move);
-    this.persist(room);
+    this.store.appendMoveAndSaveRoom(room.id, move, this.buildPersist(room));
 
     const ack: MoveAck = { ok: true, revision: room.revision, state: this.publicState(room) };
     room.moveAcks.set(req.requestId, ack);
@@ -502,6 +503,10 @@ export class RoomManager {
       }
     }
     if (removed > 0) {
+      // 同步清理内存会话索引，避免长期运行内存无限增长
+      for (const [hash, session] of this.sessions) {
+        if (!this.rooms.has(session.roomId)) this.sessions.delete(hash);
+      }
       console.log(`[rooms] 清理过期房间 ${removed} 个`);
     }
     return removed;
@@ -510,7 +515,7 @@ export class RoomManager {
   private newSession(room: Room, seat: 'a' | 'b' | 'spectator', name: string): SessionInfo {
     const token = newSessionToken();
     const tokenHash = sha256(token);
-    const session: SessionInfo = { token, tokenHash, name, seat, socketId: null };
+    const session: SessionInfo = { token, tokenHash, name, seat, socketId: null, roomId: room.id };
     this.sessions.set(tokenHash, session);
     this.store.saveSession({ tokenHash, roomId: room.id, seat, name, createdAt: Date.now() });
     return session;
@@ -518,13 +523,18 @@ export class RoomManager {
 
   private cleanName(raw?: string): string | null {
     if (typeof raw !== 'string') return null;
-    const t = raw.trim();
+    // 过滤控制字符（防 PGN 头注入/日志污染），再裁剪空白并限长
+    const t = raw.replace(/[\u0000-\u001f\u007f\u2028\u2029]/g, '').trim();
     if (t.length === 0 || t.length > MAX_NAME) return null;
     return t;
   }
 
   private persist(room: Room): void {
-    this.store.saveRoom({
+    this.store.saveRoom(this.buildPersist(room));
+  }
+
+  private buildPersist(room: Room): RoomPersist {
+    return {
       roomId: room.id,
       kind: room.kind,
       fen: room.engine.fen(),
@@ -538,7 +548,7 @@ export class RoomManager {
       },
       createdAt: room.createdAt,
       updatedAt: room.updatedAt,
-    });
+    };
   }
 
   private trimAcks(room: Room): void {
