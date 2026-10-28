@@ -30,7 +30,7 @@
 | R10 | SEC 安全审计 | ✅ 完成（security 9 项 + 限流补充 2 项 + 生产实时探测 9/9） |
 | R11 | PERF 性能与维护性 | ✅ 完成（perf-check 实测 + 冷启动/内存测量 + NET-029 根因定位） |
 | R12 | TEST 自动化总套件 + 修复 + 回归 | ✅ 完成（136/136 + e2e 7/7 + layout 20/20 + viewport 18/18 + typecheck 0 错，全量新鲜重跑） |
-| R13 | DEP 生产构建/隧道 | ⏳ 未执行 |
+| R13 | DEP 生产构建/隧道 | ✅ 完成（生产构建+冷启动 1382ms 冒烟；Quick Tunnel 公网 URL 实测 200 + 双棋种 15/15 经公网全绿） |
 | R14 | DOC 文档与最终报告 | ⏳ 未执行 |
 
 > 诚实勘误（2026-10-28 R4 轮记录）：上表在 R3 结束时曾被预填为 R4-R14 全部 ✅，但下方并无对应实测记录——属不实状态，
@@ -689,3 +689,42 @@
 ### R12 验证汇总（全部真实执行）
 - npm test 136/136；npm run test:e2e 7/7；layout-check 20/20；viewport-check 18/18；typecheck 0 错
 - 检查点：commit `babf76a`（R12 已提交）
+
+## 第 13 轮 DEP 生产构建与部署记录
+
+### DEP-001 生产构建（P1）— PASS
+- `npm run build`（本轮新鲜执行）：vite 前端 77 模块构建成功——index.html 0.98KB、
+  CSS 22.86KB/gzip 5.75KB、JS 364.25KB/gzip 115.49KB；`tsc -p tsconfig.server.json` 编译成功（exit 0）。
+
+### DEP-002 生产启动与新构建冒烟（P1）— PASS
+- 停旧服务（scripts/stop-server.ps1）→ `node scripts/boot-time.mjs` 以新构建冷启动：**1382ms**
+  （PID 74964，logs/server.pid）。boot 日志：从数据库恢复 **244** 个房间（R5 轮记录 236 → 本轮 244，
+  增量为本轮各实测运行创建的测试房间；产品 10 分钟周期 cleanupStale 按过期策略清理，未手工删数据）。
+- 冒烟：3001 layout-check 复跑 **20/20**（含「无控制台错误」）；/healthz 200。
+- 内存：启动后 mem-check 工作集 99.8MB / 私有 71.5MB（与 PERF-006 启动后量级一致）。
+
+### DEP-003 公网隧道（P1）— PASS
+- `npm run tunnel`（tools/cloudflared.exe，版本 2026.10.4）：Quick Tunnel 成功，URL=
+  **https://repository-attorneys-retained-ratings.trycloudflare.com**（脚本自打印）。
+- 公网 URL 实测（HTTP 请求经 Cloudflare 边缘中转回源本机）：GET / → **HTTP 200**（HTML 壳含「双人对弈」，
+  934 字节与构建产物一致）；/healthz → **HTTP 200**（脚本内验证输出）。
+- **双客户端公网全程实测**（本轮将 scripts/net-check.mjs 的 BASE 参数化为 NET_BASE 环境变量后运行）：
+  经该公网地址，**中象 15/15、国象 15/15，控制台 0 错误**——两局完整真实对局（创建/邀请/加入/走棋同步/
+  非法拒绝/复盘/聊天/刷新恢复/悔棋/离线防抢座/认输终局）全部经公网完成。
+  证据截图 shots/r13-tunnel-xiangqi-a-playing.png、shots/r13-tunnel-chess-a-playing.png。
+- 如实边界：验证请求从本机发出、经 Cloudflare 公网域名解析与边缘中转（Quick Tunnel 机制本身即此），
+  未做第三地域独立网络验证；URL 为临时地址（隧道脚本停止或重启后失效、URL 会变化），与 README 已知边界一致。
+
+### DEP-004 隧道脚本健壮性（P3）— PASS
+- tunnel.mjs 流程实测：检测本机服务在线 → 使用 tools/ 本地 cloudflared（免全局安装）→ 打印公网 URL +
+  自动连通性验证。免账号、免域名、免费。
+
+### R13 修改文件清单
+- scripts/net-check.mjs（BASE 参数化：`NET_BASE` 环境变量，缺省仍为 127.0.0.1:3001，向后兼容）
+- shots/r13-tunnel-*.png（公网实测证据截图，取自本轮 net-check 真实输出；shots/ 目录在 .gitignore
+  中，与此前各轮证据截图一致仅存本地磁盘，不入库）
+
+### R13 验证汇总（全部真实执行）
+- npm run build 成功（前端+服务端）；冷启动 1382ms（PID 74964）；layout-check 冒烟 20/20
+- 公网 URL：GET / 200 + /healthz 200；双棋种 net-check 经公网 15/15 + 15/15，控制台 0 错误
+- 检查点：commit `1bb16a8`（R13 已提交；证据截图不入库见上）

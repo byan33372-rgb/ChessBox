@@ -1,11 +1,12 @@
 /** R5 NET 双客户端端到端实测：两个独立浏览器上下文（非单页模拟）
  *  15 步清单：创建/邀请/加入/就绪/走棋同步×2/一致/非轮次禁走/非法目标/复盘导航/
  *  聊天/刷新恢复/悔棋offer/离线徽章+防抢座/认输终局+锁定
- *  用法: node scripts/net-check.mjs [xiangqi|chess]（默认 xiangqi） */
+ *  用法: node scripts/net-check.mjs [xiangqi|chess]（默认 xiangqi）
+ *        R13 起 BASE 可用环境变量覆盖（如指向 Quick Tunnel 公网地址实测）。 */
 import { chromium } from '@playwright/test';
 
 const kind = process.argv[2] ?? 'xiangqi';
-const BASE = 'http://127.0.0.1:3001';
+const BASE = process.env.NET_BASE ?? 'http://127.0.0.1:3001';
 
 /** 按棋种参数化：首步/次步走法与记谱文本、选环选择器、回合文案 */
 const CFG = kind === 'chess'
