@@ -74,6 +74,15 @@ describe('规则 · 吃过路兵', () => {
     e.applyMove({ from: 'e4', to: 'e5' });
     expect(e.isLegal({ from: 'e5', to: 'd6' })).toBe(false); // d6 有兵且非 ep
   });
+
+  it('吃过路兵若使己王暴露（牵制）→ 非法；普通兵进不受此限', () => {
+    // 白王 a5、黑卒 d5（刚双步，ep=d6）、白兵 e5、黑后 h5 沿第 5 横线
+    // exd6 吃过路兵会同时移走 e5 兵与 d5 卒 → 黑后沿横线直射白王 → 非法
+    const e = new ChessEngine('8/8/8/K2pP2q/8/8/8/7k w - d6 0 1');
+    expect(e.isLegal({ from: 'e5', to: 'd6' })).toBe(false);
+    // 对照：e5 普通前进到 e6 时 d5 卒仍在原位挡线 → 合法
+    expect(e.isLegal({ from: 'e5', to: 'e6' })).toBe(true);
+  });
 });
 
 describe('规则 · 王车易位', () => {
@@ -109,6 +118,24 @@ describe('规则 · 王车易位', () => {
     const eG = new ChessEngine('r3k2r/pppppppp/8/8/6r1/8/PPPPPP1P/R3K2R w KQkq - 0 1');
     expect(eG.isLegal({ from: 'e1', to: 'g1' })).toBe(false); // 目的 g1 被控
     expect(eG.isLegal({ from: 'e1', to: 'c1' })).toBe(true); // 长易位仍可
+  });
+
+  it('己方棋子阻挡易位路径 → 易位非法（b1 阻长易位、f1 阻短易位）', () => {
+    // b1 有己方马：长易位需 b1/c1/d1 全空 → 非法；短易位不受影响
+    const eLong = new ChessEngine('r3k2r/pppppppp/8/8/8/8/PPPPPPPP/RN2K2R w KQkq - 0 1');
+    expect(eLong.isLegal({ from: 'e1', to: 'c1' })).toBe(false);
+    expect(eLong.isLegal({ from: 'e1', to: 'g1' })).toBe(true);
+    // f1 有己方马：短易位需 f1/g1 全空 → 非法；长易位路径 b1/c1/d1 全空 → 不受影响
+    const eShort = new ChessEngine('r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3KN2 w KQkq - 0 1');
+    expect(eShort.isLegal({ from: 'e1', to: 'g1' })).toBe(false);
+    expect(eShort.isLegal({ from: 'e1', to: 'c1' })).toBe(true);
+  });
+
+  it('车被攻击不影响易位资格（仅王与王路径受攻才禁）', () => {
+    // 黑车 b4 打白车 b1：易位资格仍保留（FIDE：只检查王与王经过格/目的格）
+    const e = new ChessEngine('r3k2r/pppppppp/8/8/1r6/8/PPPPPPPP/R3K2R w KQkq - 0 1');
+    expect(e.isLegal({ from: 'e1', to: 'c1' })).toBe(true);
+    expect(e.isLegal({ from: 'e1', to: 'g1' })).toBe(true);
   });
 
   it('车动过或王动过 → 易位权丧失（FEN 同步）', () => {
@@ -207,6 +234,58 @@ describe('规则 · 终局与限着', () => {
     expect(e.outcome()?.type).toBe('repetition');
     const k = new ChessEngine('8/8/8/4k3/8/8/8/4K3 w - - 0 1');
     expect(k.outcome()?.type).toBe('insufficient');
+  });
+
+  it('三次重复的判和时点：一个周期（4 步）后不判，两个周期（P0 第三次出现）才判', () => {
+    const e = new ChessEngine();
+    const CYCLE: Array<[string, string]> = [
+      ['g1', 'f3'],
+      ['g8', 'f6'],
+      ['f3', 'g1'],
+      ['f6', 'g8'],
+    ];
+    for (const [from, to] of CYCLE) e.applyMove({ from, to });
+    expect(e.outcome()).toBeNull(); // 初始局面此时仅出现 2 次
+    for (const [from, to] of CYCLE) e.applyMove({ from, to });
+    expect(e.outcome()?.type).toBe('repetition'); // 初始局面第 3 次出现
+  });
+
+  it('子力不足标准逐例：与 FIDE 一致（chess.js 语义）', () => {
+    // 判和：K/K、K+B/K、K+N/K、K+B vs K+B（同色格双象）
+    for (const fen of [
+      '4k3/8/8/8/8/8/8/4K3 w - - 0 1',
+      '4k3/8/8/8/8/8/8/4KB2 w - - 0 1',
+      '4k3/8/8/8/8/8/8/4KN2 w - - 0 1',
+      '5b2/4k3/8/8/8/8/8/2B1K3 w - - 0 1',
+    ]) {
+      expect(new ChessEngine(fen).outcome()?.type, fen).toBe('insufficient');
+    }
+    // 不判和：异色格双象（尚有理论将杀可能）、K+N vs K+N（FIDE 非死局）、K+R vs K+R、K+B vs K+N
+    for (const fen of [
+      '4b3/4k3/8/8/8/8/8/2B1K3 w - - 0 1',
+      '4k3/4n3/8/8/8/8/8/4KN2 w - - 0 1',
+      '4k3/8/8/8/8/8/8/4KR2 w - - 0 1',
+      '4k3/8/8/8/8/8/4n3/4KB2 w - - 0 1',
+    ]) {
+      expect(new ChessEngine(fen).outcome(), fen).toBeNull();
+    }
+  });
+
+  it('黑方将死白方 → 胜方记 b（愚人杀）', () => {
+    const e = new ChessEngine();
+    for (const m of [
+      ['f2', 'f3'],
+      ['e7', 'e5'],
+      ['g2', 'g4'],
+      ['d8', 'h4'],
+    ] as Array<[string, string]>) {
+      const r = e.applyMove({ from: m[0], to: m[1] });
+      expect(r, m.join()).not.toBeNull();
+    }
+    expect(e.outcome()?.type).toBe('checkmate');
+    expect(e.outcome()?.winner).toBe('b');
+    expect(e.inCheck()).toBe(true);
+    expect(e.checkedKingSquare()).toBe('e1');
   });
 });
 

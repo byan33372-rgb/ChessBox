@@ -48,7 +48,7 @@ export const CHECKLIST: CheckGroup[] = [
     title: '功能确认（国际象棋）',
     items: [
       { label: '棋盘和棋子显示正确，坐标清晰', status: 'pass', evidence: 'UI-003/UI-005 浏览器实测 + layout-check' },
-      { label: '走法/易位/吃过路兵/升变等规则', status: 'pass', evidence: 'CH-003~CH-013：unit chess-rules 41 项' },
+      { label: '走法/易位/吃过路兵/升变等规则', status: 'pass', evidence: 'CH-004~CH-018：unit chess-rules-deep + chess-adapter 47 项' },
       { label: '可创建房间并分享链接，另一位玩家能加入', status: 'pass', evidence: 'NET-001~NET-004：integration rooms + e2e' },
       { label: '走棋实时同步，上一步/下一步导航正常', status: 'pass', evidence: 'NET-005 + REC-002~REC-006 + e2e' },
       { label: '导出 FEN / PGN 功能正常', status: 'pass', evidence: 'REC-008/REC-009：unit exporters + e2e 下载校验' },
