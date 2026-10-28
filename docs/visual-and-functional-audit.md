@@ -27,7 +27,7 @@
 | R7 | UX 聊天/邀请/反馈回归 | ✅ 完成（integration chat 5 项 + UX 实测 9/9） |
 | R8 | CHK 功能确认状态真实性 | ✅ 完成（证据编号逐条核对 + chk-check 8/8） |
 | R9 | RWD 响应式与可访问性 | ✅ 完成（真实视口矩阵 12/12 + 翻转实测 + layout/viewport 复跑） |
-| R10 | SEC 安全审计 | ⏳ 未执行 |
+| R10 | SEC 安全审计 | ✅ 完成（security 9 项 + 限流补充 2 项 + 生产实时探测 9/9） |
 | R11 | PERF 性能与维护性 | ⏳ 未执行 |
 | R12 | TEST 自动化总套件 + 修复 + 回归 | ⏳ 未执行 |
 | R13 | DEP 生产构建/隧道 | ⏳ 未执行 |
@@ -475,6 +475,48 @@
 - node scripts/rwd-check.mjs：12/12 PASS，控制台 0 错误
 - layout-check 20/20；viewport-check 18/18；chk-check 8/8（断言同步更新后）
 - 检查点：commit `2d7c441`（R9 已提交，工作区干净）
+
+## 第 10 轮 SEC 安全审计记录
+
+### SEC-001 敏感路径（P0）— PASS
+- vitest security.test.ts：/.env、/package.json、/data/app.db、/node_modules、/src/server/index.ts 全 404（内嵌测试服）。
+- **生产实时探测**（scripts/sec-check.mjs，对 3001 真实服务）：上述路径 + /data、/logs/server.log 全部 404。
+
+### SEC-002 安全响应头（P1）— PASS
+- nosniff / X-Frame-Options SAMEORIGIN / Referrer-Policy no-referrer / Permissions-Policy camera=() microphone=() geolocation=()；
+- CSP：default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src …，无 unsafe-eval（vitest+生产双验证）。
+
+### SEC-003 SPA 与 API 边界（P2）— PASS
+- / 与 /r/<roomId> 200（SPA 回退）；/api/secret 404 JSON {"ok":false,"error":"not found"} 无内部泄露；/healthz 200。
+
+### SEC-004 Socket 输入校验（P1）— PASS
+- security.test.ts：11 位/大写/短号+未知字段拒绝；null/数字载荷拒绝不崩溃；走棋 from 传对象被拒；
+  聊天 __proto__ 注入被拒（未知字段 strip 不影响）；棋种枚举外值（weiqi）拒绝。
+
+### SEC-005 会话与令牌（P1）— PASS
+- 令牌仅存 localStorage 不进 URL（roomClient 头注 + 邀请链接不含令牌实测——URL 仅 /r/<roomId>）；
+- 高熵格式：create ack token ≥24 字符；令牌错误 rejoin 拒绝（SESSION_INVALID，NET-015）；跨房间令牌不可用（NET-025）；
+- 断线后席位保留且陌生人不能抢座、凭令牌方可恢复（NET-014 + NET-028 步骤⑭双客户端实测）。
+
+### SEC-006 限流四桶（P1）— FIXED_RETEST_PASS（补充测试后）
+- 已有真实测试：创建（第 3 个拒，NET-005）、聊天（7 条突发第 7 拒，UX-006）、加入（joinLimit 代码+重连退避路径）。
+- **本轮补充** tests/integration/ratelimit-extra.test.ts 2 项：走棋桶容量 20（25 次突发触发 RATE_LIMITED，
+  且限流不产生走法）、操作桶容量 15（20 次 undo:offer 突发触发 RATE_LIMITED）。2/2 PASS。
+- 此前状态如实：走棋/操作限流在交付包中**无测试**（仅代码存在）——本轮补齐。
+
+### SEC-007 XSS 与存储边界（P2）— PASS
+- 聊天载荷原文存储、React 文本节点渲染转义（chat.test.ts 第 1 项断言存储原文+顺序）；
+- 棋谱/玩家名含引号反斜杠经净化不破坏 PGN 结构（exporters 第 6 项）。
+
+### R10 修改文件清单
+- tests/integration/ratelimit-extra.test.ts（新增：走棋/操作限流 2 项）
+- scripts/sec-check.mjs（新增：生产实时安全探测）
+
+### R10 验证汇总（全部真实执行）
+- npx vitest run integration/ratelimit-extra：2/2 PASS
+- node scripts/sec-check.mjs：9/9 PASS（生产 3001 实时探测）
+- npm test（全量）：**136/136 PASS**；npm run typecheck 0 错误
+- 检查点：commit `6998099`（R10 已提交，工作区干净）
 
 ### R2 验证汇总（全部真实重跑）
 - npm test 122/122 PASS；npm run typecheck 0 错误；npm run build 成功（前端 363.87KB/gzip 115.37KB + CSS 22.86KB）
