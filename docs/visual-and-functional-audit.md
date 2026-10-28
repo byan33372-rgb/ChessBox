@@ -24,7 +24,7 @@
 | R4 | CH 国际象棋规则与交互回归 | ✅ 完成（自动化 47 项 + e2e 重跑 7/7） |
 | R5 | NET 联机与状态一致性（双客户端） | ✅ 完成（integration 41 项 + 双客户端 15 步×双棋种） |
 | R6 | REC 棋谱/导出/数据库回归 | ✅ 完成（exporters 9 项 + e2e 导出 2 项 + 持久化交叉验证） |
-| R7 | UX 聊天/邀请/反馈回归 | ⏳ 未执行 |
+| R7 | UX 聊天/邀请/反馈回归 | ✅ 完成（integration chat 5 项 + UX 实测 9/9） |
 | R8 | CHK 功能确认状态真实性 | ⏳ 未执行 |
 | R9 | RWD 响应式与可访问性 | ⏳ 未执行 |
 | R10 | SEC 安全审计 | ⏳ 未执行 |
@@ -361,6 +361,54 @@
 - npm test（全量）：**134/134 PASS**（本轮新鲜重跑；exporters 9 项在其中）
 - e2e 用例 6/7（导出下载校验）：R4 轮重跑 7/7 中的两项，R5 轮双客户端实测亦覆盖导出前置场景
 - 检查点：commit `9d95160`（R6 已提交，工作区干净）
+
+## 第 7 轮 UX 聊天/邀请/反馈记录
+
+> 工具：新增 `scripts/ux-check.mjs`（Playwright，两个独立浏览器上下文 + 剪贴板权限授予，验证真实剪贴板内容）。
+
+### UX-001 昵称链路（P2）— PASS
+- 首页 #nickname 填"阿甲"→ 创建房间 → 房间页玩家卡显示"阿甲"。
+
+### UX-002 邀请链接复制（P1）— PASS
+- "复制链接"按钮 → navigator.clipboard.readText() 实读剪贴板 === `http://127.0.0.1:3001/r/<roomId>`（逐字符比对）；
+- 同时出现 success toast。邀请输入框 readOnly + onFocus 全选（Room.tsx 549 行）。
+
+### UX-003 加入方默认昵称（P3）— PASS
+- B 无昵称经链接加入 → 黑方席位，玩家卡名称非空（服务端默认名）。
+
+### UX-004 聊天消息链路（P1）— PASS
+- A 展开面板发"你好"→ B 未展开时 toggle 计数徽标"1 条 ▸"（未读提示）→ 展开后消息渲染含发送者昵称与文本。
+
+### UX-005 空消息防呆 + 服务端校验（P1）— PASS
+- 客户端：纯空格输入 → 发送按钮 disabled（ChatPanel 58 行）；
+- 服务端：integration chat.test.ts——空/纯空白/超长(>200)拒绝 INVALID_INPUT、XSS 载荷原文存储（React 文本节点转义）、
+  消息顺序保持，共 5 项。
+
+### UX-006 限频反馈（P2）— PASS
+- 连发 7 条 → 第 7 条出现 error toast「发言过于频繁，请稍后再试」（截图 shots/r7-ux-ratelimit.png）。
+
+### UX-007 提和 offer 双向流（P1）— PASS
+- A 提和 → toast"已发送和棋请求" + pending 提示；B 收到 offer 卡 → 拒绝 → 双端卡/提示清除、对局继续（0 走法不受影响）。
+- 同意路径见 NET-018（agreement 判和）。
+
+### UX-008 重开 offer 双向流（P2）— PASS
+- B 请求重开 → A 卡片 → 拒绝 → 双端清除、继续。同意路径见 NET-021（回到初始 FEN）。
+
+### UX-009 认输终局 CTA（P2）— PASS
+- A 认输 → 双端 .game-over-banner（文案"黑方获胜"+理由）+「再来一局（需对方同意）」按钮真实出现（截图 shots/r7-ux-ended.png）。
+
+### UX-010 首跑如实记录 —
+- 首跑 7/9：UX-01/UX-02 失败根因均为**我的验证脚本选择器缺陷**（first() 命中对手空席卡；复制按钮在遮罩与侧栏各有一处
+  触发 strict mode 冲突），产品行为无缺陷；修正选择器后 9/9。
+
+### R7 修改文件清单
+- scripts/ux-check.mjs（新增：UX 专项实测工具）
+- shots/r7-ux-ratelimit.png、shots/r7-ux-ended.png（证据截图）
+
+### R7 验证汇总（全部真实执行）
+- node scripts/ux-check.mjs：首跑 7/9（脚本选择器问题）→ 修正 → **9/9 PASS，控制台 0 错误**
+- integration chat.test.ts 5 项随 npm test 全量通过（134/134）
+- 检查点：commit `7edb543`（R7 已提交，工作区干净）
 
 ### R2 验证汇总（全部真实重跑）
 - npm test 122/122 PASS；npm run typecheck 0 错误；npm run build 成功（前端 363.87KB/gzip 115.37KB + CSS 22.86KB）
