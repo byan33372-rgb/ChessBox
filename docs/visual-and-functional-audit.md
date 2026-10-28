@@ -29,7 +29,7 @@
 | R9 | RWD 响应式与可访问性 | ✅ 完成（真实视口矩阵 12/12 + 翻转实测 + layout/viewport 复跑） |
 | R10 | SEC 安全审计 | ✅ 完成（security 9 项 + 限流补充 2 项 + 生产实时探测 9/9） |
 | R11 | PERF 性能与维护性 | ✅ 完成（perf-check 实测 + 冷启动/内存测量 + NET-029 根因定位） |
-| R12 | TEST 自动化总套件 + 修复 + 回归 | ⏳ 未执行 |
+| R12 | TEST 自动化总套件 + 修复 + 回归 | ✅ 完成（136/136 + e2e 7/7 + layout 20/20 + viewport 18/18 + typecheck 0 错，全量新鲜重跑） |
 | R13 | DEP 生产构建/隧道 | ⏳ 未执行 |
 | R14 | DOC 文档与最终报告 | ⏳ 未执行 |
 
@@ -653,3 +653,39 @@
 - node scripts/boot-time.mjs：冷启动 1349ms（PID 84724）；powershell scripts/mem-check.ps1：见 PERF-006
 - npm run typecheck：0 错误
 - 检查点：commit `2c1d9e3`（R11 已提交）
+
+## 第 12 轮 TEST 自动化总套件回归记录
+
+> 本轮为全量**新鲜重跑**（非引用前轮结果）；无修复项，首轮即全绿；本轮零源码改动。
+
+### TEST-001 单元+集成总套件（P1）— PASS
+- `npm test`：**136/136 PASS**（9 文件，2.69s，退出码 0）。构成：unit——xiangqi-engine 37 /
+  chess-rules-deep 29 / chess-adapter 18 / exporters 9（93 项）；integration——rooms 21 /
+  concurrency 6 / security 9 / chat 5 / ratelimit-extra 2（43 项）。
+
+### TEST-002 端到端套件（P1）— PASS
+- `npm run test:e2e`：**7/7 PASS**（9.2s）：桌面双上下文中象对局（创建/邀请/对弈/同步/复盘/重连）、
+  非法走棋不改局面、国象 e4 e5 Nf3 双端同步 SAN、升变对话框、移动端 375×667 走棋、
+  国象 PGN 导出下载、中象中文棋谱+JSON 导出。
+- Playwright 自带 webServer（独立 3100 端口 + 独立测试库 data/e2e-test.db），与生产 3001 互不影响。
+
+### TEST-003 布局自动化（P2）— PASS
+- `node scripts/layout-check.mjs`：**20/20**（含移动端棋盘宽自适应、触控高度≥40px、点击热区≥30px、无控制台错误）。
+
+### TEST-004 视口自动化（P2）— PASS
+- `npx tsx scripts/viewport-check.mjs`：**18/18**（含长昵称不溢出、键盘 Tab 可遍历 12 个可聚焦控件、
+  复盘横幅与位置显示 29/30）。
+
+### TEST-005 类型检查（P2）— PASS
+- `npm run typecheck`：前后端 0 错误（exit 0）。
+
+### TEST-006 用例完整性核查 — PASS
+- 本轮套件文件与 R10 轮一致，零改动：无隐藏/跳过用例、无删除用例、无屏蔽断言（vitest 报告 9 文件
+  全部执行、Playwright list 报告 7 用例全部 ok）。
+
+### R12 修改文件清单
+- （无源码改动；仅本记录）
+
+### R12 验证汇总（全部真实执行）
+- npm test 136/136；npm run test:e2e 7/7；layout-check 20/20；viewport-check 18/18；typecheck 0 错
+- 检查点：commit `babf76a`（R12 已提交）
