@@ -7,7 +7,7 @@
  */
 
 import { createServer } from 'http';
-import { existsSync, mkdirSync } from 'fs';
+import { appendFileSync, existsSync, mkdirSync } from 'fs';
 import { join, resolve } from 'path';
 import { Server } from 'socket.io';
 import type { ClientToServerEvents, ServerToClientEvents } from '../shared/protocol';
@@ -15,6 +15,27 @@ import { createHttpApp } from './http';
 import { RoomManager } from './rooms';
 import { Store } from './store';
 import { setupSocket, type AppServer } from './socket';
+
+/** 崩溃留痕：进程级异常写入 logs/server-error.log（Node 24 默认会静默退出，无此则死因不可查） */
+function logCrash(kind: string, err: unknown): void {
+  const msg = `[${new Date().toISOString()}] ${kind}: ${err instanceof Error ? (err.stack ?? err.message) : String(err)}\n`;
+  try {
+    mkdirSync(join(process.cwd(), 'logs'), { recursive: true });
+    appendFileSync(join(process.cwd(), 'logs', 'server-error.log'), msg, 'utf8');
+  } catch {
+    // 日志写失败不掩盖原始错误
+  }
+  console.error(msg);
+}
+
+process.on('uncaughtException', (err) => {
+  logCrash('uncaughtException', err);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason) => {
+  logCrash('unhandledRejection', reason);
+  process.exit(1);
+});
 
 function main(): void {
   const port = Number(process.env.PORT ?? 3001);

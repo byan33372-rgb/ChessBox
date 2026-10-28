@@ -22,7 +22,7 @@
 | R2 | UI 视觉复刻 + IMG 图片资源（Room 主题接入、Home 展示页、说明区、确认卡） | ✅ 完成（见 UI/IMG 记录） |
 | R3 | XI 中国象棋规则与交互回归 | ✅ 完成（自动化 37 项 + 浏览器实测） |
 | R4 | CH 国际象棋规则与交互回归 | ✅ 完成（自动化 47 项 + e2e 重跑 7/7） |
-| R5 | NET 联机与状态一致性（双客户端） | ⏳ 未执行 |
+| R5 | NET 联机与状态一致性（双客户端） | ✅ 完成（integration 42 项 + 双客户端 15 步×双棋种） |
 | R6 | REC 棋谱/导出/数据库回归 | ⏳ 未执行 |
 | R7 | UX 聊天/邀请/反馈回归 | ⏳ 未执行 |
 | R8 | CHK 功能确认状态真实性 | ⏳ 未执行 |
@@ -254,6 +254,70 @@
 - npm run test:e2e：**7/7 PASS**（本轮重跑，9.2s）
 - npm run typecheck：前后端 0 错误
 - 检查点：commit `2c85773`（R4 已提交，工作区干净）
+
+## 第 5 轮 NET 联机与状态一致性记录
+
+> 编号说明：仓库内无既有 NET 编号定义，本轮按真实测试文件登记 NET-001~NET-029（rooms 22 + concurrency 6 +
+> 双客户端实测 2 轮），随后为 1 项事故记录。安全专项测试文件（security.test.ts，9 项）在 R10 SEC 轮登记，
+> 本轮不重复记号（其测试已随 npm test 真实执行）。
+
+### NET-001~NET-005 房间与席位（integration/rooms.test.ts 前 5 项）— PASS
+- 创建：红方席位/waiting/高熵 10 位房间号/令牌≥24 字符；第二人加入→playing+广播一致（revision=2）；
+- 第三人观战不能走棋（NOT_PLAYER）；房间不存在拒绝（ROOM_NOT_FOUND）；建房限流第 3 个被拒（RATE_LIMITED）。
+
+### NET-006~NET-011 中象走棋协议（rooms.test.ts 6 项）— PASS
+- 双端一致局面+记谱「炮二平五」+revision 递增；非法走棋拒绝局面不变；轮次限制；requestId 幂等（重复提交不产生第二步）；
+- 过期 revision 拒绝并返回最新局面（STALE_REVISION）；畸形走法参数拒绝（INVALID_INPUT）。
+
+### NET-012~NET-013 国际象棋协议（rooms.test.ts 2 项）— PASS
+- e4/e5/Nf3 SAN 正确；升变必须带 promotion（缺省拒绝 ILLEGAL_MOVE，带 q 合法 axb8=Q）。
+
+### NET-014~NET-016 断线重连与持久化（rooms.test.ts 3 项）— PASS
+- 断线后席位保留、陌生人不能抢座（观战）、凭令牌重连并继续走棋（马8进7）；令牌错误 rejoin 拒绝（SESSION_INVALID）；
+- 服务重启后房间/棋谱/会话从 SQLite 恢复并可重连（真实 stop/start 往返）。
+
+### NET-017~NET-021 认输/提和/悔棋/重开/聊天协议（rooms.test.ts 5 项）— PASS
+- 认输→ended+不能再走（GAME_ENDED）；提和→同意→agreement；悔棋→同意→回退 2 步+库内棋谱清空；
+- 重开→回到初始 FEN；聊天双端收到+空消息拒绝。
+
+### NET-022~NET-027 并发与原子性（integration/concurrency.test.ts 6 项）— PASS
+- 同 revision 并发两步恰一成功（STALE_REVISION/NOT_YOUR_TURN）且棋谱只 1 步；双方同时各走一步恰一成功；
+- 观战者伪造走棋/认输均拒；令牌跨房间不可用；观战进出计数精确归零；同会话多标签页重连续接管在线状态。
+
+### NET-028 双客户端浏览器实测（15 步清单 × 双棋种）— PASS
+- 工具：新增 `scripts/net-check.mjs`（Playwright，**两个独立浏览器上下文**，非单页模拟；记录全程控制台错误）。
+- 中象 15/15、国象 15/15，控制台错误均为 0。截图：shots/r5-net-*-waiting/playing/spectator/ended.png。
+- 15 步清单：①A 创建房间（URL+高熵房间号）→②A 等待遮罩+邀请链接可复制→③B 独立上下文加入为黑方→④A 就绪提示→
+  ⑤A 首步双端同步（炮二平五 / e4）→⑥B 次步双端同步（马8进7 / e5）→⑦双端步数/记谱文本/回合提示一致→
+  ⑧非轮次点击无反应→⑨非法目标无走法→⑩B 复盘导航不影响 A→⑪聊天 B→A 实时到达→⑫B 刷新凭会话恢复席位与棋谱→
+  ⑬A 请求悔棋→B 同意→双端 0 步→⑭B 断开→A 离线徽章；新上下文打开同链接判为观战不抢座→⑮A 认输→双端终局横幅+棋盘锁定。
+- 实测修正：步骤⑦首跑断言用词错误（我误期待非行棋方文案为"等待对方"，实际产品文案为"轮到红方走棋/轮到白方走棋"，
+  Room.tsx 225 行第三方视角）——脚本断言更正后通过，产品行为正确；国象变体首跑失败根因=脚本未参数化国象走法
+  （误用中象坐标），更正后通过。两处均为**验证脚本缺陷**，非产品缺陷。
+
+### NET-029 事故记录：生产服务一次无迹退出 + P1 加固 — FIXED（加固完成，原死因未定位如实记录）
+- 事实：2026-10-28 13:01 前后，3001 生产服务在国象变体实测执行中自行退出（步骤 1-4 成功后、步骤 12 重连时
+  ERR_CONNECTION_REFUSED）。当时服务器**未注册** uncaughtException/unhandledRejection 处理器，Node 24 遇
+  未处理 Promise 拒绝会静默退出，**死因无痕迹可查**。
+- 可能原因（如实列出不判定）：(a) 未知未处理异常；(b) 该服务此前经本会话后台命令启动（npm start），不排除被
+  会话生命周期回收；(c) 其他环境因素。
+- 处置（真实修改）：src/server/index.ts 注册 uncaughtException/unhandledRejection 处理器，崩溃堆栈写入
+  `logs/server-error.log`（P1 加固：死因从此可查）；新增 `scripts/start-server-bg.ps1`（日志重定向+PID 记录，
+  服务不再依赖启动它的 shell 生命周期）。重启后 PID 85800（boot 日志见 logs/server.log）。
+- 复测：双棋种 15/15+15/15 全绿且控制台 0 错误，服务持续存活至今（本轮结束时复核 Test-NetConnection 3001=True、
+  server-error.log 不存在=未复现）。若复发，以 logs/server-error.log 取迹后补记。
+
+### R5 修改文件清单
+- scripts/net-check.mjs（新增：15 步双客户端实测工具，双棋种参数化）
+- scripts/start-server-bg.ps1（新增：生产服务后台启动+日志重定向+PID 记录）
+- src/server/index.ts（P1 加固：崩溃留痕处理器）
+- logs/server.log、logs/server.pid（运行时产物，随日志目录生成）
+
+### R5 验证汇总（全部真实执行）
+- npm test（全量）：134/134 PASS（integration rooms 22 + concurrency 6 + security 9 + chat 5 = 42 项在其中）
+- node scripts/net-check.mjs xiangqi：15/15，控制台 0 错误
+- node scripts/net-check.mjs chess：首跑 4/15（脚本缺陷+服务退出）→ 修复/重启后 15/15，控制台 0 错误
+- 检查点：commit `daa8e2e`（R5 已提交，工作区干净）
 
 ### R2 验证汇总（全部真实重跑）
 - npm test 122/122 PASS；npm run typecheck 0 错误；npm run build 成功（前端 363.87KB/gzip 115.37KB + CSS 22.86KB）
