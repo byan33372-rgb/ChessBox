@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" role="img" aria-label="国际象棋主题示意">
+  <defs>
+    <linearGradient id="civ" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#efe8d2"/>
+      <stop offset="1" stop-color="#d9cfae"/>
+    </linearGradient>
+    <linearGradient id="cblk" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3a3733"/>
+      <stop offset="1" stop-color="#211e1a"/>
+    </linearGradient>
+    <linearGradient id="goldLine2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6f6238"/>
+      <stop offset="0.5" stop-color="#bda668"/>
+      <stop offset="1" stop-color="#6f6238"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="300" fill="#121813"/>
+  <!-- 棋盘格一角（绿与象牙） -->
+  <g transform="rotate(3 400 150)">
+    <rect x="110" y="-30" width="600" height="380" rx="8" fill="#20301f"/>
+    <g>
+      <rect x="140" y="0" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="220" y="0" width="80" height="80" fill="#5c7355"/>
+      <rect x="300" y="0" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="380" y="0" width="80" height="80" fill="#5c7355"/>
+      <rect x="460" y="0" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="540" y="0" width="80" height="80" fill="#5c7355"/>
+      <rect x="620" y="0" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="140" y="80" width="80" height="80" fill="#5c7355"/>
+      <rect x="220" y="80" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="300" y="80" width="80" height="80" fill="#5c7355"/>
+      <rect x="380" y="80" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="460" y="80" width="80" height="80" fill="#5c7355"/>
+      <rect x="540" y="80" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="620" y="80" width="80" height="80" fill="#5c7355"/>
+      <rect x="140" y="160" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="220" y="160" width="80" height="80" fill="#5c7355"/>
+      <rect x="300" y="160" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="380" y="160" width="80" height="80" fill="#5c7355"/>
+      <rect x="460" y="160" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="540" y="160" width="80" height="80" fill="#5c7355"/>
+      <rect x="620" y="160" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="140" y="240" width="80" height="80" fill="#5c7355"/>
+      <rect x="220" y="240" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="300" y="240" width="80" height="80" fill="#5c7355"/>
+      <rect x="380" y="240" width="80" height="80" fill="#dcd4bb"/>
+      <rect x="460" y="240" width="80" height="80" fill="#5c7355"/>
+      <rect x="540" y="240" width="80" height="80" fill="#dcd4bb"/>
+    </g>
+  </g>
+  <!-- 象牙白骑士（马）剪影 -->
+  <g transform="translate(310 128) scale(2.6)" stroke="#4a4335" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round">
+    <path fill="url(#civ)" d="M14.6 35.5 c.6 -7.4 3.4 -12.8 8.4 -16.4 c.8 -.6 1 -1.6 .8 -2.8 l-.8 -3.4 l3.4 2.4 c5.8 1.2 9.2 4.6 9.2 8.2 c0 2.2 -2.6 2.6 -4.8 1.4 l-2.6 -1.6 c-1.6 1.8 -3.4 2.8 -5 4.4 c2.6 .4 4.6 2.2 4.6 4.6 c0 1.4 -.6 2.4 -1.4 3.2 z"/>
+    <rect x="10.5" y="35" width="24" height="6" rx="2.4" fill="url(#civ)"/>
+  </g>
+  <!-- 黑色车（Rook）剪影 -->
+  <g transform="translate(500 150) scale(2.2)" stroke="#c9c2ae" stroke-width="1.1" stroke-linejoin="round">
+    <path fill="url(#cblk)" d="M12 12 h5 v4 h4 v-4 h5 v4 h4 v-4 h5 v8 h-3 l1 14 h3 v6 H9 v-6 h3 l1 -14 h-3 z"/>
+  </g>
+  <!-- 低饱和金装饰线 -->
+  <rect x="24" y="24" width="752" height="252" rx="14" fill="none" stroke="url(#goldLine2)" stroke-width="2" opacity="0.8"/>
+  <circle cx="716" cy="64" r="5" fill="#bda668" opacity="0.9"/>
+  <circle cx="84" cy="236" r="5" fill="#bda668" opacity="0.9"/>
+</svg>

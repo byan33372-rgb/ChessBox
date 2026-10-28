@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" role="img" aria-label="中国象棋主题示意">
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8cf9a"/>
+      <stop offset="1" stop-color="#d3b271"/>
+    </linearGradient>
+    <radialGradient id="discR" cx="0.38" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#fdf5e3"/>
+      <stop offset="1" stop-color="#eedb9f"/>
+    </radialGradient>
+    <radialGradient id="discB" cx="0.38" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#f2ead6"/>
+      <stop offset="1" stop-color="#d9cbaa"/>
+    </radialGradient>
+    <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8a6a2a"/>
+      <stop offset="0.5" stop-color="#d9b45f"/>
+      <stop offset="1" stop-color="#8a6a2a"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="300" fill="#1c150b"/>
+  <rect x="0" y="0" width="800" height="300" fill="#241a0e" opacity="0.5"/>
+  <!-- 木色棋盘一角 -->
+  <g transform="rotate(-4 400 150)">
+    <rect x="120" y="-40" width="560" height="380" rx="10" fill="url(#wood)"/>
+    <g stroke="#8a6d4a" stroke-width="3" opacity="0.9">
+      <line x1="170" y1="10" x2="170" y2="290"/>
+      <line x1="240" y1="10" x2="240" y2="290"/>
+      <line x1="310" y1="10" x2="310" y2="290"/>
+      <line x1="520" y1="10" x2="520" y2="290"/>
+      <line x1="590" y1="10" x2="590" y2="290"/>
+      <line x1="660" y1="10" x2="660" y2="290"/>
+      <line x1="140" y1="40" x2="690" y2="40"/>
+      <line x1="140" y1="110" x2="690" y2="110"/>
+      <line x1="140" y1="190" x2="690" y2="190"/>
+      <line x1="140" y1="260" x2="690" y2="260"/>
+      <!-- 九宫斜线 -->
+      <line x1="240" y1="40" x2="380" y2="110" stroke-width="2"/>
+      <line x1="380" y1="40" x2="240" y2="110" stroke-width="2"/>
+    </g>
+    <rect x="140" y="118" width="550" height="12" fill="none"/>
+  </g>
+  <!-- 红方棋子：帥 -->
+  <g transform="translate(250 150)">
+    <circle r="52" fill="url(#discR)" stroke="#a08368" stroke-width="2.5"/>
+    <circle r="44" fill="none" stroke="#b03a2e" stroke-width="1.6"/>
+    <text x="0" y="17" text-anchor="middle" font-family="Georgia, 'STSong', 'SimSun', serif" font-size="46" font-weight="700" fill="#a63226">帥</text>
+  </g>
+  <!-- 黑方棋子：將 -->
+  <g transform="translate(452 208)">
+    <circle r="46" fill="url(#discB)" stroke="#8d8471" stroke-width="2.5"/>
+    <circle r="39" fill="none" stroke="#332a20" stroke-width="1.5"/>
+    <text x="0" y="15" text-anchor="middle" font-family="Georgia, 'STSong', 'SimSun', serif" font-size="40" font-weight="700" fill="#2c241b">將</text>
+  </g>
+  <!-- 红方棋子：炮 -->
+  <g transform="translate(596 118)">
+    <circle r="40" fill="url(#discR)" stroke="#a08368" stroke-width="2.5"/>
+    <circle r="33" fill="none" stroke="#b03a2e" stroke-width="1.5"/>
+    <text x="0" y="13" text-anchor="middle" font-family="Georgia, 'STSong', 'SimSun', serif" font-size="34" font-weight="700" fill="#a63226">炮</text>
+  </g>
+  <!-- 古金色装饰线 -->
+  <rect x="24" y="24" width="752" height="252" rx="14" fill="none" stroke="url(#goldLine)" stroke-width="2" opacity="0.85"/>
+  <circle cx="716" cy="64" r="5" fill="#d9b45f" opacity="0.9"/>
+  <circle cx="84" cy="236" r="5" fill="#d9b45f" opacity="0.9"/>
+</svg>
