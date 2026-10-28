@@ -28,7 +28,7 @@
 | R8 | CHK 功能确认状态真实性 | ✅ 完成（证据编号逐条核对 + chk-check 8/8） |
 | R9 | RWD 响应式与可访问性 | ✅ 完成（真实视口矩阵 12/12 + 翻转实测 + layout/viewport 复跑） |
 | R10 | SEC 安全审计 | ✅ 完成（security 9 项 + 限流补充 2 项 + 生产实时探测 9/9） |
-| R11 | PERF 性能与维护性 | ⏳ 未执行 |
+| R11 | PERF 性能与维护性 | ✅ 完成（perf-check 实测 + 冷启动/内存测量 + NET-029 根因定位） |
 | R12 | TEST 自动化总套件 + 修复 + 回归 | ⏳ 未执行 |
 | R13 | DEP 生产构建/隧道 | ⏳ 未执行 |
 | R14 | DOC 文档与最终报告 | ⏳ 未执行 |
@@ -306,6 +306,11 @@
   服务不再依赖启动它的 shell 生命周期）。重启后 PID 85800（boot 日志见 logs/server.log）。
 - 复测：双棋种 15/15+15/15 全绿且控制台 0 错误，服务持续存活至今（本轮结束时复核 Test-NetConnection 3001=True、
   server-error.log 不存在=未复现）。若复发，以 logs/server-error.log 取迹后补记。
+- **R11 轮根因更新（已定位）**：R11 冷启动测量时以 pipe 方式重启服务，父脚本退出后服务再次 EPIPE 崩溃，
+  留痕处理器记录堆栈：`uncaughtException: EPIPE: broken pipe, write ← console.log ← socket.js:59 broadcast`。
+  结论：**NET-029 原始事故根因=console.log 向被回收的父 shell 管道写入抛 EPIPE**（此前服务由会话后台命令启动，
+  该 shell 被回收后首条广播日志即崩溃）。修复=stdio 直接挂文件句柄（scripts/boot-time.mjs 用 fs.openSync），
+  父进程存活与否不再影响服务。留痕处理器已一次真实生效（本次崩溃留下完整堆栈，若在原始事故时期即可据此定位），验证有效。
 
 ### R5 修改文件清单
 - scripts/net-check.mjs（新增：15 步双客户端实测工具，双棋种参数化）
@@ -595,3 +600,56 @@
 - npx vitest run --project unit：4 文件中 1 文件曾 FAIL（我的新测试 FEN 错误）→ 修正 → 37/37 中象 PASS
 - npm test（全量）：**128/128 PASS**（原 122 + 新增 6）
 - 检查点：commit `963238d`（已提交，此处原文"待提交"为提交前写下的状态，更正）
+
+## 第 11 轮 PERF 性能与维护性记录
+
+> 工具：`scripts/perf-check.mjs`（Playwright + Navigation Timing/Performance API，对生产 3001 实测）
+> + 本轮新增 `scripts/boot-time.mjs`（spawn→/healthz 200 冷启动计时；stdio 直接挂文件句柄）
+> + 新增 `scripts/mem-check.ps1`（服务进程工作集/私有内存，ASCII 输出避免控制台编码问题）。
+
+### PERF-001 首屏加载（P2）— PASS
+- 生产实测：首页 HTML 请求均值 2ms（n=5）；Navigation Timing：TTFB=2ms、DOMContentLoaded=37ms、Load=37ms。
+- 如实边界：以上为本机局域环境值，仅作回归比较基线，不代表公网表现。
+
+### PERF-002 静态资源体积（P2）— PASS
+- 首页实际加载 JS≈356KB + CSS≈22KB，合计≈378KB（页面内 fetch content-length 实测；与 R2 构建记录
+  JS 363.87KB/gzip 115.37KB + CSS 22.86KB 同量级）。
+
+### PERF-003 走棋端到端延迟（P1）— PASS
+- 双独立上下文国象随机对局 20 步：每步「点击落子→棋谱条目出现」端到端均值 63ms / 最大 78ms
+  （n=17，前 3 步预热丢弃；含 socket 往返与全量状态广播）。交互无卡顿、无控制台错误。
+
+### PERF-004 广播体积 — NOT_TESTED（如实跳过）
+- 随机对局第 20 步即终局，无后续合法走法可触发单次广播测量；脚本有明确超时跳过分支并如实输出
+  「广播体积测量跳过」。全量快照广播的体积取舍未量化，留待后续。
+
+### PERF-005 服务冷启动（P2）— PASS
+- `node scripts/boot-time.mjs`：spawn `dist-server/server/index.js` → /healthz 200 = **1349ms**
+  （PID 84724，logs/server.pid）。
+- 该方式 stdio 直接挂文件句柄（fs.openSync），不依赖父进程：父脚本退出后服务持续存活
+  （当前 3001 仍为该 PID 在监听）。NET-029 首跑 pipe 版崩溃堆栈由留痕处理器记录（见 NET-029 根因更新）。
+
+### PERF-006 服务内存（P2）— PASS（两采样点）
+- `scripts/mem-check.ps1`：冷启动后实测工作集 100.9MB / 私有 104.7MB；本轮空闲态复测工作集 68.4MB /
+  私有 71.8MB——低于启动后峰值，未见只增不减迹象。如实边界：仅两采样点，非长周期泄漏专项。
+
+### PERF-007 维护性核查（P2）— PASS
+- `npm run typecheck`（本轮新鲜重跑）：前后端 **0 错误**。
+- 本轮新增脚本均有真实运行输出支撑，无仅存在性检查项。
+
+### PERF-008 测量工具修复 — FIXED_RETEST_PASS
+- perf-check.mjs 首跑受阻于 R2 遗留选择器（`.create-card.chess` 整卡点击，R2 改版后 CTA 为
+  `.gc-create-btn`）→ 修正为 `.create-card.chess .gc-create-btn` 后全流程跑通。
+- 首跑失败根因=验证脚本未同步 R2 改版，非产品缺陷（与 R5/R7/R8 首跑模式一致，如实记录）。
+
+### R11 修改文件清单
+- scripts/perf-check.mjs（选择器同步 R2 改版）
+- scripts/boot-time.mjs（新增：冷启动计时 + 文件句柄 stdio 启动）
+- scripts/mem-check.ps1（新增：内存测量）
+- docs NET-029 段落（根因定位更新：console.log→EPIPE）
+
+### R11 验证汇总（全部真实执行）
+- npx tsx scripts/perf-check.mjs：PERF-001/002/003 实测通过；PERF-004 如实跳过
+- node scripts/boot-time.mjs：冷启动 1349ms（PID 84724）；powershell scripts/mem-check.ps1：见 PERF-006
+- npm run typecheck：0 错误
+- 检查点：commit `2c1d9e3`（R11 已提交）

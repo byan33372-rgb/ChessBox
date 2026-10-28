@@ -63,7 +63,7 @@ async function main() {
   const pA = await ctxA.newPage();
   const pB = await ctxB.newPage();
   await pA.goto(BASE + '/');
-  await pA.locator('.create-card.chess').click();
+  await pA.locator('.create-card.chess .gc-create-btn').click();
   await pA.waitForURL(/\/r\//);
   await pB.goto(pA.url());
   await pA.locator('.waiting-overlay').waitFor({ state: 'hidden', timeout: 10000 });
