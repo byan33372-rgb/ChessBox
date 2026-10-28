@@ -25,7 +25,7 @@
 | R5 | NET 联机与状态一致性（双客户端） | ✅ 完成（integration 41 项 + 双客户端 15 步×双棋种） |
 | R6 | REC 棋谱/导出/数据库回归 | ✅ 完成（exporters 9 项 + e2e 导出 2 项 + 持久化交叉验证） |
 | R7 | UX 聊天/邀请/反馈回归 | ✅ 完成（integration chat 5 项 + UX 实测 9/9） |
-| R8 | CHK 功能确认状态真实性 | ⏳ 未执行 |
+| R8 | CHK 功能确认状态真实性 | ✅ 完成（证据编号逐条核对 + chk-check 8/8） |
 | R9 | RWD 响应式与可访问性 | ⏳ 未执行 |
 | R10 | SEC 安全审计 | ⏳ 未执行 |
 | R11 | PERF 性能与维护性 | ⏳ 未执行 |
@@ -409,6 +409,33 @@
 - node scripts/ux-check.mjs：首跑 7/9（脚本选择器问题）→ 修正 → **9/9 PASS，控制台 0 错误**
 - integration chat.test.ts 5 项随 npm test 全量通过（134/134）
 - 检查点：commit `7edb543`（R7 已提交，工作区干净）
+
+## 第 8 轮 CHK 功能确认状态真实性记录
+
+### CHK-001 数据源逐条核对（P1）— FIXED_RETEST_PASS
+- 逐条核对 src/client/checklist.ts 与审计文档：发现**多处证据编号错引**（历史轮次遗留）：规则项写"31 项"（实际 37）、
+  走棋同步引 NET-005（实为限流用例，应为 NET-006）、导出引 REC-010/REC-008（实为 REC-007/REC-006）、
+  聊天引 UX-005（应为 UX-004~006）、刷新恢复引 NET-012/013（实为 NET-014）。
+- 全部更正为真实编号与真实计数（37/47 项、NET-028 步骤号），状态本身此前即有真实测试支撑，故仅证据串修正。
+
+### CHK-002 生产页面渲染一致性（P1）— FIXED_RETEST_PASS
+- 新增 `scripts/chk-check.mjs`（生产 3001 实测）：重建后两张确认卡渲染的 title 属性（悬停证据提示）与
+  checklist.ts 逐字一致；响应式两项如实显示"未验证"；无项目显示"未通过"；状态图标语义与类一致（14 pass + 2 unverified）。
+- 首跑 4/7 → 7/8 → 8/8：三次失败根因均为**我的检查脚本缺陷**（textContent 取不到 title 属性、li/span 目标选错、
+  双卡计数误设 ===1），非产品缺陷；逐次修正后 8/8。证据截图 shots/r8-chk-cards.png。
+
+### CHK-003 诚实声明展示（P2）— PASS
+- 确认卡底部明示"人工维护的验收记录（非实时自动化监控）+ 未验证项不会标为通过"（CHK-002 实测渲染）。
+
+### R8 修改文件清单
+- src/client/checklist.ts（证据编号逐条更正为真实登记编号）
+- scripts/chk-check.mjs（新增：确认卡一致性实测工具）
+- dist-client 重建（checklist 数据变更）
+
+### R8 验证汇总（全部真实执行）
+- node scripts/chk-check.mjs：8/8 PASS，控制台 0 错误（shots/r8-chk-cards.png）
+- npm run build 成功（重建后生产页面与源数据一致）
+- 检查点：commit `0d11080`（R8 已提交，工作区干净）
 
 ### R2 验证汇总（全部真实重跑）
 - npm test 122/122 PASS；npm run typecheck 0 错误；npm run build 成功（前端 363.87KB/gzip 115.37KB + CSS 22.86KB）
