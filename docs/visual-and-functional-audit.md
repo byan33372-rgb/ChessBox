@@ -26,7 +26,7 @@
 | R6 | REC 棋谱/导出/数据库回归 | ✅ 完成（exporters 9 项 + e2e 导出 2 项 + 持久化交叉验证） |
 | R7 | UX 聊天/邀请/反馈回归 | ✅ 完成（integration chat 5 项 + UX 实测 9/9） |
 | R8 | CHK 功能确认状态真实性 | ✅ 完成（证据编号逐条核对 + chk-check 8/8） |
-| R9 | RWD 响应式与可访问性 | ⏳ 未执行 |
+| R9 | RWD 响应式与可访问性 | ✅ 完成（真实视口矩阵 12/12 + 翻转实测 + layout/viewport 复跑） |
 | R10 | SEC 安全审计 | ⏳ 未执行 |
 | R11 | PERF 性能与维护性 | ⏳ 未执行 |
 | R12 | TEST 自动化总套件 + 修复 + 回归 | ⏳ 未执行 |
@@ -436,6 +436,45 @@
 - node scripts/chk-check.mjs：8/8 PASS，控制台 0 错误（shots/r8-chk-cards.png）
 - npm run build 成功（重建后生产页面与源数据一致）
 - 检查点：commit `0d11080`（R8 已提交，工作区干净）
+
+## 第 9 轮 RWD 响应式与可访问性记录
+
+> 工具：新增 `scripts/rwd-check.mjs`（真实视口矩阵 + boundingBox 实测翻转）。
+
+### RWD-001~006 首页视口矩阵（P1）— PASS
+- 1440×900 / 1280×800 / 1024×800 / 820×900 / 414×800 / 375×667 六个真实视口逐一截图，
+  scrollWidth ≤ clientWidth 全部成立（无横向滚动）。证据 shots/r9-home-*.png。
+
+### RWD-007/010 房间页（对局中）1280×800（P1）— PASS
+- 双棋种房间无横向溢出。首跑此两项等待态即 PASS，对局中态本轮复验。
+
+### RWD-008/011 房间页 375×667（P1）— FIXED_RETEST_PASS
+- 首跑 FAIL：我在**等待态**测"提和按钮可达"——等待态本无该按钮（场景设计错误，非产品缺陷）；
+  改为对局中（B 加入后）实测：无横向溢出 + 提和/翻转按钮 scrollIntoView 可达。双棋种 PASS。证据 shots/r9-room-*-375.png。
+
+### RWD-009/012 翻转棋盘真实生效（P1）— FIXED_RETEST_PASS
+- 首跑 FAIL：我的 aria-label 用了繁体"帥"，产品为简体"帅"（notation.ts RED_NAME）。经临时诊断脚本实证两棋盘
+  aria-label 均带颜色前缀（"e9 红帅"/"e1 白王"/"e8 黑王"，空格="e5"）后修正选择器。
+- 复测：点击「翻转棋盘」→ 红帅/白王 boundingBox 纵向位置由底部半区互换至顶部半区（再点还原），双棋种 PASS。
+  证据 shots/r9-xq-flip.png、shots/r9-ch-flip.png。翻转仅改显示视角不改棋谱/FEN（XI-018 交叉引用）。
+
+### RWD-013 自动化回归复跑（P1）— PASS
+- node scripts/layout-check.mjs：20/20（含「移动端点击热区≥30px size=32」「无控制台错误」）
+- npx tsx scripts/viewport-check.mjs：18/18（含复盘导航在窄视口可用、29/30 复盘位置显示）
+
+### RWD-014 可访问性抽查（P2）— PASS（如实范围）
+- 已验证：棋盘按钮 aria-label 带颜色+棋子名（屏幕阅读器可辨）；toast 容器 aria-live="polite"；waiting 遮罩/复盘横幅/终局横幅/升变对话框均有 role（grid/status/dialog）与 aria-label；确认卡证据以 title 属性提供悬停说明。
+- 如实边界：键盘走棋（Tab+Enter 遍历棋盘格）未单列测试——按钮原生可聚焦+Enter 触发为浏览器默认行为，但未实测断言，标 NOT_TESTED。
+
+### R9 修改文件清单
+- src/client/checklist.ts（响应式两项 unverified → pass，附 RWD 证据）
+- scripts/rwd-check.mjs（新增）
+- dist-client 重建
+
+### R9 验证汇总（全部真实执行）
+- node scripts/rwd-check.mjs：12/12 PASS，控制台 0 错误
+- layout-check 20/20；viewport-check 18/18；chk-check 8/8（断言同步更新后）
+- 检查点：commit `2d7c441`（R9 已提交，工作区干净）
 
 ### R2 验证汇总（全部真实重跑）
 - npm test 122/122 PASS；npm run typecheck 0 错误；npm run build 成功（前端 363.87KB/gzip 115.37KB + CSS 22.86KB）

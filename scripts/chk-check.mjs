@@ -22,11 +22,11 @@ t(1, '两张功能确认卡存在（中国/国际）', (body.match(/功能确认
 t(2, '确认卡明示“人工维护的验收记录（非实时自动化监控）”', body.includes('人工维护的验收记录（非实时自动化监控）'));
 t(3, '国象规则项证据为 47 项（CH-004~CH-018）', await page.locator('.status-label[title*="CH-004~CH-018"][title*="47 项"]').count() === 1);
 t(4, '中象规则项证据为 37 项（XI-003~XI-014）', await page.locator('.status-label[title*="XI-003~XI-014"][title*="37 项"]').count() === 1);
-t(5, '响应式项如实显示“未验证”', body.includes('未验证'));
-t(6, '无任何项目显示“未通过”（当前无失败项）', !body.includes('未通过'));
+t(5, '响应式项已随 R9 实测更新为“已通过”（title 含 RWD-01 证据）', await page.locator('.status-label[title*="RWD-01"]').count() === 2);
+t(6, '无任何项目处于未验证/失败状态（li.unverified=0 且 li.fail=0；提示文案中的措辞除外）', await page.locator('li.unverified, li.fail').count() === 0);
 // 证据渲染于 .status-label 的 title 属性（悬停提示）；两棋种卡各一条 → 用存在性断言
 t(7, '证据编号抽查（NET-006/REC-007/UX-004/NET-014 均渲染于 title 属性）', await page.locator('.status-label[title*="NET-006"]').count() >= 1 && await page.locator('.status-label[title*="REC-007"]').count() >= 1 && await page.locator('.status-label[title*="UX-004"]').count() >= 1 && await page.locator('.status-label[title*="NET-014"]').count() >= 1);
-t(8, '列表项状态类与图标语义一致（pass=✓ / unverified=?）', await page.locator('li.pass .status-ico', { hasText: '✓' }).count() === 14 && await page.locator('li.unverified .status-ico').count() === 2);
+t(8, '列表项状态类与图标语义一致（pass=✓ ×16 / 无 unverified）', await page.locator('li.pass .status-ico', { hasText: '✓' }).count() === 16 && await page.locator('li.unverified').count() === 0);
 await page.screenshot({ path: 'shots/r8-chk-cards.png', fullPage: true });
 
 await browser.close();

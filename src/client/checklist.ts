@@ -40,7 +40,7 @@ export const CHECKLIST: CheckGroup[] = [
       { label: '导出中文棋谱 / 自定义 JSON 功能正常', status: 'pass', evidence: 'REC-007：unit exporters + e2e 用例 7 下载校验' },
       { label: '聊天功能可用，消息实时同步', status: 'pass', evidence: 'UX-004~UX-006 + integration chat 5 项 + NET-028 步骤⑪' },
       { label: '刷新页面后能恢复当前对局状态', status: 'pass', evidence: 'NET-014 + NET-028 步骤⑫：integration 重启恢复 + 刷新实测' },
-      { label: '页面在不同屏幕尺寸下均能正常显示', status: 'unverified', evidence: 'RWD 待本轮视口矩阵复测' },
+      { label: '页面在不同屏幕尺寸下均能正常显示', status: 'pass', evidence: 'RWD-01~RWD-09：真实视口矩阵 1440~375 无溢出 + 翻转实测' },
     ],
   },
   {
@@ -54,7 +54,7 @@ export const CHECKLIST: CheckGroup[] = [
       { label: '导出 FEN / PGN 功能正常', status: 'pass', evidence: 'REC-006：unit exporters + e2e 用例 6 下载校验' },
       { label: '聊天功能可用，消息实时同步', status: 'pass', evidence: 'UX-004~UX-006 + integration chat 5 项 + NET-028 步骤⑪' },
       { label: '刷新页面后能恢复当前对局状态', status: 'pass', evidence: 'NET-014 + NET-028 步骤⑫：integration 重启恢复 + 刷新实测' },
-      { label: '页面在不同屏幕尺寸下均能正常显示', status: 'unverified', evidence: 'RWD 待本轮视口矩阵复测' },
+      { label: '页面在不同屏幕尺寸下均能正常显示', status: 'pass', evidence: 'RWD-01~RWD-12：真实视口矩阵 1440~375 无溢出 + 翻转实测' },
     ],
   },
 ];
