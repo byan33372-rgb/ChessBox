@@ -10,9 +10,9 @@ async function createRoom(page: Page, kind: 'xiangqi' | 'chess'): Promise<string
   await page.goto('/');
   await page.getByRole('button', { name: new RegExp(`创建房间`) }).first().waitFor({ state: 'visible' });
   if (kind === 'chess') {
-    await page.locator('.create-card.chess').click();
+    await page.locator('.create-card.chess .gc-create-btn').click();
   } else {
-    await page.locator('.create-card.xiangqi').click();
+    await page.locator('.create-card.xiangqi .gc-create-btn').click();
   }
   await expect(page).toHaveURL(/\/r\/[a-z2-9]{10}/, { timeout: 15_000 });
   await expect(page.locator('.conn-pill.ok')).toBeVisible({ timeout: 15_000 });

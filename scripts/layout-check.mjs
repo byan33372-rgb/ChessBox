@@ -49,7 +49,7 @@ async function main() {
     const pA = await ctx.newPage();
     watchConsole(pA, errors);
     await pA.goto(BASE + '/');
-    await pA.locator('.create-card.xiangqi').click();
+    await pA.locator('.create-card.xiangqi .gc-create-btn').click();
     await pA.waitForURL(/\/r\//);
     const pB = await ctxB.newPage();
     await pB.goto(pA.url());
@@ -110,7 +110,7 @@ async function main() {
     const pC = await ctx.newPage();
     watchConsole(pC, errors);
     await pC.goto(BASE + '/');
-    await pC.locator('.create-card.chess').click();
+    await pC.locator('.create-card.chess .gc-create-btn').click();
     await pC.waitForURL(/\/r\//);
     const pD = await ctxD.newPage();
     await pD.goto(pC.url());
@@ -154,7 +154,7 @@ async function main() {
     const page = await ctx.newPage();
     watchConsole(page, errors);
     await page.goto(BASE + '/');
-    await page.locator('.create-card.xiangqi').click();
+    await page.locator('.create-card.xiangqi .gc-create-btn').click();
     await page.waitForURL(/\/r\//);
     await page.locator('.conn-pill.ok').waitFor({ timeout: 10000 });
     const page2 = await ctx2.newPage();

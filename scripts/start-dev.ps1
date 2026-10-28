@@ -1,4 +1,4 @@
-# 开发模式启动（Windows PowerShell）
+﻿# 开发模式启动（Windows PowerShell）
 # 前提：已安装 Node.js >= 20.19，已执行 npm install
 # 用法：powershell -ExecutionPolicy Bypass -File scripts/start-dev.ps1
 

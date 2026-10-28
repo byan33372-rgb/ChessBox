@@ -349,7 +349,7 @@ input::placeholder {
   border-radius: 16px;
   box-shadow: var(--shadow);
   padding: 0;
-  cursor: pointer;
+  cursor: default;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -428,7 +428,7 @@ input::placeholder {
   opacity: 0.85;
 }
 
-/* 真实棋盘预览（非交互、装饰层禁用指针） */
+/* 真实棋盘预览/试玩：非交互装饰时禁用指针；试玩模式恢复交互 */
 .gc-preview {
   padding: 18px 16px 6px;
   display: flex;
@@ -439,13 +439,43 @@ input::placeholder {
   pointer-events: none;
 }
 
+/* 试玩沙盒：真实可交互 */
+.gc-preview.practice {
+  pointer-events: auto;
+}
+
 .gc-preview .board {
   width: min(100%, 340px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
 .gc-preview .board-hotspot {
-  cursor: default;
+  cursor: pointer;
+}
+
+/* 试玩沙盒元信息行 */
+.practice-board {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.practice-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0 0 10px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.practice-outcome {
+  color: var(--accent-ink);
+  font-weight: 600;
 }
 
 .gc-foot {
@@ -476,6 +506,10 @@ input::placeholder {
 .howto h2 {
   margin: 0 0 10px;
   font-size: 16px;
+}
+
+.join-name {
+  margin-bottom: 10px;
 }
 
 .join-row {
@@ -677,6 +711,28 @@ li.unverified .status-label {
   padding: 3px 10px;
   border-radius: 999px;
   white-space: nowrap;
+}
+
+/* 标题栏棋种图标（与参考图一致：图标圆牌 + 标题） */
+.room-kind-ico {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  flex: none;
+  background: radial-gradient(circle at 35% 30%, #f4e5c0, #dcb96f);
+  border: 2px solid var(--red);
+  color: #8e2a1e;
+}
+
+.theme-chess .room-kind-ico {
+  background: radial-gradient(circle at 35% 30%, #efe8d2, #cfc3a0);
+  border-color: #33402f;
+  color: #242b22;
 }
 
 .kind-badge.xiangqi {

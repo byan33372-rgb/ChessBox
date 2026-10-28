@@ -1,4 +1,4 @@
-# 生产模式启动（Windows PowerShell）
+﻿# 生产模式启动（Windows PowerShell）
 # 自动构建（如需要）→ 启动服务 → 可选启动隧道
 # 用法：
 #   powershell -ExecutionPolicy Bypass -File scripts/start-prod.ps1            仅本地服务

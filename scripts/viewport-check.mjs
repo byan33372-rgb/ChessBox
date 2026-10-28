@@ -42,7 +42,7 @@ async function main() {
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
     await page.goto(BASE + '/');
     await page.locator('.create-card.xiangqi').waitFor({ timeout: 15000 });
-    await page.locator('.create-card.xiangqi').click();
+    await page.locator('.create-card.xiangqi .gc-create-btn').click();
     await page.waitForURL(/\/r\//, { timeout: 15000 });
     await page.locator('.conn-pill.ok').waitFor({ timeout: 15000 });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -60,7 +60,7 @@ async function main() {
     const pA = await ctxA.newPage();
     await pA.goto(BASE + '/');
     await pA.locator('#nickname').fill('十二字昵称压力测试哦');
-    await pA.locator('.create-card.chess').click();
+    await pA.locator('.create-card.chess .gc-create-btn').click();
     await pA.waitForURL(/\/r\//);
     const pB = await ctxB.newPage();
     await pB.goto(pA.url());

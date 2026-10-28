@@ -1,4 +1,4 @@
-# 停止本机服务（Windows PowerShell）
+﻿# 停止本机服务（Windows PowerShell）
 # 停止监听指定端口（默认 3001）的进程
 # 用法：powershell -ExecutionPolicy Bypass -File scripts/stop-server.ps1 [-Port 3001]
 

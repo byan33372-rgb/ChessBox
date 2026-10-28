@@ -225,11 +225,14 @@ export function Room({ roomId, onExit }: RoomProps) {
   const turnLabel = state.turn === seat ? '轮到你走棋' : `轮到${sideName(state.turn)}走棋`;
 
   return (
-    <div className="room">
+    <div className={`room theme-${state.kind}`}>
       <header className="room-header">
         <button type="button" className="icon-btn" onClick={onExit} aria-label="返回首页">
           ←
         </button>
+        <span className="room-kind-ico" aria-hidden="true">
+          {state.kind === 'xiangqi' ? '帥' : '♞'}
+        </span>
         <div className="room-title">
           <span className={`kind-badge ${state.kind}`}>{state.kind === 'xiangqi' ? '中国象棋' : '国际象棋'}</span>
           <span className="room-code" title="房间号">
