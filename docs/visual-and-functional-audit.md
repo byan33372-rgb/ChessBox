@@ -31,7 +31,7 @@
 | R11 | PERF 性能与维护性 | ✅ 完成（perf-check 实测 + 冷启动/内存测量 + NET-029 根因定位） |
 | R12 | TEST 自动化总套件 + 修复 + 回归 | ✅ 完成（136/136 + e2e 7/7 + layout 20/20 + viewport 18/18 + typecheck 0 错，全量新鲜重跑） |
 | R13 | DEP 生产构建/隧道 | ✅ 完成（生产构建+冷启动 1382ms 冒烟；Quick Tunnel 公网 URL 实测 200 + 双棋种 15/15 经公网全绿） |
-| R14 | DOC 文档与最终报告 | ⏳ 未执行 |
+| R14 | DOC 文档与最终报告 | ✅ 完成（README 实测数字与工具用法更新 + 最终交付报告） |
 
 > 诚实勘误（2026-10-28 R4 轮记录）：上表在 R3 结束时曾被预填为 R4-R14 全部 ✅，但下方并无对应实测记录——属不实状态，
 > 现已更正为真实进度（R4 起逐轮执行后逐轮更新，未执行的保持 ⏳）。R4 的 CH-001~CH-019 用例清单为本轮在文档中
@@ -728,3 +728,88 @@
 - npm run build 成功（前端+服务端）；冷启动 1382ms（PID 74964）；layout-check 冒烟 20/20
 - 公网 URL：GET / 200 + /healthz 200；双棋种 net-check 经公网 15/15 + 15/15，控制台 0 错误
 - 检查点：commit `1bb16a8`（R13 已提交；证据截图不入库见上）
+
+## 第 14 轮 DOC 文档与最终报告记录
+
+### DOC-001 README 更新（P2）— PASS
+- §7 测试节：计数更正为实测值（npm test 122→**136**）并逐项列出实测覆盖构成（国象 47/中象 37/导出 9/
+  联机 27/安全 11/聊天 5/e2e 7——原README 数字为历史版本值，已过时）；补齐全部验收实测工具与运维工具用法
+  （net-check/ux-check/chk-check/rwd-check/sec-check/boot-time/mem-check，含 NET_BASE 用法与"勿用管道方式
+  后台启动"的 NET-029 教训）。
+- §13 架构：scripts/ 说明更新为"运维脚本 + 验收实测工具"。
+- §14 命令表：补 boot-time/mem-check/stop-server 三行。
+- 新增 §15 验收记录：14 轮结论摘要 + 指向审计文档。
+
+### DOC-002 文档链完整性（P2）— PASS
+- docs/overnight-audit-log.md（早期）→ docs/visual-and-functional-audit.md（本审计 14 轮全记录）→
+  README §15（对外摘要）三层引用关系建立；README 中过时计数不再与实测矛盾。
+
+### DOC-003 最终交付报告（P1）— PASS
+- 见下方「最终交付报告」节；全部结论均指向本文档已登记的真实实测记录，无新增未验证声明。
+
+### R14 修改文件清单
+- README.md（§7/§13/§14/§15）
+- docs/visual-and-functional-audit.md（R14 记录 + 最终交付报告）
+- logs/server.pid（生产 PID 84724→74964，运行时产物如实入库）
+
+### R14 验证汇总（全部真实执行）
+- README 所述命令与计数逐项对照审计文档实测记录一致；无凭空新增命令
+- 检查点：本提交（R14 最终；见文末「检查点链」与本说明：hash 回填模式说明：各轮「检查点」行记录的是
+  该轮提交 amend 前的 hash，最终有效 hash 以 `git log` 为准）
+
+---
+
+# 最终交付报告（2026-10-28，14/14 轮完成）
+
+## 总结论
+- **14 轮验收全部完成**，每轮均有真实执行记录与本轮 git 检查点；未实测项全部如实标注（无伪造）。
+- 产品处于**可交付/可游玩状态**：生产构建成功、服务稳定（崩溃留痕加固 + 后台启动安全）、
+  双棋种本地与公网均可完成完整真实对局。
+
+## 真实测试总量（2026-10-28 新鲜重跑口径）
+| 套件 | 结果 |
+|------|------|
+| npm test（unit 93 + integration 43） | **136/136 PASS** |
+| e2e（Playwright 双上下文） | **7/7 PASS** |
+| layout-check | **20/20** |
+| viewport-check | **18/18** |
+| net-check 双客户端 15 步（本地） | 中象 **15/15**、国象 **15/15**，控制台 0 错误 |
+| net-check 双客户端 15 步（公网隧道） | 中象 **15/15**、国象 **15/15**，控制台 0 错误 |
+| ux/chk/rwd/sec 专项实测 | 9/9、8/8、12/12、9/9 |
+| typecheck | **0 错误** |
+| perf | 首屏 TTFB 2ms；静态资源≈378KB；走棋端到端均值 63ms/最大 78ms；冷启动 1349/1382ms |
+
+## 本审计会话的真实变更（按轮）
+- R2：Home/Room 视觉复刻接入（theme 类）、首页展示卡试玩沙盒（真实引擎）、功能确认卡数据源
+- R3/R4：中象+国象边界测试补强（中象 31→37、国象 41→47，含易位阻挡/过路兵牵制/终局语义/重复判和时点）
+- R5：net-check.mjs（双客户端 15 步实测）；NET-029 P1 加固（崩溃留痕处理器 + start-server-bg.ps1）
+- R6：exporters 边界（引号/反斜杠净化等 9 项存在性核实）；DB 房间增长如实登记
+- R7~R11：验收工具链成型（ux/chk/rwd/sec/perf-check、boot-time.mjs、mem-check.ps1）；
+  checklist 证据编号逐条更正；NET-029 根因定位（console.log→EPIPE）
+- R10：限流补充测试 2 项（走棋桶 20/操作桶 15，此前无测试如实补齐）
+- R13：net-check NET_BASE 参数化（公网实测能力）
+- 无任何用例被删除或屏蔽；全部测试 FEN/选择器笔误型失败已逐例如实登记根因
+
+## 已知边界（如实，均有对应记录节）
+1. 中象导出为自定义格式 `chessbox-xiangqi-v1`（非标准 PGN）——REC-007 如实声明
+2. 长捉仲裁未实现（提和/认输可替代）——README §11
+3. 键盘走棋（Tab+Enter 落子）未实测——RWD-014 标 NOT_TESTED
+4. Quick Tunnel 公网地址临时（停止即失效、重启会变）——DEP-003 边界
+5. 公网验证为经 Cloudflare 边缘中转的本机请求，未做第三地域独立网络验证——DEP-003 边界
+6. 广播体积未量化（随机对局 20 步即和无法触发）——PERF-004 标 NOT_TESTED
+7. 数据库含本会话测试房间（236→244），由 10 分钟周期 cleanupStale 按过期策略自动清理——REC-008/R13
+8. 遗留 1 个开发会话与孤儿实测进程（BASE-004 登记，不影响产品；未杀用户进程）
+
+## 交付物清单
+- 产品源码 `src/`（client/server/shared/games）+ 生产构建产物 `dist-client/`、`dist-server/`（不入库）
+- `docs/visual-and-functional-audit.md`：本文件，14 轮全记录与最终报告（唯一验收源）
+- `README.md`：面向使用者的完整用法、安全要点、边界声明与验收摘要
+- `scripts/`：运维工具（start-prod/start-server-bg/stop-server/tunnel/boot-time/mem-check）
+  + 验收实测工具（net/ux/chk/rwd/sec/perf/layout/viewport-check）
+- `shots/`：各轮证据截图（本地磁盘，.gitignore 不入库）
+
+## 检查点链（最终）
+`d6be19d`→`1b6398e`(R2)→`963238d`(R3)→`bedbd38`(R4)→`c901736`(R5)→`8fdea52`(R6)→`586ef91`(R7)
+→`5a3f160`(R8)→`6ecff91`(R9)→`fce24e4`(R10)→`6460dfd`(R11)→`f938c0d`(R12)→`c273730`(R13)→**本提交**（R14 最终，含本报告；
+R1 记录于 `d6be19d` 之前的 `d462d4e` 起点）。说明：hash 回填后 amend 会使文档内该轮 hash 失效为
+amend 前值（可用 `git reflog` 追溯），故 R14 以"本提交"指代，避免写入自引用假 hash。

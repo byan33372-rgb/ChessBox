@@ -88,17 +88,29 @@ npm run tunnel
 ## 7. 测试
 
 ```bash
-npm test                          # 单元 + 集成（Vitest，共 122 项）
+npm test                          # 单元 + 集成（Vitest，共 136 项）
 npm run test:e2e                  # 端到端（Playwright，7 项；使用系统 Chrome，需先 npm run build）
 npm run typecheck                 # TypeScript 前后端类型检查
 node scripts/layout-check.mjs     # UI 几何布局校验（20 项，需 3001 服务在线）
 npx tsx scripts/viewport-check.mjs # 视口矩阵/键盘/长内容（18 项，需 3001 服务在线）
-npx tsx scripts/perf-check.mjs    # 性能测量（首屏/资源/走棋耗时/广播体积）
+npx tsx scripts/perf-check.mjs    # 性能测量（首屏 TTFB/静态资源体积/走棋端到端耗时）
+node scripts/net-check.mjs [xiangqi|chess] # 双浏览器上下文 15 步联机实测；
+                                  #   默认测 127.0.0.1:3001，测隧道/局域网地址用 NET_BASE 环境变量覆盖
+node scripts/ux-check.mjs         # 交互反馈实测 9 项（昵称/剪贴板逐字符/toast/聊天徽标/限频/offer 流/认输 CTA）
+node scripts/chk-check.mjs        # 功能确认卡与验收记录一致性 8 项（证据 title 渲染比对）
+node scripts/rwd-check.mjs        # 响应式视口矩阵 + 翻转棋盘 boundingBox 实测 12 项
+node scripts/sec-check.mjs        # 生产服务安全实时探测 9 项（敏感路径 404/安全头/API 边界）
+node scripts/boot-time.mjs        # 冷启动生产服务并计时（spawn→/healthz；stdio 挂文件句柄，
+                                  #   父进程/终端退出不影响服务——勿用管道重定向方式后台启动）
+powershell -ExecutionPolicy Bypass -File scripts/mem-check.ps1  # 服务进程内存（工作集/私有，读 logs/server.pid）
 ```
 
-测试覆盖：国象规则 41 项（含易位资格/吃过路兵时机/升变/FEN 字段/PGN 往返）、中象规则 31 项、
-导出 9 项、联机协议与并发 27 项（幂等/乐观锁/席位原子性/断线重连/持久化）、聊天与安全 14 项、
-浏览器端到端 7 项（双浏览器同步/导出内容校验/移动端）。整夜审计记录见 docs/overnight-audit-log.md。
+测试覆盖（2026-10-28 实测）：国象规则 47 项（易位资格/阻挡/吃过路兵牵制/升变/终局 FIDE 语义）、
+中象规则 37 项（长将判负/困毙判负/三次重复判和/60 回合判和）、导出 9 项、
+联机房间与并发 27 项（幂等/乐观锁/席位原子性/断线重连/持久化）、安全 11 项（敏感路径/安全头/
+Socket 输入校验/走棋与操作限流桶）、聊天 5 项、浏览器端到端 7 项（双上下文同步/导出内容校验/移动端）。
+14 轮验收全程记录（含实测数据、截图与首轮失败根因）见 `docs/visual-and-functional-audit.md`；
+早期整夜审计见 `docs/overnight-audit-log.md`。
 
 ## 8. 故障排查
 
@@ -151,7 +163,7 @@ src/server     Express + Socket.IO 后端（房间/会话/限流/SQLite）
 src/shared     前后端共享协议类型
 src/games      规则引擎：chess.js 适配器 + 自研中象引擎（前后端同源使用）
 tests/         unit / integration / e2e
-scripts/       启动、停止、隧道脚本
+scripts/       启动/停止/隧道/冷启动/内存运维脚本 + 各轮验收实测工具（用法见第 7 节）
 data/          SQLite 数据（.gitignore 已排除）
 ```
 
@@ -177,3 +189,18 @@ data/          SQLite 数据（.gitignore 已排除）
 | `npm run tunnel` | 启动公网隧道（需先 `npm start`） |
 | `npm run tunnel -- --install` | 下载 cloudflared 到项目 tools/ |
 | `npm test` / `npm run test:e2e` | 自动化测试 |
+| `node scripts/boot-time.mjs` | 后台冷启动生产服务并计时（stdio 挂文件句柄，终端退出不影响服务） |
+| `powershell -ExecutionPolicy Bypass -File scripts/mem-check.ps1` | 查看服务进程内存 |
+| `powershell -ExecutionPolicy Bypass -File scripts/stop-server.ps1` | 停止 3001 生产服务 |
+
+## 15. 验收记录（2026-10-28）
+
+本项目已完成 **14 轮完整验收**（BASE→UI/IMG→XI→CH→NET→REC→UX→CHK→RWD→SEC→PERF→TEST→DEP→DOC），
+全部结果（含失败与首轮失败根因）如实记录于 `docs/visual-and-functional-audit.md`，要点：
+
+- 自动化全绿：npm test **136/136**、e2e **7/7**、layout **20/20**、viewport **18/18**、typecheck **0 错**（全量新鲜重跑）
+- 双客户端实测（两个独立浏览器上下文，非单页模拟）：中象 15/15、国象 15/15，控制台 0 错误；
+  **并经 Quick Tunnel 公网地址复测同样全绿**
+- 生产部署：构建成功；冷启动 1349~1382ms；公网 URL 实测 HTTP 200
+- 已知边界（如实，详见审计文档「最终交付报告」）：中象导出为自定义格式（非标准 PGN）、
+  长捉仲裁未实现、键盘走棋未实测、Quick Tunnel 地址临时、公网验证经 Cloudflare 边缘（未做第三地域独立验证）
