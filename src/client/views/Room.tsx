@@ -54,6 +54,7 @@ export function Room({ roomId, onExit }: RoomProps) {
 
   // —— 走棋动画闸门（ANIM-001~013 核心） ——
   // 仅当 moves.length 恰好 +1（服务端确认的新着到达）、在线、直播复盘态、动效开启时构造 FLIP 描述；
+  // 终局着（将死/困毙/逼和）随 phase='ended' 一起到达，同属服务端已接受的着法，同样播放；
   // 重连追赶（跳变>1）/悔棋/重开（length 不增）/复盘浏览（viewPly≠null）/被拒（state 不变）一律直同步不动画；
   // 同一 ply 只触发一次（ack 与 room:state 双路径 + 重复广播去重，ANIM-013）。
   useEffect(() => {
@@ -63,7 +64,7 @@ export function Room({ roomId, onExit }: RoomProps) {
     lastMoveCountRef.current = moves.length;
     const last = moves.length > 0 ? moves[moves.length - 1] : null;
     const freshPly = last !== null && last.ply > lastAnimPlyRef.current;
-    const canAnimate = animEnabled && conn === 'online' && viewPly === null && state.phase === 'playing';
+    const canAnimate = animEnabled && conn === 'online' && viewPly === null && (state.phase === 'playing' || state.phase === 'ended');
     if (moves.length === prevCount + 1 && last && freshPly && canAnimate) {
       const next = buildBoardAnim(state.kind, last.fenBefore, last.fenAfter, last.from, last.to);
       if (next) setAnim(next);
