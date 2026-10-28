@@ -6,6 +6,7 @@
 > 起点检查点：git HEAD = `0c30dcd`（14 轮验收全部完成的最终交付态），工作区干净，无用户未提交修改。
 > 专项开始前基线截图：`shots/anim-baseline-{xiangqi,chess}-{a,b}-playing.png`、
 > `shots/anim-baseline-{xiangqi,chess}-a-selected.png`（scripts/anim-baseline.mjs 真实双上下文对弈 2 步后拍摄）。
+> **最终检查点：`fb0ae2b`（阶段 A-J 全部完成；核心实现 `0391392`）。**
 
 ## 阶段状态总表
 
