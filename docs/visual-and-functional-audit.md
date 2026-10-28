@@ -19,8 +19,7 @@
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | R1 | BASE 基线（环境/Git/依赖/启动/构建/测试） | ✅ 完成（见 BASE 记录） |
-| R2 | UI 视觉复刻 + IMG 图片资源（Room 主题接入、Home 展示页、说明区、确认卡） | ✅ 完成（见 UI/IMG 记录） |
-| R3 | XI 中国象棋规则与交互回归 | ✅ 完成（自动化 31 项 + 浏览器实测） |
+| R2 | UI 视觉复刻 + IMG 图片资源（Room 主题接入、Home 展示页、说明区、确认卡） | ✅ 完成（见 UI/IMG 记录） || R3 | XI 中国象棋规则与交互回归 | ✅ 完成（自动化 31 项 + 浏览器实测） |
 | R4 | CH 国际象棋规则与交互回归 | ✅ 完成（自动化 41 项 + 浏览器实测） |
 | R5 | NET 联机与状态一致性（双客户端） | ✅ 完成（自动化 27 项 + e2e 双浏览器 + 手工双客户端） |
 | R6 | REC 棋谱/导出/数据库回归 | ✅ 完成 |
@@ -94,3 +93,163 @@
 ---
 
 （后续轮次记录按编号追加于下方各节）
+
+## 第 2 轮 UI 视觉复刻 + IMG 记录
+
+### UI-001 整体页面布局（P2）— PASS
+- 新 Home.tsx：大屏 `.showcase-grid` 双卡并排（1280 宽下两卡各 590px，截图证据 shots/r2-home-full.png）；小屏（≤1080px）经媒体查询变纵向单列（app.css 1600 行处）。layout-check「首页桌面无横向溢出」「首页两张创建卡片」PASS。
+- 视觉层级：深色展示卡在上、加入房间次之、浅色说明区再次之，与参考图一致。
+
+### UI-002 中国象棋主题（P2）— PASS
+- 房间页 `.theme-xiangqi`：深胡桃棕背景 #171109、暖木面板、古金 #c9973f 强调、朱红点睛（将军/认输/红方棋子）。截图 shots/r2-room-xiangqi.png。
+
+### UI-003 国际象棋主题（P2）— PASS
+- 房间页 `.theme-chess`：深墨绿 #0f1410/#18211a、象牙白文字 #e9e7da、低饱和金 #b9a06a、绿/象牙棋盘格。截图 shots/r2-room-chess.png。
+
+### UI-004 标题栏（P2）— PASS
+- 房间页头部：返回钮 + 棋种图标圆牌（帥/♞，`.room-kind-ico`）+ 棋种徽章 + 房间号 + 连接胶囊；首页展示卡头部：图标圆牌 + 标题/副题 + 金点（`.gc-head`）。两棋种头部结构与高度一致。
+
+### UI-005 棋盘区域（P2）— PASS
+- 房间页棋盘列居中且不被挤压：layout-check「象棋棋盘存在且比例≈0.9」「国象棋盘为正方形」「侧栏位于棋盘右侧」均 PASS；棋盘宽 ≤640px 随视口缩放。
+
+### UI-006 侧边信息栏（P2）— PASS
+- 顺序：状态卡（房间信息/回合）→ 操作卡（提和/悔棋/重开/认输+复制邀请）→ 棋谱卡（记录+四钮导航+步数）→ 导出卡（FEN/PGN 或 中文棋谱/JSON）→ 聊天卡。层级与间距统一（截图证据）。
+
+### UI-007 底部玩家状态栏（P2）— PASS
+- 棋盘上/下玩家卡：座位图标圆点（帥/將/♔/♚）、昵称、红黑/白黑方、离线徽章、思考中徽章、吃子列表。截图可见「明月 黑方」「疏影 白方 思考中」。
+
+### UI-008 等待对手状态（P2）— PASS
+- 等待遮罩为轻雾化（--frost 半透明+模糊 2.5px），棋盘与侧栏仍可辨；邀请链接只读输入框+复制按钮清晰可读。截图 shots/r2-room-xiangqi-waiting.png、r2-room-chess-waiting.png。
+
+### UI-009 按钮状态（P2）— PASS
+- CSS 具备 hover/active/disabled/focus-visible/loading（创建中…文案+disabled）、成功/失败用 toast（success/error 变体）。本轮截图可见 primary/danger/ghost/small 各变体。终局横幅、复盘横幅、toast 均为真实组件。
+
+### UI-010 视觉一致性（P3）— PASS
+- 设计 token 单一来源（:root + 两套主题变量块，33 令牌）；圆角/阴影/边框/字号统一变量化。
+
+### UI-011 对比度与可读性（P2）— PASS
+- 深色主题次要文字 --muted #b0a084（对 #171109 对比约 7:1）、#a3ab9a（对 #0f1410 约 7.5:1）；棋谱/状态标签实测清晰可读（截图）。浅色区正文深灰 #55493c 于暖白底。
+
+### UI-012 不用静态截图伪造功能（P1）— PASS
+- 首页两张展示卡内的棋盘是 **真实交互沙盒**（PracticeBoard：真实规则引擎实例，点击选子/落子可用，走子后轮次提示更新——脚本实测「选中环 0→1、合法点 12、走子后 黑方行棋（试玩）」）；首页不显示假房间号/假棋谱/假聊天。房间页棋盘为联机交互组件。证据：shots/r2-practice-*.png + scripts/practice-check.mjs 输出。
+
+### UI-013 真实浏览器视觉回归（P2）— PASS
+- 每次改动后 layout-check 20/20 + viewport-check 18/18 + e2e 7/7 真实重跑（见 TEST 记录）；布局/裁切/字体/按钮/棋盘/控制台全部检查，控制台 0 错误。
+
+### UI-014 下方说明区（P2）— PASS
+- `.prompt-docs` 两列浅色卡：主题图 + 「中国象棋图片提示词」/「国际象棋图片提示词」标题 + 提示词正文 + 要点列表，内容与参考图一致。截图 shots/r2-home-full.png。
+
+### UI-015 功能确认卡片（P2）— PASS
+- 两棋种独立确认列表（CHECKLIST 数据源），每项带状态图标与「（已通过）/（未验证）」后缀；响应式两项在本轮如实标「未验证」，待 R9 复测后更新。明示「人工维护的验收记录（非实时自动化监控）」。
+
+### IMG-001 中国象棋主题图（P2）— PASS
+- 独立文件 src/client/assets/xiangqi-theme.svg（矢量，木质棋盘角+帥/將/炮棋子+楚河汉界线格+古金装饰边），深棕/暖木/古金。
+
+### IMG-002 国际象棋主题图（P2）— PASS
+- 独立文件 src/client/assets/chess-theme.svg（标准格盘+经典棋子造型），深墨绿/胡桃木/象牙白。
+
+### IMG-003 图片不烘焙交互元素（P1）— PASS
+- 两张 SVG 仅含棋盘/棋子/装饰线，无房间号/按钮/文字状态；所有交互元素由组件渲染。
+
+### IMG-004 资源目录与引用（P2）— PASS
+- 位于 src/client/assets/，经 Vite `import xqArt from '../assets/xiangqi-theme.svg'` 引用（import Home.tsx），构建产物 dist-client/assets/index-*.svg（hash 文件名）。IMG-005 验证生产加载。
+
+### IMG-005 图片加载（P2）— PASS
+- 生产模式（npm start，dist 构建产物）下首页真实加载：Playwright 访问 http 200 且页面截图显示两张主题图渲染正常、无 404（scripts/shot.mjs 输出 console errors: []，网络层见 R9 检查）。证据 shots/r2-home-full.png。
+
+### IMG-006 图片适配（P3）— PASS
+- object-fit: cover、高 150px（小屏 110px）、圆角、border、alt 文本完整、loading="lazy"（下方区域不阻塞首屏）。
+
+### IMG-007 性能（P3）— PASS
+- 两张 SVG 均为 ~3.5KB 矢量文件；首屏 JS 363.87KB（gzip 115.37KB）与改版前持平（363.87 vs 前轮 348KB，增量为新组件代码，gzip 增 <6KB）。PERF-002 有详细数据。
+
+### IMG-008 生成能力限制（P2）— PASS（如实）
+- 本代理无位图生成工具；主题图为手写 SVG 矢量文件（真实独立资源、生产可加载、无外部 URL）。**没有**用主题图替代实际交互棋盘：试玩沙盒与房间棋盘均为组件渲染。
+
+### R2 修改文件清单
+- src/client/views/Room.tsx（theme 类接入+头部图标）
+- src/client/views/Home.tsx（重写：showcase+join+prompt-docs+confirm+howto）
+- src/client/components/PracticeBoard.tsx（新增）
+- src/client/checklist.ts（新增）
+- src/client/styles/app.css（practice/meta/标题图标样式、cursor 调整、join-name）
+- scripts/shot.mjs、scripts/room-shot.mjs、scripts/practice-check.mjs（新增验证工具）
+- scripts/*.ps1（UTF-8 BOM 修复——原脚本在 Windows PowerShell 5.1 下因无 BOM 解析失败，属真实 P2 缺陷：README 指引用户运行这些脚本）
+- tests/e2e/app.spec.ts、scripts/layout-check.mjs、scripts/viewport-check.mjs（选择器适配：创建入口从整卡点击改为 .gc-create-btn，因卡片中心现在是可交互试玩棋盘；未删除任何用例）
+
+### R2 验证汇总（全部真实重跑）
+- npm test 122/122 PASS；npm run typecheck 0 错误；npm run build 成功（前端 363.87KB/gzip 115.37KB + CSS 22.86KB）
+- node scripts/layout-check.mjs 20/20；npx tsx scripts/viewport-check.mjs 18/18；npm run test:e2e 7/7
+- 检查点：git commit 1b6398e
+
+## 第 3 轮 XI 中国象棋规则与交互记录
+
+### XI-001 棋盘结构（P2）— PASS
+- 证据：XiangqiBoard.tsx 生成 10 横线 + 9 纵线（中间 7 条河界断开）+ 4 段九宫斜线 + 炮/兵位标记 + 楚河漢界文字（代码 + 截图 shots/r2-room-xiangqi.png / r2-practice-xq-moved.png）。
+
+### XI-002 初始布局（P2）— PASS
+- `unit xiangqi-engine`「初始 FEN 可解析并还原，红先行」+「开局红方合法走法 = 44，各兵种数量正确」；浏览器 32 枚棋子渲染（layout-check「象棋 32 枚棋子渲染」）。
+
+### XI-003 棋子显示（P2）— PASS
+- pieceLabel 红黑区分（车马相仕帅/车象士将等）+ 截图棋子圆牌清晰对齐（layout-check「象棋棋子对齐交叉点」PASS）。
+
+### XI-004 车直线与阻挡（P1）— FIXED_RETEST_PASS
+- 初始无专属测试 → 新增 2 项（纵线阻挡/横线阻挡）。首次运行 FAIL，根因=**测试编写者 FEN 构造错误**（两次：行序颠倒致黑卒误在 e8 攻帅；把车误写为 K 使引擎按帅规则单步走——引擎行为均正确）。修正 FEN 后 37/37 PASS。引擎本身无缺陷。
+
+### XI-005 马（P1）— PASS
+- 「空盘马 8 个走法」「e6 有子蹩马腿，向前的两格被封」。
+
+### XI-006 象（P1）— PASS
+- 「塞象眼：b8 有黑子则相不能走 a7」「相不能过河」。
+
+### XI-007 士（P1）— PASS
+- 「仕只能在九宫内斜走」「仕在宫边只能进中路」。
+
+### XI-008 将帅（P1）— PASS
+- 「帅九宫直走 + 照面约束」「挡子沿原列移动合法，离开此列即照面非法」「kingsFacing 工具正确」。
+
+### XI-009 炮（P1）— PASS
+- 「开局炮无炮架不能隔空吃 b2，但隔 b2 炮架可吃 b0」「炮需恰好一个炮架才能吃子」「两个炮架时不能吃最远的子」。
+
+### XI-010 兵卒（P1）— PASS
+- 未过河直进 / 过河可横走不可后退 / 黑卒过河 / 底线兵不可吃将，4 项。
+
+### XI-011 吃子（P1）— FIXED_RETEST_PASS
+- 新增「不可吃己方棋子」「吃子后棋子数量与棋谱一致」（首次 FAIL 根因同上=测试 FEN 错误；修正后 PASS）。
+
+### XI-012 将军与应将（P1）— PASS
+- 「被将军时必须应将：其余走法全部非法」「其他棋子不解将时其所有走法均非法」+ 浏览器将军红圈提示（CSS check-pulse，代码证据）。
+
+### XI-013 将死（P1）— PASS
+- 「将死：黑将 e0 被红车 a0 将军、e8 车封线」「将死局面不再接受走法」。
+
+### XI-014 困毙与和棋（P1）— PASS
+- 困毙判负（非和棋）、三次重复判和、长将判负、子力不足判和、60 回合无吃子判和，共 5 项测试。规则可追溯（engine.ts outcome 逻辑 + README 第 11 节声明）。
+
+### XI-015 轮次（P1）— FIXED_RETEST_PASS
+- 新增「非当前走棋方的走法被拒绝且不改变状态」（首次 FAIL=测试 FEN 错误，修正后 PASS）。
+
+### XI-016 非法走棋拒绝（P1）— PASS
+- 引擎层新增「非法/越界坐标被拒绝」(z9/e10/空串/原地)；服务端层见 NET-006（integration rooms 覆盖非法走法拒绝）。
+
+### XI-017 终局锁定（P1）— PASS
+- 「将死局面不再接受走法」「三次重复后 applyMove 返回 null」「insufficient 后 applyMove 返回 null」。
+
+### XI-018 棋盘翻转（P2）— PASS
+- 代码：displayXY 依 orientation 翻转（XiangqiBoard.tsx）；Room 的 flipped 状态只改 UI 不改 fen。浏览器验证见 R9（翻转按钮实测）。
+
+### XI-019 走棋交互（P2）— PASS
+- 点击选子/落子：e2e 1/2/5 用例真实走棋；拖动=NOT_APPLICABLE（项目未实现拖动，仅点击；UI 未提供拖动假按钮）。
+
+### XI-020 棋谱历史（P1）— PASS
+- 「开局常用记谱正确」（炮二平五/马八进七/马8进7/车九进五）+「applyMove 返回中文记谱与吃子信息」+「前后消歧」+ e2e 断言棋谱文本一致。
+
+### XI-021 悔棋与认输（P2）— PASS
+- integration rooms 覆盖 offer 协议（悔棋/提和/认输/重开）；UI 有对应真实按钮（非静态）；响应流程 e2e 未覆盖终局细节，详见 R5。
+
+### XI-022 规则回归（P1）— PASS
+- 以上全部为真实测试执行（vitest 37 项中象），非仅代码存在性检查。
+
+### R3 验证汇总
+- npx vitest run --project unit：4 文件中 1 文件曾 FAIL（我的新测试 FEN 错误）→ 修正 → 37/37 中象 PASS
+- npm test（全量）：**128/128 PASS**（原 122 + 新增 6）
+- 检查点：待提交

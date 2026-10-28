@@ -329,3 +329,77 @@ describe('象棋引擎 · 记谱与 FEN', () => {
     expect(() => new XiangqiEngine('4k4/9/9/9/9/9/9/9/9/4K4 x')).toThrow(); // 走棋方非法
   });
 });
+
+describe('象棋引擎 · 车的直线走法与阻挡（XI-004）', () => {
+  it('车沿纵线滑行，遇阻挡不能越过', () => {
+    // 红车 e5；黑卒 e4 挡在通向黑方一侧（可吃、不可越过）；红兵 e6 挡在己方一侧
+    const e = new XiangqiEngine('3k5/9/9/9/4p4/4R4/4P4/9/9/4K4 w');
+    const t = movesFrom(e, 'e5');
+    expect(t).toContain('e4'); // 可吃阻挡的黑卒
+    expect(t).not.toContain('e3'); // 不能越过 e4
+    expect(t).not.toContain('e2'); // 不能越过 e4
+    expect(t).not.toContain('e6'); // 不可吃己方红兵
+    expect(t).not.toContain('e7'); // 不能越过 e6
+    expect(t).toContain('a5'); // 横向空线可走
+    expect(t).not.toContain('e0'); // 不可吃将
+    expect(t).not.toContain('e9'); // 不可吃己帅
+    expect(t.length).toBe(9); // 纵向 1 + 横向 8
+  });
+
+  it('车沿横线滑行同样受阻', () => {
+    // 红车 a9；黑卒 c9 在横线上（黑卒在 r9 只攻击 b9/d9，不将军）；红帅 e9
+    const e = new XiangqiEngine('3k5/9/9/9/9/9/9/9/9/R1p1K4 w');
+    const t = movesFrom(e, 'a9');
+    expect(t).toContain('b9'); // 空格可走
+    expect(t).toContain('c9'); // 可吃黑卒
+    expect(t).not.toContain('d9'); // 不能越过 c9
+    expect(t).toContain('a8'); // 纵线下行
+    expect(t).not.toContain('e9'); // 不可吃己帅
+  });
+});
+
+describe('象棋引擎 · 吃子约束（XI-011）', () => {
+  it('不可吃己方棋子', () => {
+    const e = new XiangqiEngine('3k5/9/9/9/9/4R4/4P4/9/9/4K4 w');
+    expect(e.isLegal({ from: 'e5', to: 'e6' })).toBe(false); // e6 为红兵
+    expect(e.applyMove({ from: 'e5', to: 'e6' })).toBeNull();
+  });
+
+  it('吃子后棋子数量与棋谱一致', () => {
+    const e = new XiangqiEngine('3k5/9/9/9/4p4/4R4/9/9/9/4K4 w');
+    const r = e.applyMove({ from: 'e5', to: 'e4' });
+    expect(r).not.toBeNull();
+    expect(r!.captured).toBe('p'); // 吃黑卒
+    expect(e.pieceAt('e4')).toBe('R');
+    expect(e.pieceAt('e5')).toBeNull();
+    expect(r!.notation).toBe('车五进一'); // e=红方第五线，进=向黑方前进 1 格
+  });
+});
+
+describe('象棋引擎 · 轮次约束（XI-015）', () => {
+  it('非当前走棋方的走法被拒绝且不改变状态', () => {
+    const e = new XiangqiEngine(); // 红先行
+    const fenBefore = e.fen();
+    // 黑方（后手）在红回合试图走子 → 非法
+    expect(e.isLegal({ from: 'h0', to: 'g2' })).toBe(false);
+    expect(e.applyMove({ from: 'h0', to: 'g2' })).toBeNull();
+    expect(e.fen()).toBe(fenBefore);
+    expect(e.turn()).toBe('a');
+    // 红走完后轮到黑方，红再走被拒
+    e.applyMove({ from: 'h7', to: 'e7' });
+    expect(e.turn()).toBe('b');
+    expect(e.applyMove({ from: 'a9', to: 'a4' })).toBeNull();
+    expect(e.turn()).toBe('b');
+  });
+});
+
+describe('象棋引擎 · 非法坐标与越界（XI-016 引擎层）', () => {
+  it('非法/越界坐标被拒绝', () => {
+    const e = new XiangqiEngine();
+    expect(e.applyMove({ from: 'z9', to: 'e7' })).toBeNull();
+    expect(e.applyMove({ from: 'h7', to: 'e10' })).toBeNull();
+    expect(e.applyMove({ from: '', to: 'e7' })).toBeNull();
+    expect(e.applyMove({ from: 'h7', to: '' })).toBeNull();
+    expect(e.applyMove({ from: 'e9', to: 'e9' })).toBeNull(); // 原地不走
+  });
+});
