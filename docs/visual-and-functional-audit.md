@@ -22,8 +22,8 @@
 | R2 | UI 视觉复刻 + IMG 图片资源（Room 主题接入、Home 展示页、说明区、确认卡） | ✅ 完成（见 UI/IMG 记录） |
 | R3 | XI 中国象棋规则与交互回归 | ✅ 完成（自动化 37 项 + 浏览器实测） |
 | R4 | CH 国际象棋规则与交互回归 | ✅ 完成（自动化 47 项 + e2e 重跑 7/7） |
-| R5 | NET 联机与状态一致性（双客户端） | ✅ 完成（integration 42 项 + 双客户端 15 步×双棋种） |
-| R6 | REC 棋谱/导出/数据库回归 | ⏳ 未执行 |
+| R5 | NET 联机与状态一致性（双客户端） | ✅ 完成（integration 41 项 + 双客户端 15 步×双棋种） |
+| R6 | REC 棋谱/导出/数据库回归 | ✅ 完成（exporters 9 项 + e2e 导出 2 项 + 持久化交叉验证） |
 | R7 | UX 聊天/邀请/反馈回归 | ⏳ 未执行 |
 | R8 | CHK 功能确认状态真实性 | ⏳ 未执行 |
 | R9 | RWD 响应式与可访问性 | ⏳ 未执行 |
@@ -257,8 +257,8 @@
 
 ## 第 5 轮 NET 联机与状态一致性记录
 
-> 编号说明：仓库内无既有 NET 编号定义，本轮按真实测试文件登记 NET-001~NET-029（rooms 22 + concurrency 6 +
-> 双客户端实测 2 轮），随后为 1 项事故记录。安全专项测试文件（security.test.ts，9 项）在 R10 SEC 轮登记，
+> 编号说明：仓库内无既有 NET 编号定义，本轮按真实测试文件登记 NET-001~NET-027（rooms 21 + concurrency 6）+
+> 双客户端实测 1 项 + 事故加固 1 项。安全专项测试文件（security.test.ts，9 项）在 R10 SEC 轮登记，
 > 本轮不重复记号（其测试已随 npm test 真实执行）。
 
 ### NET-001~NET-005 房间与席位（integration/rooms.test.ts 前 5 项）— PASS
@@ -314,10 +314,53 @@
 - logs/server.log、logs/server.pid（运行时产物，随日志目录生成）
 
 ### R5 验证汇总（全部真实执行）
-- npm test（全量）：134/134 PASS（integration rooms 22 + concurrency 6 + security 9 + chat 5 = 42 项在其中）
+- npm test（全量）：134/134 PASS（integration rooms 21 + concurrency 6 + security 9 + chat 5 = 41 项在其中）
 - node scripts/net-check.mjs xiangqi：15/15，控制台 0 错误
 - node scripts/net-check.mjs chess：首跑 4/15（脚本缺陷+服务退出）→ 修复/重启后 15/15，控制台 0 错误
 - 检查点：commit `daa8e2e`（R5 已提交，工作区干净）
+
+## 第 6 轮 REC 棋谱/导出/数据库记录
+
+### REC-001 中象记谱准确性（P1）— PASS
+- unit xiangqi-engine：开局记谱（炮二平五/马八进七/马8进7/车九进五）、applyMove 返回中文记谱+吃子信息、前后消歧（XI-020 已记录，本轮随全量重跑复验）。
+
+### REC-002 国象 SAN 与走法记录结构（P1）— PASS
+- unit chess-adapter/deep：SAN、captured、gaveCheck、fenBefore/fenAfter 完整；PGN 往返一致（CH-015 交叉引用）。
+
+### REC-003 复盘导航 UI（P1）— PASS
+- e2e 用例 1：B 端「上一步」→ .replay-banner 可见、.replay-pos="1 / 2"、「回到当前」→横幅消失；net-check 步骤⑩同断言双棋种复验。
+
+### REC-004 复盘不影响线上（P1）— PASS
+- e2e 用例 1：B 复盘时 A 端步数不变；net-check 步骤⑩断言 A=2 步不变。
+
+### REC-005 导出卡按钮真实且按棋种区分（P2）— PASS
+- Room.tsx 374-426：通用「复制 FEN」；chess→「导出 PGN」；xiangqi→「导出中文棋谱」+「导出 JSON」+ 自定义格式提示文案。
+- 按钮非静态（onClick 真实调 download/copy + toast）。视觉证据 R2 截图；行为证据 e2e 用例 6/7 真实触发下载。
+
+### REC-006 PGN 导出（P1）— PASS
+- unit exporters PGN 6 项：空棋谱头部元数据、易位/吃子 SAN、吃过路兵 exd6、完整回放终局面一致、
+  结果映射（1-0 / 0-1 / 1/2-1/2 + Termination）、玩家名引号/反斜杠净化不破坏结构。
+- e2e 用例 6：真实下载 PGN，内容含 [Event]、1. e4 e5、2. Qh5、[Result "*"]。
+
+### REC-007 中文棋谱与 JSON 导出（P1）— PASS
+- unit exporters 3 项：两列对齐（红先行）、空棋谱可用、JSON 声明 format=chessbox-xiangqi-v1 + note 含"非通用标准"。
+- e2e 用例 7：下载 .txt 含「1. 炮二平五 马8进7」；JSON.moves[0].notation=炮二平五。中象格式如实声明（非标准 PGN）。
+
+### REC-008 数据库持久化（P1）— PASS
+- rooms NET-016：真实 stop/start 往返后房间/棋谱/会话/席位恢复；chat 第 5 项：聊天历史从 SQLite 恢复并可下发；
+- 本轮生产服务重启实证：logs/server.log [boot]「从数据库恢复 218 个房间」——**如实说明**：其中大量房间是本会话与
+  前会话验证运行产生的测试房间（产品有 10 分钟周期 cleanupStale 按其过期策略清理；未手工删除任何数据）。
+
+### REC-009 导出文件命名（P3）— PASS
+- e2e 断言：chess-<roomId>.pgn、xiangqi-<roomId>.txt、xiangqi-<roomId>.json。
+
+### REC-010 悔棋后的持久化一致性（P1）— PASS
+- rooms 悔棋用例：同意悔棋后 server.store.loadMoves(roomId).length === 0（棋谱库与内存同步回退）。
+
+### R6 验证汇总（全部真实执行）
+- npm test（全量）：**134/134 PASS**（本轮新鲜重跑；exporters 9 项在其中）
+- e2e 用例 6/7（导出下载校验）：R4 轮重跑 7/7 中的两项，R5 轮双客户端实测亦覆盖导出前置场景
+- 检查点：commit `9d95160`（R6 已提交，工作区干净）
 
 ### R2 验证汇总（全部真实重跑）
 - npm test 122/122 PASS；npm run typecheck 0 错误；npm run build 成功（前端 363.87KB/gzip 115.37KB + CSS 22.86KB）
