@@ -3,11 +3,14 @@
  * 本地可交互（点击选子/落子，国象升变默认升后），不联机、不落库。
  * 与在线对局的区别在界面上明示（"试玩"徽标 + 结束后可重置），不冒充在线房间。
  */
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createEngine, startFenOf } from '../../games';
 import type { GameEngine } from '../../games/types';
 import { XiangqiBoard } from './XiangqiBoard';
 import { ChessBoard } from './ChessBoard';
+import { buildBoardAnim } from './boardAnim';
+import type { BoardAnim } from './boardAnim';
+import { useAnimPref } from './animPref';
 import type { GameKind } from '../../games/types';
 
 export function PracticeBoard({ kind }: { kind: GameKind }) {
@@ -24,6 +27,11 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
   const [selected, setSelected] = useState<string | null>(null);
   const selectedRef = useRef<string | null>(null);
   selectedRef.current = selected;
+
+  // 沙盒动画：本地引擎走棋成功（=本沙盒的权威确认）即构造 FLIP 描述
+  const { enabled: animEnabled } = useAnimPref();
+  const [anim, setAnim] = useState<BoardAnim | null>(null);
+  useEffect(() => setAnim(null), [engine]);
 
   const fen = engine.fen();
   const outcome = engine.outcome();
@@ -58,6 +66,12 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
       const applied = eng.applyMove(needsPromo ? { from: sel, to: sq, promotion: 'q' } : { from: sel, to: sq });
       if (applied) {
         setSelected(null);
+        if (animEnabled) {
+          const a = buildBoardAnim(kind, applied.fenBefore, applied.fenAfter, sel, sq);
+          if (a) setAnim(a);
+        } else {
+          setAnim(null);
+        }
         bump();
       } else {
         setSelected(null);
@@ -88,6 +102,7 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
         lastMove={null}
         checkSquare={checkSquare}
         onSquareClick={handleSquareClick}
+        anim={anim}
       />
     ) : (
       <ChessBoard
@@ -98,6 +113,7 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
         lastMove={null}
         checkSquare={checkSquare}
         onSquareClick={handleSquareClick}
+        anim={anim}
       />
     );
 

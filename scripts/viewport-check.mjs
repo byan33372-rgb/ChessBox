@@ -1,6 +1,6 @@
 /** 阶段 8：视口矩阵 + 键盘可达性 + 长内容压力检查（真实浏览器） */
 import { chromium } from '@playwright/test';
-import { ChessEngine } from '../src/games/chess/adapter';
+import { ChessEngine } from '../src/games/chess/adapter.ts';
 
 const BASE = process.env.SHOT_BASE ?? 'http://127.0.0.1:3001';
 

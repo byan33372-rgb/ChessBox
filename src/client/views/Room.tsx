@@ -7,6 +7,9 @@ import type { Side } from '../../games/types';
 import type { RoomState } from '../../shared/protocol';
 import { ChessBoard } from '../components/ChessBoard';
 import { XiangqiBoard } from '../components/XiangqiBoard';
+import { buildBoardAnim } from '../components/boardAnim';
+import type { BoardAnim } from '../components/boardAnim';
+import { useAnimPref } from '../components/animPref';
 import { MoveList } from '../components/MoveList';
 import { ChatPanel } from '../components/ChatPanel';
 import { buildPgn, buildXiangqiJson, buildXiangqiText, copyText, downloadJson, downloadText } from '../export/exporters';
@@ -34,6 +37,11 @@ export function Room({ roomId, onExit }: RoomProps) {
   const [flipped, setFlipped] = useState(false);
   const [viewPly, setViewPly] = useState<number | null>(null);
   const [pendingPromo, setPendingPromo] = useState<PendingPromotion | null>(null);
+  const { enabled: animEnabled, userOn: animUserOn, toggle: toggleAnimPref } = useAnimPref();
+  const [anim, setAnim] = useState<BoardAnim | null>(null);
+  /** 动画闸门游标：上次见过的 moves.length 与 ply（服务端确认后 +1 判定 + 去重） */
+  const lastMoveCountRef = useRef(0);
+  const lastAnimPlyRef = useRef(-1);
 
   useEffect(() => {
     setSelected(null);
@@ -43,6 +51,35 @@ export function Room({ roomId, onExit }: RoomProps) {
   useEffect(() => {
     if (state && state.moves.length === 0) setViewPly(null);
   }, [state?.moves.length]);
+
+  // —— 走棋动画闸门（ANIM-001~013 核心） ——
+  // 仅当 moves.length 恰好 +1（服务端确认的新着到达）、在线、直播复盘态、动效开启时构造 FLIP 描述；
+  // 重连追赶（跳变>1）/悔棋/重开（length 不增）/复盘浏览（viewPly≠null）/被拒（state 不变）一律直同步不动画；
+  // 同一 ply 只触发一次（ack 与 room:state 双路径 + 重复广播去重，ANIM-013）。
+  useEffect(() => {
+    if (!state) return;
+    const moves = state.moves;
+    const prevCount = lastMoveCountRef.current;
+    lastMoveCountRef.current = moves.length;
+    const last = moves.length > 0 ? moves[moves.length - 1] : null;
+    const freshPly = last !== null && last.ply > lastAnimPlyRef.current;
+    const canAnimate = animEnabled && conn === 'online' && viewPly === null && state.phase === 'playing';
+    if (moves.length === prevCount + 1 && last && freshPly && canAnimate) {
+      const next = buildBoardAnim(state.kind, last.fenBefore, last.fenAfter, last.from, last.to);
+      if (next) setAnim(next);
+    }
+    lastAnimPlyRef.current = last ? Math.max(lastAnimPlyRef.current, last.ply) : -1;
+  }, [state, animEnabled, conn, viewPly]);
+
+  // 复盘态不残留动画（ANIM-020）：进入复盘时清掉在飞的层
+  useEffect(() => {
+    if (viewPly !== null) setAnim(null);
+  }, [viewPly]);
+
+  // 关闭动效时立即清掉在飞的层
+  useEffect(() => {
+    if (!animEnabled) setAnim(null);
+  }, [animEnabled]);
 
   const initialFen = useMemo(() => {
     if (!state) return XQ_START_FEN;
@@ -208,6 +245,7 @@ export function Room({ roomId, onExit }: RoomProps) {
         lastMove={display.lastMove ? { from: display.lastMove.from, to: display.lastMove.to } : null}
         checkSquare={checkSquare}
         onSquareClick={handleSquareClick}
+        anim={display.viewing ? null : anim}
       />
     ) : (
       <ChessBoard
@@ -218,6 +256,7 @@ export function Room({ roomId, onExit }: RoomProps) {
         lastMove={display.lastMove ? { from: display.lastMove.from, to: display.lastMove.to } : null}
         checkSquare={checkSquare}
         onSquareClick={handleSquareClick}
+        anim={display.viewing ? null : anim}
       />
     );
 
@@ -317,6 +356,15 @@ export function Room({ roomId, onExit }: RoomProps) {
             </span>
             <button type="button" className="btn small ghost" onClick={() => setFlipped((f) => !f)}>
               翻转棋盘
+            </button>
+            <button
+              type="button"
+              className="btn small ghost"
+              onClick={toggleAnimPref}
+              aria-pressed={animUserOn}
+              title="走棋动效开关（不影响规则）"
+            >
+              {animUserOn ? '动效 开' : '动效 关'}
             </button>
           </div>
         </div>

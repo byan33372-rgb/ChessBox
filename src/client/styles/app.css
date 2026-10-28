@@ -29,8 +29,8 @@
   --active-border: #dfc392;
   --frost: rgba(246, 241, 230, 0.62);
   --frost-strong: rgba(246, 241, 230, 0.82);
-  --chess-light: #f0d9b5;
-  --chess-dark: #b58863;
+  --chess-light: #ecd9b4;
+  --chess-dark: #9a6b45;
   --wood-dark: #b58863;
   --wood-light: #f0d9b5;
   --xq-board: #efdcab;
@@ -40,6 +40,15 @@
   --shadow: 0 1px 3px rgba(80, 60, 30, 0.08), 0 4px 16px rgba(80, 60, 30, 0.07);
   --font-ui: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
   --font-serif: Georgia, 'Times New Roman', 'STSong', 'SimSun', serif;
+
+  /* —— 走棋动效 tokens（ENG-003 集中管理；ANIM-003 桌面普通移动 140–220ms） —— */
+  --anim-move-ms: 180ms;
+  --anim-capture-ms: 170ms;
+  --anim-land-ms: 340ms;
+  --anim-ease: cubic-bezier(0.32, 0.72, 0.35, 1);
+  /* 中象棋子字色：温润朱红 / 墨黑（避免刺眼纯亮红） */
+  --xq-red-ink: #b3352c;
+  --xq-black-ink: #2e2620;
 }
 
 /* —— 中国象棋主题：深胡桃棕 · 古金 · 朱红 —— */
@@ -94,8 +103,8 @@
   --active-border: #6e7f56;
   --frost: rgba(13, 18, 14, 0.58);
   --frost-strong: rgba(13, 18, 14, 0.8);
-  --chess-light: #e9e2ce;
-  --chess-dark: #6f8465;
+  --chess-light: #e8d5ae;
+  --chess-dark: #7a5c3e;
   --gold: #b9a06a;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.32);
 }
@@ -1106,34 +1115,41 @@ li.unverified .status-label {
   z-index: 2;
 }
 
+/* 圆盘棋子：显式容器单位尺寸（PIECE-002 修复：父元素 shrink-to-fit 内
+   calc(100%/9) 百分比无法解析导致塌缩；.xq-board 为 inline-size 容器） */
 .xq-piece-disc {
-  width: calc(100% / 9 * 0.92);
-  height: calc(100% / 10 * 0.92);
-  aspect-ratio: 1;
+  width: 10.22cqw;
+  height: 10.22cqw;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-serif);
   font-weight: 700;
-  box-shadow: 0 2px 5px rgba(40, 25, 5, 0.4);
-  border: 1px solid;
+  /* 统一左上光源：底部投影 + 外沿细线 + 内圈亮线 + 金环（PIECE-002/006） */
+  box-shadow:
+    0 2.5px 6px rgba(48, 28, 6, 0.42),
+    inset 0 0 0 1px rgba(112, 78, 40, 0.55),
+    inset 0 0 0 3px rgba(255, 246, 218, 0.5),
+    inset 0 0 0 4.5px rgba(176, 141, 62, 0.32);
 }
 
 .xq-piece.red .xq-piece-disc {
-  background: radial-gradient(circle at 38% 30%, #fdf5e3, #efdba0);
-  border-color: #b0825f;
-  color: #a63226;
+  background: radial-gradient(circle at 36% 28%, #fdf6e4 0%, #f2dfae 52%, #e2c689 100%);
+  color: var(--xq-red-ink);
+  text-shadow: 0 1px 0 rgba(255, 248, 226, 0.55);
 }
 
 .xq-piece.black .xq-piece-disc {
-  background: radial-gradient(circle at 38% 30%, #f4edda, #ddd0ad);
-  border-color: #8d8471;
-  color: #2c241b;
+  background: radial-gradient(circle at 36% 28%, #f6efdd 0%, #eadfb9 52%, #d8c493 100%);
+  color: var(--xq-black-ink);
+  text-shadow: 0 1px 0 rgba(255, 248, 226, 0.45);
 }
 
 .xq-piece-char {
-  font-size: 4.2cqw;
+  font-size: 4.8cqw;
+  line-height: 1;
+  user-select: none;
 }
 
 .xq-piece.selected .xq-piece-disc {
@@ -1195,6 +1211,109 @@ li.unverified .status-label {
   pointer-events: none;
 }
 
+/* —— 中象 SVG 线格与坐标（BOARD-004/005） —— */
+.xq-line {
+  stroke: var(--xq-line);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+
+.xq-line.thin {
+  stroke-width: 1.1;
+  opacity: 0.75;
+}
+
+.xq-coord {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-serif);
+  font-size: 1.7cqw;
+  font-weight: 600;
+  color: rgba(122, 88, 54, 0.55);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* —— 走棋动画层（FLIP：只呈现服务端确认后的过渡；transform 由内联样式驱动） —— */
+
+/* 飞行中隐藏底层同格棋子，落位立即恢复（ANIM-026/028 无残影） */
+.xq-piece.hidden-flying,
+.chess-piece-wrap.hidden-flying {
+  visibility: hidden;
+}
+
+/* 落位强调：一次性金晕渐隐（FX-004 极轻、短时） */
+@keyframes land-fade {
+  from {
+    opacity: 0.42;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.xq-piece.just-landed::after {
+  content: '';
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(216, 170, 90, 0.5) 0%, rgba(216, 170, 90, 0) 72%);
+  animation: land-fade var(--anim-land-ms) ease-out forwards;
+  pointer-events: none;
+}
+
+.xq-anim-fly,
+.xq-anim-captured {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.xq-anim-fly .xq-piece,
+.xq-anim-captured .xq-piece {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xq-anim-fly {
+  z-index: 6;
+  transition: transform var(--anim-move-ms) var(--anim-ease);
+  will-change: transform;
+}
+
+.xq-anim-fly .xq-piece-disc {
+  box-shadow:
+    0 6px 14px rgba(40, 24, 4, 0.45),
+    inset 0 0 0 1px rgba(112, 78, 40, 0.55),
+    inset 0 0 0 3px rgba(255, 246, 218, 0.5),
+    inset 0 0 0 4.5px rgba(176, 141, 62, 0.32);
+}
+
+/* 被吃子离场：独立 scale/opacity 属性（ENG-006 不与 transform 争夺） */
+@keyframes capture-out {
+  from {
+    scale: 1;
+    opacity: 1;
+  }
+  to {
+    scale: 0.5;
+    opacity: 0;
+  }
+}
+
+.xq-anim-captured {
+  z-index: 5;
+  animation: capture-out var(--anim-capture-ms) ease-in forwards;
+}
+
+/* 悬停反馈：仅鼠标、有子格轻微亮晕（FX-001，不移动棋子真实位置） */
+.board-hotspot[data-occ]:hover {
+  background: radial-gradient(circle, rgba(255, 238, 196, 0.25) 0%, rgba(255, 238, 196, 0) 70%);
+}
+
 .board-hotspot {
   width: 9.2cqw;
   height: 9.2cqw;
@@ -1209,6 +1328,25 @@ li.unverified .status-label {
 /* ============ 国际象棋棋盘（真实交互组件） ============ */
 .chess-board {
   aspect-ratio: 1 / 1;
+  position: relative;
+  border: 3px solid #6b4c2c;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 240, 210, 0.18),
+    inset 0 0 20px rgba(56, 36, 12, 0.26),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+/* 盘面柔和暗角（BOARD-006，不遮格线与棋子） */
+.chess-board::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 42%, rgba(0, 0, 0, 0) 60%, rgba(46, 28, 8, 0.2) 100%);
+  z-index: 4;
 }
 
 .chess-grid {
@@ -1230,11 +1368,15 @@ li.unverified .status-label {
 }
 
 .chess-sq.light {
-  background: var(--chess-light);
+  background:
+    linear-gradient(148deg, rgba(255, 253, 246, 0.32) 0%, rgba(255, 253, 246, 0) 46%),
+    var(--chess-light);
 }
 
 .chess-sq.dark {
-  background: var(--chess-dark);
+  background:
+    linear-gradient(148deg, rgba(255, 240, 214, 0.14) 0%, rgba(56, 34, 12, 0.1) 62%),
+    var(--chess-dark);
 }
 
 .chess-sq.last-from::before,
@@ -1265,6 +1407,61 @@ li.unverified .status-label {
 
 .chess-piece {
   filter: drop-shadow(0 1px 1.5px rgba(20, 12, 2, 0.5));
+  transition: scale 120ms ease-out, filter 120ms ease-out;
+}
+
+/* 选中抬起（PIECE-008：仅视觉提升，不改命中区域/真实格位） */
+.chess-piece-wrap.selected {
+  z-index: 3;
+}
+
+.chess-piece-wrap.selected .chess-piece {
+  scale: 1.06;
+  filter: drop-shadow(0 1px 1.5px rgba(20, 12, 2, 0.5)) drop-shadow(0 3px 6px rgba(20, 12, 2, 0.28));
+}
+
+/* 落位强调（FX-004）：与 .selected::after 不共存（落子后 selected 已清空） */
+.chess-sq.just-landed::after {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border-radius: 14%;
+  background: radial-gradient(circle, rgba(238, 200, 120, 0.5) 0%, rgba(238, 200, 120, 0) 75%);
+  animation: land-fade var(--anim-land-ms) ease-out forwards;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* —— 走棋动画层（.chess-board 直接子元素；角定位 12.5% 格） —— */
+.chess-anim-fly,
+.chess-anim-captured {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4%;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.chess-anim-fly {
+  z-index: 6;
+  transition: transform var(--anim-move-ms) var(--anim-ease);
+  will-change: transform;
+}
+
+.chess-anim-fly .chess-piece {
+  filter: drop-shadow(0 5px 9px rgba(24, 14, 2, 0.42));
+}
+
+.chess-anim-captured {
+  z-index: 5;
+  animation: capture-out var(--anim-capture-ms) ease-in forwards;
+}
+
+/* 悬停反馈（FX-001）：轻微提亮，不移动棋子 */
+.chess-sq[data-occ]:hover .chess-piece-wrap {
+  filter: brightness(1.07);
 }
 
 .chess-dot {
@@ -1651,6 +1848,23 @@ li.unverified .status-label {
   .move-btn {
     transition: none !important;
   }
+  /* 走棋动画直接呈现最终局面（ANIM-024；选中/目标/结果提示保留） */
+  :root {
+    --anim-move-ms: 0ms;
+    --anim-capture-ms: 0ms;
+    --anim-land-ms: 0ms;
+  }
+  .xq-anim-fly,
+  .chess-anim-fly {
+    transition: none;
+  }
+  .xq-anim-captured,
+  .chess-anim-captured,
+  .xq-piece.just-landed::after,
+  .chess-sq.just-landed::after {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 @media (max-width: 1080px) {
@@ -1685,6 +1899,12 @@ li.unverified .status-label {
 }
 
 @media (max-width: 640px) {
+  /* 移动端走棋动画缩短（ANIM-003：手机 120–190ms） */
+  :root {
+    --anim-move-ms: 150ms;
+    --anim-capture-ms: 140ms;
+  }
+
   body {
     font-size: 14.5px;
   }
