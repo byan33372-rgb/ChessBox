@@ -1,0 +1,10 @@
+﻿== xiangqi == board=340x377.8 cell=31.2 piece=34.6x34.6 ratio=1.111
+coords=19 hidden=["a:board-hotspot","b:board-hotspot","c:board-hotspot","d:board-hotspot","e:board-hotspot","f:board-hotspot","g:board-hotspot","h:board-hotspot","i:board-hotspot"] outside=["0","1","2","3","4","5","6","7","8","9"] font=5.75716px/rgba(122, 88, 54, 0.55)
+coordPieceOverlaps=["a:9","b:8","c:7","d:6","e:5","f:4","g:3","h:2","i:1"]
+rank labels=10 pieceOverlaps=[] sampleRect={"x":597,"y":201.8,"w":5.7,"h":8.1}
+red char=rgb(179, 53, 44) (16.2555px/700) contrast(vs disc 253,246,228) = 5.63:1
+black char=rgb(46, 38, 32) contrast = 13.77:1
+disc bg=rgba(0, 0, 0, 0) bgImage=radial-gradient(circle at 36% 28%, rgb(253, 246, 228), rgb(242, 223, 174) 52%, rgb(226, 198, 137))
+== chess == board=340x340 cell=41.8 piece=38.5x38.5 ratio=0.92
+coords=16 hidden=[] outside=[] font=10px/rgb(232, 213, 174)
+coordPieceOverlaps=["8:32","7:24","6:16","5:16","4:16","3:16","2:16","a:8","1:8","b:7","c:6","d:5","e:4","f:3","g:2","h:1"]

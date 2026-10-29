@@ -48,7 +48,7 @@ async function main() {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     check(`${vp.name} 无横向溢出`, overflow <= 0, `overflow=${overflow}px`);
     const board = await page.locator('.xq-board').boundingBox();
-    check(`${vp.name} 棋盘可见且适配`, !!board && board.width <= vp.width, `w=${board && board.width.toFixed(0)}`);
+    check(`${vp.name} 棋盘可见且适配`, !!board && board.width <= vp.width && board.width >= 240, `w=${board && board.width.toFixed(0)}`);
     check(`${vp.name} 无控制台错误`, errors.length === 0, errors[0] ?? '');
     await ctx.close();
   }

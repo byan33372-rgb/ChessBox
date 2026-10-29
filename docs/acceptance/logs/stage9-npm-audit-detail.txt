@@ -1,0 +1,358 @@
+﻿node : node:child_process:1018
+所在位置 行:1 字符: 52
++ ... ing]::UTF8; node -e "const {execSync}=require('child_process');const  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (node:child_process:1018:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    throw err;
+    ^
+
+Error: Command failed: npm audit --json
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:943:11)
+    at execSync (node:child_process:1015:15)
+    at [eval]:1:62
+    at runScriptInThisContext (node:internal/vm:219:10)
+    at node:internal/process/execution:451:12
+    at [eval]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:449:60)
+    at evalFunction (node:internal/process/execution:283:30) {
+  status: 1,
+  signal: null,
+  output: [
+    null,
+    '{\n' +
+      '  "auditReportVersion": 2,\n' +
+      '  "vulnerabilities": {\n' +
+      '    "@vitest/mocker": {\n' +
+      '      "name": "@vitest/mocker",\n' +
+      '      "severity": "moderate",\n' +
+      '      "isDirect": false,\n' +
+      '      "via": [\n' +
+      '        {\n' +
+      '          "source": 1193684,\n' +
+      '          "name": "@vitest/mocker",\n' +
+      '          "dependency": "@vitest/mocker",\n' +
+      '          "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",\n' +
+      '          "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",\n' +
+      '          "severity": "moderate",\n' +
+      '          "cwe": [\n' +
+      '            "CWE-22"\n' +
+      '          ],\n' +
+      '          "cvss": {\n' +
+      '            "score": 5.9,\n' +
+      '            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N"\n' +
+      '          },\n' +
+      '          "range": ">=2.1.0 <4.1.11"\n' +
+      '        },\n' +
+      '        {\n' +
+      '          "source": 1242767,\n' +
+      '          "name": "@vitest/mocker",\n' +
+      '          "dependency": "@vitest/mocker",\n' +
+      '          "title": "Vitest: Code injection via unauthenticated manual mock registration",\n' +
+      '          "url": "https://github.com/advisories/GHSA-qxg6-89mg-rqv8",\n' +
+      '          "severity": "moderate",\n' +
+      '          "cwe": [\n' +
+      '            "CWE-94",\n' +
+      '            "CWE-116",\n' +
+      '            "CWE-306"\n' +
+      '          ],\n' +
+      '          "cvss": {\n' +
+      '            "score": 4.7,\n' +
+      '            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N"\n' +
+      '          },\n' +
+      '          "range": ">=2.1.0-beta.7 <4.1.12"\n' +
+      '        }\n' +
+      '      ],\n' +
+      '      "effects": [\n' +
+      '        "vitest"\n' +
+      '      ],\n' +
+      '      "range": "<=4.1.11",\n' +
+      '      "nodes": [\n' +
+      '        "node_modules/@vitest/mocker"\n' +
+      '      ],\n' +
+      '      "fixAvailable": {\n' +
+      '        "name": "vitest",\n' +
+      '        "version": "5.0.5",\n' +
+      '        "isSemVerMajor": true\n' +
+      '      }\n' +
+      '    },\n' +
+      '    "tinypool": {\n' +
+      '      "name": "tinypool",\n' +
+      '      "severity": "critical",\n' +
+      '      "isDirect": false,\n' +
+      '      "via": [\n' +
+      '        {\n' +
+      '          "source": 1241260,\n' +
+      '          "name": "tinypool",\n' +
+      '          "dependency": "tinypool",\n' +
+      '          "title": "Tinypool: Prototype Pollution gadget in worker options leads to Remote Code Execution",\n' +
+      '          "url": "https://github.com/advisories/GHSA-5gmw-xhrv-c9v3",\n' +
+      '          "severity": "critical",\n' +
+      '          "cwe": [\n' +
+      '            "CWE-1321"\n' +
+      '          ],\n' +
+      '          "cvss": {\n' +
+      '            "score": 0,\n' +
+      '            "vectorString": null\n' +
+      '          },\n' +
+      '          "range": "<=2.1.0"\n' +
+      '        },\n' +
+      '        {\n' +
+      '          "source": 1241261,\n' +
+      '          "name": "tinypool",\n' +
+      '          "dependency": "tinypool",\n' +
+      '          "title": "Tinypool: Prototype Pollution Gadget to RCE in run() options",\n' +
+      '          "url": "https://github.com/advisories/GHSA-85c8-ppgw-ccpr",\n' +
+      '          "severity": "critical",\n' +
+      '          "cwe": [\n' +
+      '            "CWE-94",\n' +
+      '            "CWE-1321"\n' +
+      '          ],\n' +
+      '          "cvss": {\n' +
+      '            "score": 0,\n' +
+      '            "vectorString": null\n' +
+      '          },\n' +
+      '          "range": "<2.1.2"\n' +
+      '        }\n' +
+      '      ],\n' +
+      '      "effects": [\n' +
+      '        "vitest"\n' +
+      '      ],\n' +
+      '      "range": "<=2.1.1",\n' +
+      '      "nodes": [\n' +
+      '        "node_modules/tinypool"\n' +
+      '      ],\n' +
+      '      "fixAvailable": {\n' +
+      '        "name": "vitest",\n' +
+      '        "version": "5.0.5",\n' +
+      '        "isSemVerMajor": true\n' +
+      '      }\n' +
+      '    },\n' +
+      '    "vitest": {\n' +
+      '      "name": "vitest",\n' +
+      '      "severity": "critical",\n' +
+      '      "isDirect": true,\n' +
+      '      "via": [\n' +
+      '        "@vitest/mocker",\n' +
+      '        {\n' +
+      '          "source": 1193683,\n' +
+      '          "name": "vitest",\n' +
+      '          "dependency": "vitest",\n' +
+      '          "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",\n' +
+      '          "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",\n' +
+      '          "severity": "moderate",\n' +
+      '          "cwe": [\n' +
+      '            "CWE-22"\n' +
+      '          ],\n' +
+      '          "cvss": {\n' +
+      '            "score": 5.9,\n' +
+      '            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N"\n' +
+      '          },\n' +
+      '          "range": ">=2.1.0 <4.1.11"\n' +
+      '        },\n' +
+      '        "tinypool"\n' +
+      '      ],\n' +
+      '      "effects": [],\n' +
+      '      "range": "0.0.95 - 4.1.10",\n' +
+      '      "nodes": [\n' +
+      '        "node_modules/vitest"\n' +
+      '      ],\n' +
+      '      "fixAvailable": {\n' +
+      '        "name": "vitest",\n' +
+      '        "version": "5.0.5",\n' +
+      '        "isSemVerMajor": true\n' +
+      '      }\n' +
+      '    }\n' +
+      '  },\n' +
+      '  "metadata": {\n' +
+      '    "vulnerabilities": {\n' +
+      '      "info": 0,\n' +
+      '      "low": 0,\n' +
+      '      "moderate": 1,\n' +
+      '      "high": 0,\n' +
+      '      "critical": 2,\n' +
+      '      "total": 3\n' +
+      '    },\n' +
+      '    "dependencies": {\n' +
+      '      "prod": 97,\n' +
+      '      "dev": 186,\n' +
+      '      "optional": 53,\n' +
+      '      "peer": 0,\n' +
+      '      "peerOptional": 0,\n' +
+      '      "total": 282\n' +
+      '    }\n' +
+      '  }\n' +
+      '}\n',
+    ''
+  ],
+  pid: 120020,
+  stdout: '{\n' +
+    '  "auditReportVersion": 2,\n' +
+    '  "vulnerabilities": {\n' +
+    '    "@vitest/mocker": {\n' +
+    '      "name": "@vitest/mocker",\n' +
+    '      "severity": "moderate",\n' +
+    '      "isDirect": false,\n' +
+    '      "via": [\n' +
+    '        {\n' +
+    '          "source": 1193684,\n' +
+    '          "name": "@vitest/mocker",\n' +
+    '          "dependency": "@vitest/mocker",\n' +
+    '          "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",\n' +
+    '          "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",\n' +
+    '          "severity": "moderate",\n' +
+    '          "cwe": [\n' +
+    '            "CWE-22"\n' +
+    '          ],\n' +
+    '          "cvss": {\n' +
+    '            "score": 5.9,\n' +
+    '            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N"\n' +
+    '          },\n' +
+    '          "range": ">=2.1.0 <4.1.11"\n' +
+    '        },\n' +
+    '        {\n' +
+    '          "source": 1242767,\n' +
+    '          "name": "@vitest/mocker",\n' +
+    '          "dependency": "@vitest/mocker",\n' +
+    '          "title": "Vitest: Code injection via unauthenticated manual mock registration",\n' +
+    '          "url": "https://github.com/advisories/GHSA-qxg6-89mg-rqv8",\n' +
+    '          "severity": "moderate",\n' +
+    '          "cwe": [\n' +
+    '            "CWE-94",\n' +
+    '            "CWE-116",\n' +
+    '            "CWE-306"\n' +
+    '          ],\n' +
+    '          "cvss": {\n' +
+    '            "score": 4.7,\n' +
+    '            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N"\n' +
+    '          },\n' +
+    '          "range": ">=2.1.0-beta.7 <4.1.12"\n' +
+    '        }\n' +
+    '      ],\n' +
+    '      "effects": [\n' +
+    '        "vitest"\n' +
+    '      ],\n' +
+    '      "range": "<=4.1.11",\n' +
+    '      "nodes": [\n' +
+    '        "node_modules/@vitest/mocker"\n' +
+    '      ],\n' +
+    '      "fixAvailable": {\n' +
+    '        "name": "vitest",\n' +
+    '        "version": "5.0.5",\n' +
+    '        "isSemVerMajor": true\n' +
+    '      }\n' +
+    '    },\n' +
+    '    "tinypool": {\n' +
+    '      "name": "tinypool",\n' +
+    '      "severity": "critical",\n' +
+    '      "isDirect": false,\n' +
+    '      "via": [\n' +
+    '        {\n' +
+    '          "source": 1241260,\n' +
+    '          "name": "tinypool",\n' +
+    '          "dependency": "tinypool",\n' +
+    '          "title": "Tinypool: Prototype Pollution gadget in worker options leads to Remote Code Execution",\n' +
+    '          "url": "https://github.com/advisories/GHSA-5gmw-xhrv-c9v3",\n' +
+    '          "severity": "critical",\n' +
+    '          "cwe": [\n' +
+    '            "CWE-1321"\n' +
+    '          ],\n' +
+    '          "cvss": {\n' +
+    '            "score": 0,\n' +
+    '            "vectorString": null\n' +
+    '          },\n' +
+    '          "range": "<=2.1.0"\n' +
+    '        },\n' +
+    '        {\n' +
+    '          "source": 1241261,\n' +
+    '          "name": "tinypool",\n' +
+    '          "dependency": "tinypool",\n' +
+    '          "title": "Tinypool: Prototype Pollution Gadget to RCE in run() options",\n' +
+    '          "url": "https://github.com/advisories/GHSA-85c8-ppgw-ccpr",\n' +
+    '          "severity": "critical",\n' +
+    '          "cwe": [\n' +
+    '            "CWE-94",\n' +
+    '            "CWE-1321"\n' +
+    '          ],\n' +
+    '          "cvss": {\n' +
+    '            "score": 0,\n' +
+    '            "vectorString": null\n' +
+    '          },\n' +
+    '          "range": "<2.1.2"\n' +
+    '        }\n' +
+    '      ],\n' +
+    '      "effects": [\n' +
+    '        "vitest"\n' +
+    '      ],\n' +
+    '      "range": "<=2.1.1",\n' +
+    '      "nodes": [\n' +
+    '        "node_modules/tinypool"\n' +
+    '      ],\n' +
+    '      "fixAvailable": {\n' +
+    '        "name": "vitest",\n' +
+    '        "version": "5.0.5",\n' +
+    '        "isSemVerMajor": true\n' +
+    '      }\n' +
+    '    },\n' +
+    '    "vitest": {\n' +
+    '      "name": "vitest",\n' +
+    '      "severity": "critical",\n' +
+    '      "isDirect": true,\n' +
+    '      "via": [\n' +
+    '        "@vitest/mocker",\n' +
+    '        {\n' +
+    '          "source": 1193683,\n' +
+    '          "name": "vitest",\n' +
+    '          "dependency": "vitest",\n' +
+    '          "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",\n' +
+    '          "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9",\n' +
+    '          "severity": "moderate",\n' +
+    '          "cwe": [\n' +
+    '            "CWE-22"\n' +
+    '          ],\n' +
+    '          "cvss": {\n' +
+    '            "score": 5.9,\n' +
+    '            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N"\n' +
+    '          },\n' +
+    '          "range": ">=2.1.0 <4.1.11"\n' +
+    '        },\n' +
+    '        "tinypool"\n' +
+    '      ],\n' +
+    '      "effects": [],\n' +
+    '      "range": "0.0.95 - 4.1.10",\n' +
+    '      "nodes": [\n' +
+    '        "node_modules/vitest"\n' +
+    '      ],\n' +
+    '      "fixAvailable": {\n' +
+    '        "name": "vitest",\n' +
+    '        "version": "5.0.5",\n' +
+    '        "isSemVerMajor": true\n' +
+    '      }\n' +
+    '    }\n' +
+    '  },\n' +
+    '  "metadata": {\n' +
+    '    "vulnerabilities": {\n' +
+    '      "info": 0,\n' +
+    '      "low": 0,\n' +
+    '      "moderate": 1,\n' +
+    '      "high": 0,\n' +
+    '      "critical": 2,\n' +
+    '      "total": 3\n' +
+    '    },\n' +
+    '    "dependencies": {\n' +
+    '      "prod": 97,\n' +
+    '      "dev": 186,\n' +
+    '      "optional": 53,\n' +
+    '      "peer": 0,\n' +
+    '      "peerOptional": 0,\n' +
+    '      "total": 282\n' +
+    '    }\n' +
+    '  }\n' +
+    '}\n',
+  stderr: ''
+}
+
+Node.js v24.22.1

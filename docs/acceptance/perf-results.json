@@ -1,0 +1,478 @@
+{
+  "env": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+    "platform": "Win32",
+    "cores": 20,
+    "dpr": 1.0000000298023224,
+    "viewport": {
+      "w": 1280,
+      "h": 800
+    },
+    "reducedMotion": false,
+    "screen": {
+      "w": 1280,
+      "h": 800
+    }
+  },
+  "refreshHz": 167,
+  "refreshDetail": {
+    "modeIntervalMs": 6,
+    "modeCount": 771,
+    "idleSamples": 775,
+    "idleFps": 154.6
+  },
+  "scenarios": {
+    "A_idle": {
+      "frameSamples": 775,
+      "windowMs": 5013,
+      "avgIntervalMs": 6.47,
+      "avgFps": 154.6,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.1,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 321.2,
+      "longFrames": 1,
+      "over16_67ms": 1,
+      "over16_67Ratio": "0.13%",
+      "over8_33ms": 1,
+      "over8_33Ratio": "0.13%",
+      "note": "首页静止 5s 空闲采样"
+    },
+    "B_xq_normal": {
+      "frameSamples": 8477,
+      "windowMs": 55975,
+      "avgIntervalMs": 6.6,
+      "avgFps": 151.4,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.2,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 193.8,
+      "longFrames": 30,
+      "over16_67ms": 31,
+      "over16_67Ratio": "0.37%",
+      "over8_33ms": 71,
+      "over8_33Ratio": "0.84%",
+      "animationRuns": 240,
+      "failedMoves": 0,
+      "clickToSettleMs": {
+        "samples": 240,
+        "medianMs": 196.5,
+        "p95Ms": 198.6,
+        "maxMs": 227
+      },
+      "animDurationMs": {
+        "samples": 240,
+        "medianMs": 195.6,
+        "p95Ms": 197.5,
+        "maxMs": 225.6
+      },
+      "dpr": 1,
+      "tag": "B"
+    },
+    "C_chess_normal": {
+      "frameSamples": 8547,
+      "windowMs": 56314,
+      "avgIntervalMs": 6.59,
+      "avgFps": 151.8,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.2,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 169.7,
+      "longFrames": 31,
+      "over16_67ms": 32,
+      "over16_67Ratio": "0.37%",
+      "over8_33ms": 63,
+      "over8_33Ratio": "0.74%",
+      "animationRuns": 240,
+      "failedMoves": 0,
+      "clickToSettleMs": {
+        "samples": 240,
+        "medianMs": 196.8,
+        "p95Ms": 198.4,
+        "maxMs": 251
+      },
+      "animDurationMs": {
+        "samples": 240,
+        "medianMs": 194.9,
+        "p95Ms": 196.5,
+        "maxMs": 249.2
+      },
+      "dpr": 1,
+      "tag": "C"
+    },
+    "R_chess_dpr2": {
+      "frameSamples": 1428,
+      "windowMs": 9298,
+      "avgIntervalMs": 6.51,
+      "avgFps": 153.6,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.2,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 169.8,
+      "longFrames": 4,
+      "over16_67ms": 4,
+      "over16_67Ratio": "0.28%",
+      "over8_33ms": 12,
+      "over8_33Ratio": "0.84%",
+      "animationRuns": 40,
+      "failedMoves": 0,
+      "clickToSettleMs": {
+        "samples": 40,
+        "medianMs": 197.2,
+        "p95Ms": 200.2,
+        "maxMs": 219.7
+      },
+      "animDurationMs": {
+        "samples": 40,
+        "medianMs": 194.4,
+        "p95Ms": 196.2,
+        "maxMs": 217.5
+      },
+      "dpr": 2,
+      "tag": "R"
+    },
+    "H_xq_cannon_capture": {
+      "frameSamples": 38,
+      "windowMs": 230,
+      "avgIntervalMs": 6.06,
+      "avgFps": 165,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.1,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 6.2,
+      "longFrames": 0,
+      "over16_67ms": 0,
+      "over16_67Ratio": "0%",
+      "over8_33ms": 0,
+      "over8_33Ratio": "0%",
+      "clickToSettleMs": {
+        "samples": 1,
+        "medianMs": 208.8,
+        "p95Ms": 208.8,
+        "maxMs": 208.8
+      },
+      "animDurationMs": {
+        "samples": 1,
+        "medianMs": 191.2,
+        "p95Ms": 191.2,
+        "maxMs": 191.2
+      },
+      "integrity": {
+        "b0": "b0 红炮",
+        "moves": 1
+      }
+    },
+    "J_rapid_both": {
+      "frameSamples": 121,
+      "windowMs": 739,
+      "avgIntervalMs": 6.11,
+      "avgFps": 163.6,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.2,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 12.1,
+      "longFrames": 0,
+      "over16_67ms": 0,
+      "over16_67Ratio": "0%",
+      "over8_33ms": 1,
+      "over8_33Ratio": "0.83%",
+      "clickToSettleMs": {
+        "samples": 1,
+        "medianMs": 230.5,
+        "p95Ms": 230.5,
+        "maxMs": 230.5
+      },
+      "animDurationMs": {
+        "samples": 1,
+        "medianMs": 201.1,
+        "p95Ms": 201.1,
+        "maxMs": 201.1
+      },
+      "integrity": {
+        "A": {
+          "pieces": 32,
+          "fly": 0,
+          "moves": 2
+        },
+        "B": {
+          "pieces": 32,
+          "fly": 0,
+          "moves": 2
+        }
+      }
+    },
+    "I_flip": {
+      "frameSamples": 77,
+      "windowMs": 467,
+      "avgIntervalMs": 6.06,
+      "avgFps": 165,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.2,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 6.2,
+      "longFrames": 0,
+      "over16_67ms": 0,
+      "over16_67Ratio": "0%",
+      "over8_33ms": 0,
+      "over8_33Ratio": "0%",
+      "a9Top": 18
+    },
+    "D_chess_capture": {
+      "frameSamples": 34,
+      "windowMs": 242,
+      "avgIntervalMs": 7.13,
+      "avgFps": 140.2,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 24.2,
+      "p99FrameMs": 24.2,
+      "maxFrameMs": 24.2,
+      "longFrames": 0,
+      "over16_67ms": 2,
+      "over16_67Ratio": "5.88%",
+      "over8_33ms": 2,
+      "over8_33Ratio": "5.88%",
+      "clickToSettleMs": {
+        "samples": 1,
+        "medianMs": 243.5,
+        "p95Ms": 243.5,
+        "maxMs": 243.5
+      },
+      "animDurationMs": {
+        "samples": 1,
+        "medianMs": 232.1,
+        "p95Ms": 232.1,
+        "maxMs": 232.1
+      }
+    },
+    "K_peer_sync": {
+      "frameSamples": 36,
+      "windowMs": 236,
+      "avgIntervalMs": 6.57,
+      "avgFps": 152.3,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 12.1,
+      "p99FrameMs": 18.2,
+      "maxFrameMs": 18.2,
+      "longFrames": 0,
+      "over16_67ms": 1,
+      "over16_67Ratio": "2.78%",
+      "over8_33ms": 2,
+      "over8_33Ratio": "5.56%",
+      "clickToSettleMs": null,
+      "animDurationMs": {
+        "samples": 1,
+        "medianMs": 215.7,
+        "p95Ms": 215.7,
+        "maxMs": 215.7
+      },
+      "peerVisualMs": 14,
+      "integrity": {
+        "A": {
+          "e5": "e5 黑马",
+          "moves": 6
+        },
+        "B": {
+          "moves": 6
+        }
+      }
+    },
+    "E_castle": {
+      "frameSamples": 35,
+      "windowMs": 223,
+      "avgIntervalMs": 6.37,
+      "avgFps": 157,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 12,
+      "p99FrameMs": 12.1,
+      "maxFrameMs": 12.1,
+      "longFrames": 0,
+      "over16_67ms": 0,
+      "over16_67Ratio": "0%",
+      "over8_33ms": 2,
+      "over8_33Ratio": "5.71%",
+      "clickToSettleMs": {
+        "samples": 1,
+        "medianMs": 214.2,
+        "p95Ms": 214.2,
+        "maxMs": 214.2
+      },
+      "animDurationMs": {
+        "samples": 2,
+        "medianMs": 206.2,
+        "p95Ms": 206.2,
+        "maxMs": 206.2
+      },
+      "integrity": {
+        "king": 1,
+        "rook": 1
+      }
+    },
+    "F_en_passant": {
+      "frameSamples": 38,
+      "windowMs": 243,
+      "avgIntervalMs": 6.38,
+      "avgFps": 156.7,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 12.1,
+      "p99FrameMs": 12.2,
+      "maxFrameMs": 12.2,
+      "longFrames": 0,
+      "over16_67ms": 0,
+      "over16_67Ratio": "0%",
+      "over8_33ms": 2,
+      "over8_33Ratio": "5.26%",
+      "clickToSettleMs": {
+        "samples": 1,
+        "medianMs": 225.5,
+        "p95Ms": 225.5,
+        "maxMs": 225.5
+      },
+      "animDurationMs": {
+        "samples": 1,
+        "medianMs": 214.5,
+        "p95Ms": 214.5,
+        "maxMs": 214.5
+      },
+      "integrity": {
+        "d6": 1,
+        "d5empty": 1
+      }
+    },
+    "G_promotion": {
+      "frameSamples": 41,
+      "windowMs": 255,
+      "avgIntervalMs": 6.21,
+      "avgFps": 161,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.1,
+      "p99FrameMs": 12.1,
+      "maxFrameMs": 12.1,
+      "longFrames": 0,
+      "over16_67ms": 0,
+      "over16_67Ratio": "0%",
+      "over8_33ms": 1,
+      "over8_33Ratio": "2.44%",
+      "clickToSettleMs": {
+        "samples": 1,
+        "medianMs": 239.4,
+        "p95Ms": 239.4,
+        "maxMs": 239.4
+      },
+      "animDurationMs": {
+        "samples": 1,
+        "medianMs": 201.4,
+        "p95Ms": 201.4,
+        "maxMs": 201.4
+      },
+      "integrity": {
+        "b8queen": 1
+      }
+    },
+    "L_replay_nav": {
+      "frameSamples": 192,
+      "windowMs": 1176,
+      "avgIntervalMs": 6.12,
+      "avgFps": 163.3,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.1,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 18.2,
+      "longFrames": 0,
+      "over16_67ms": 1,
+      "over16_67Ratio": "0.52%",
+      "over8_33ms": 1,
+      "over8_33Ratio": "0.52%",
+      "integrity": {
+        "fly": 0,
+        "pieces": 32,
+        "moves": 4
+      }
+    },
+    "M_resize": {
+      "frameSamples": 148,
+      "windowMs": 915,
+      "avgIntervalMs": 6.18,
+      "avgFps": 161.7,
+      "medianFrameMs": 6.1,
+      "p95FrameMs": 6.2,
+      "p99FrameMs": 12.1,
+      "maxFrameMs": 18.2,
+      "longFrames": 0,
+      "over16_67ms": 1,
+      "over16_67Ratio": "0.68%",
+      "over8_33ms": 2,
+      "over8_33Ratio": "1.35%"
+    },
+    "N_background": {
+      "fly": 0,
+      "pieces": 32,
+      "moves": 2,
+      "d5": 1,
+      "note": "frozen 期间对手走棋；恢复后应为 2 步、d5=黑兵、无卡半途飞行层"
+    }
+  },
+  "inputLatency": {
+    "samples": 60,
+    "medianMs": 0.7,
+    "p95Ms": 1.2,
+    "maxMs": 2.3
+  },
+  "netLatency": {
+    "moves": 12,
+    "clickToOwnMoveList": {
+      "samples": 12,
+      "medianMs": 12.6,
+      "p95Ms": 14.6,
+      "maxMs": 14.6
+    },
+    "clickToPeerMoveList": {
+      "samples": 12,
+      "medianMs": 15,
+      "p95Ms": 16,
+      "maxMs": 16
+    },
+    "note": "本机回环（127.0.0.1）：ack=提交点击→本端棋谱出现（socket 往返+渲染）；peer=提交点击→对方端棋谱出现（+广播）。不含公网延迟。"
+  },
+  "cpuThrottle": {
+    "rate": 4,
+    "frameSamples": 1551,
+    "windowMs": 11716,
+    "avgIntervalMs": 7.55,
+    "avgFps": 132.4,
+    "medianFrameMs": 6.1,
+    "p95FrameMs": 12.2,
+    "p99FrameMs": 24.3,
+    "maxFrameMs": 247.07,
+    "longFrames": 6,
+    "over16_67ms": 63,
+    "over16_67Ratio": "4.06%",
+    "over8_33ms": 134,
+    "over8_33Ratio": "8.64%",
+    "animationRuns": 40,
+    "clickToSettleMs": {
+      "samples": 40,
+      "medianMs": 224.8,
+      "p95Ms": 238,
+      "maxMs": 268.8
+    },
+    "animDurationMs": {
+      "samples": 40,
+      "medianMs": 198,
+      "p95Ms": 203.9,
+      "maxMs": 226.7
+    }
+  },
+  "reducedMotion": {
+    "applied": true,
+    "flySeenImmediately": 0,
+    "moveListLatencyMs": 19.7,
+    "finalState": {
+      "e7": 1,
+      "fly": 0,
+      "reduced": true
+    },
+    "note": "减少动效下不应有飞行动画（Room/PracticeBoard 跳过 anim 构造），状态即时正确"
+  },
+  "notes": [],
+  "totalDurationSec": 168
+}

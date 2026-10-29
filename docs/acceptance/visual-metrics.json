@@ -1,0 +1,585 @@
+{
+  "XQ": {
+    "board": {
+      "w": 340,
+      "h": 377.8
+    },
+    "cell": 31.2,
+    "piece": {
+      "w": 34.6,
+      "h": 34.6
+    },
+    "pieceRatio": 1.111,
+    "redChar": {
+      "color": "rgb(179, 53, 44)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "bgImage": "none",
+      "fontSize": "16.2555px",
+      "fontWeight": "700"
+    },
+    "blackChar": {
+      "color": "rgb(46, 38, 32)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "bgImage": "none",
+      "fontSize": "16.2555px",
+      "fontWeight": "700"
+    },
+    "disc": {
+      "color": "rgb(179, 53, 44)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "bgImage": "radial-gradient(circle at 36% 28%, rgb(253, 246, 228), rgb(242, 223, 174) 52%, rgb(226, 198, 137))",
+      "fontSize": "15px",
+      "fontWeight": "700"
+    },
+    "coords": [
+      {
+        "text": "a",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 66.8,
+          "y": 550.2,
+          "w": 3.4,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 9,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "b",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 104.2,
+          "y": 550.2,
+          "w": 3.7,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 8,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "c",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 142.2,
+          "y": 550.2,
+          "w": 3.1,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 7,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "d",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 179.5,
+          "y": 550.2,
+          "w": 3.8,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 6,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "e",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 217.4,
+          "y": 550.2,
+          "w": 3.3,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 5,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "f",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 255.5,
+          "y": 550.2,
+          "w": 2.3,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 4,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "g",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 292.6,
+          "y": 550.2,
+          "w": 3.3,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 3,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "h",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 329.9,
+          "y": 550.2,
+          "w": 3.9,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 2,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "i",
+        "cls": "xq-coord",
+        "rect": {
+          "x": 368.5,
+          "y": 550.2,
+          "w": 2,
+          "h": 8.9
+        },
+        "insideBoard": true,
+        "topmost": false,
+        "pieceOverlaps": 1,
+        "hitCls": "board-hotspot"
+      },
+      {
+        "text": "0",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 597,
+          "y": 201.8,
+          "w": 5.7,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "1",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 598.7,
+          "y": 239.6,
+          "w": 4,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "2",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 597.6,
+          "y": 277.3,
+          "w": 5.1,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "3",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 597.6,
+          "y": 315.1,
+          "w": 5.1,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "4",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 597.4,
+          "y": 352.9,
+          "w": 5.3,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "5",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 597.8,
+          "y": 390.7,
+          "w": 4.8,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "6",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 597.4,
+          "y": 428.4,
+          "w": 5.2,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "7",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 598.2,
+          "y": 466.2,
+          "w": 4.5,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "8",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 597.2,
+          "y": 504,
+          "w": 5.5,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      },
+      {
+        "text": "9",
+        "cls": "xq-rank",
+        "rect": {
+          "x": 597.4,
+          "y": 541.8,
+          "w": 5.2,
+          "h": 8.1
+        },
+        "insideBoard": false,
+        "topmost": true,
+        "pieceOverlaps": 0,
+        "hitCls": "xq-wrap"
+      }
+    ],
+    "coordCount": 19,
+    "coordHidden": [
+      "a:board-hotspot",
+      "b:board-hotspot",
+      "c:board-hotspot",
+      "d:board-hotspot",
+      "e:board-hotspot",
+      "f:board-hotspot",
+      "g:board-hotspot",
+      "h:board-hotspot",
+      "i:board-hotspot"
+    ],
+    "coordOutside": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "coordFont": {
+      "color": "rgba(122, 88, 54, 0.55)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "bgImage": "none",
+      "fontSize": "5.75716px",
+      "fontWeight": "600"
+    }
+  },
+  "CH": {
+    "board": {
+      "w": 340,
+      "h": 340
+    },
+    "cell": 41.8,
+    "piece": {
+      "w": 38.5,
+      "h": 38.5
+    },
+    "pieceRatio": 0.92,
+    "redChar": null,
+    "blackChar": null,
+    "disc": null,
+    "coords": [
+      {
+        "text": "8",
+        "cls": "coord coord-rank on-dark",
+        "rect": {
+          "x": 773,
+          "y": 205.3,
+          "w": 5.6,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 32,
+        "hitCls": "chess-sq dark"
+      },
+      {
+        "text": "7",
+        "cls": "coord coord-rank on-light",
+        "rect": {
+          "x": 773,
+          "y": 247.1,
+          "w": 5.4,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 24,
+        "hitCls": "chess-sq light"
+      },
+      {
+        "text": "6",
+        "cls": "coord coord-rank on-dark",
+        "rect": {
+          "x": 773,
+          "y": 288.9,
+          "w": 5.6,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 16,
+        "hitCls": "chess-sq dark"
+      },
+      {
+        "text": "5",
+        "cls": "coord coord-rank on-light",
+        "rect": {
+          "x": 773,
+          "y": 330.8,
+          "w": 5.6,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 16,
+        "hitCls": "chess-sq light"
+      },
+      {
+        "text": "4",
+        "cls": "coord coord-rank on-dark",
+        "rect": {
+          "x": 773,
+          "y": 372.6,
+          "w": 5.8,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 16,
+        "hitCls": "chess-sq dark"
+      },
+      {
+        "text": "3",
+        "cls": "coord coord-rank on-light",
+        "rect": {
+          "x": 773,
+          "y": 414.4,
+          "w": 5.6,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 16,
+        "hitCls": "chess-sq light"
+      },
+      {
+        "text": "2",
+        "cls": "coord coord-rank on-dark",
+        "rect": {
+          "x": 773,
+          "y": 456.3,
+          "w": 5.6,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 16,
+        "hitCls": "chess-sq dark"
+      },
+      {
+        "text": "a",
+        "cls": "coord coord-file on-light",
+        "rect": {
+          "x": 803.6,
+          "y": 524.6,
+          "w": 5.2,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 8,
+        "hitCls": "chess-sq light"
+      },
+      {
+        "text": "1",
+        "cls": "coord coord-rank on-light",
+        "rect": {
+          "x": 773,
+          "y": 498.1,
+          "w": 4,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 8,
+        "hitCls": "chess-sq light"
+      },
+      {
+        "text": "b",
+        "cls": "coord coord-file on-dark",
+        "rect": {
+          "x": 844.6,
+          "y": 524.6,
+          "w": 6,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 7,
+        "hitCls": "chess-sq dark"
+      },
+      {
+        "text": "c",
+        "cls": "coord coord-file on-light",
+        "rect": {
+          "x": 887.8,
+          "y": 524.6,
+          "w": 4.7,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 6,
+        "hitCls": "chess-sq light"
+      },
+      {
+        "text": "d",
+        "cls": "coord coord-file on-dark",
+        "rect": {
+          "x": 928.3,
+          "y": 524.6,
+          "w": 6,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 5,
+        "hitCls": "chess-sq dark"
+      },
+      {
+        "text": "e",
+        "cls": "coord coord-file on-light",
+        "rect": {
+          "x": 970.9,
+          "y": 524.6,
+          "w": 5.3,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 4,
+        "hitCls": "chess-sq light"
+      },
+      {
+        "text": "f",
+        "cls": "coord coord-file on-dark",
+        "rect": {
+          "x": 1014.6,
+          "y": 524.6,
+          "w": 3.4,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 3,
+        "hitCls": "chess-sq dark"
+      },
+      {
+        "text": "g",
+        "cls": "coord coord-file on-light",
+        "rect": {
+          "x": 1053.8,
+          "y": 524.6,
+          "w": 6,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 2,
+        "hitCls": "chess-sq light"
+      },
+      {
+        "text": "h",
+        "cls": "coord coord-file on-dark",
+        "rect": {
+          "x": 1095.8,
+          "y": 524.6,
+          "w": 5.8,
+          "h": 13.3
+        },
+        "insideBoard": true,
+        "topmost": true,
+        "pieceOverlaps": 1,
+        "hitCls": "chess-sq dark"
+      }
+    ],
+    "coordCount": 16,
+    "coordHidden": [],
+    "coordOutside": [],
+    "coordFont": {
+      "color": "rgb(232, 213, 174)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "bgImage": "none",
+      "fontSize": "10px",
+      "fontWeight": "600"
+    }
+  }
+}

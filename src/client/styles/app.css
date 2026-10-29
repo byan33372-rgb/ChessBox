@@ -458,6 +458,11 @@ input::placeholder {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
+/* 中象包裹层需与棋盘同宽（棋盘 340 + 外侧行号 18），否则标尺与盘面分离/棋盘左对齐 */
+.gc-preview .xq-wrap {
+  width: min(100%, 358px);
+}
+
 .gc-preview .board-hotspot {
   cursor: pointer;
 }
@@ -808,7 +813,7 @@ li.unverified .status-label {
 
 .board-wrap {
   position: relative;
-  width: min(100%, 640px, calc(100vh - 220px));
+  width: min(100%, 640px, max(300px, calc(100vh - 220px)));
 }
 
 .board {
@@ -1083,6 +1088,55 @@ li.unverified .status-label {
   aspect-ratio: 9 / 10;
   position: relative;
   container-type: inline-size;
+}
+
+/* 棋盘外侧行号标尺（盘内会被边线棋子遮挡） */
+.xq-wrap {
+  position: relative;
+  width: 100%;
+  padding-right: 18px;
+  padding-bottom: 16px;
+  container-type: inline-size;
+}
+
+.xq-ranks {
+  position: absolute;
+  top: 0;
+  bottom: 16px;
+  right: 0;
+  width: 18px;
+  pointer-events: none;
+}
+
+.xq-rank {
+  position: absolute;
+  right: 3px;
+  transform: translateY(-50%);
+  font-family: var(--font-serif);
+  font-size: clamp(8px, 1.5cqw, 11px);
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(214, 192, 160, 0.72);
+}
+
+.xq-files {
+  position: absolute;
+  left: 0;
+  right: 18px;
+  bottom: 0;
+  height: 16px;
+  pointer-events: none;
+}
+
+.xq-file {
+  position: absolute;
+  bottom: 4px;
+  transform: translateX(-50%);
+  font-family: var(--font-serif);
+  font-size: clamp(8px, 1.5cqw, 11px);
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(214, 192, 160, 0.72);
 }
 
 .xq-svg {
@@ -1885,7 +1939,7 @@ li.unverified .status-label {
   }
 
   .board-wrap {
-    width: min(100%, calc(100vh - 260px), 560px);
+    width: min(100%, max(300px, calc(100vh - 260px)), 560px);
   }
 
   .side-col {
@@ -1915,6 +1969,10 @@ li.unverified .status-label {
 
   .gc-preview .board {
     width: min(100%, 300px);
+  }
+
+  .gc-preview .xq-wrap {
+    width: min(100%, 318px);
   }
 
   .room-body {

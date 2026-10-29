@@ -68,7 +68,7 @@ async function main() {
     check('象棋房间桌面无横向溢出', overflow <= 0, `overflow=${overflow}px`);
     const board = await pA.locator('.xq-board').boundingBox();
     check('象棋棋盘存在且比例≈0.9', board && Math.abs(board.width / board.height - 0.9) < 0.02, `w/h=${board && (board.width / board.height).toFixed(3)}`);
-    const pieces = await pA.locator('.xq-piece').count();
+    const pieces = await pA.locator('.board-overlay > .xq-piece').count();
     check('象棋 32 枚棋子渲染', pieces === 32, `count=${pieces}`);
     // 棋子与热点中心对齐（抽查 5 枚）
     const aligned = await pA.evaluate(() => {
@@ -127,7 +127,7 @@ async function main() {
     }
     const squares = await pC.locator('.chess-sq').count();
     check('国象 64 格', squares === 64, `count=${squares}`);
-    const pieces = await pC.locator('.chess-piece').count();
+    const pieces = await pC.locator('.chess-sq .chess-piece').count();
     check('国象 32 枚棋子渲染', pieces === 32, `count=${pieces}`);
     const board = await pC.locator('.chess-board').boundingBox();
     check('国象棋盘为正方形', board && Math.abs(board.width / board.height - 1) < 0.02, `w/h=${board && (board.width / board.height).toFixed(3)}`);

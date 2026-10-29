@@ -1,0 +1,24 @@
+﻿reducedMotion = false
+[
+ {
+  "t": 575.4,
+  "type": "fly-mounted",
+  "cls": "xq-anim-fly",
+  "dt": 9
+ },
+ {
+  "t": 858.1,
+  "type": "transitionend",
+  "prop": "transform",
+  "cls": "xq-anim-fly",
+  "inFly": true,
+  "dt": 291.7
+ },
+ {
+  "t": 859.6,
+  "type": "fly-removed",
+  "cls": "xq-anim-fly",
+  "dt": 293.2
+ }
+]
+fly css = no fly element now

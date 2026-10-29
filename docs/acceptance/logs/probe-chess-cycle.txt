@@ -1,0 +1,13 @@
+﻿ply: g1->f3 ok=true dt=23ms
+ply: b8->c6 ok=true dt=9ms
+ply: f3->g1 ok=true dt=7ms
+ply: c6->b8 ok=true dt=6ms
+ply: g1->f3 ok=true dt=5ms
+ply: b8->c6 ok=true dt=6ms
+ply: f3->g1 ok=true dt=6ms
+ply: c6->b8 ok=true dt=6ms
+ply: g1->f3 ok=true dt=3ms
+ply: b8->c6 ok=true dt=3ms
+ply: f3->g1 ok=true dt=2ms
+ply: c6->b8 ok=true dt=3ms
+total=81ms settleEvents=0

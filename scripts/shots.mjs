@@ -28,7 +28,7 @@ async function main() {
   // 2. 中国象棋房间（双人 + 几步棋）
   const pA = await newPage(browser);
   await pA.goto(BASE + '/');
-  await pA.locator('.create-card.xiangqi').click();
+  await pA.locator('.create-card.xiangqi .gc-create-btn').click();
   await pA.waitForURL(/\/r\//);
   await pA.locator('.waiting-overlay').waitFor({ state: 'visible' });
   const roomUrl = pA.url();
@@ -60,7 +60,7 @@ async function main() {
   // 3. 国际象棋房间
   const pC = await newPage(browser);
   await pC.goto(BASE + '/');
-  await pC.locator('.create-card.chess').click();
+  await pC.locator('.create-card.chess .gc-create-btn').click();
   await pC.waitForURL(/\/r\//);
   const chessUrl = pC.url();
   const pD = await newPage(browser);

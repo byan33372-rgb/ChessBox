@@ -1,0 +1,428 @@
+﻿
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/杞欢/chessbox-璞℃[39m
+
+ [32m鉁?[39m [30m[42m unit [49m[39m tests/unit/board-anim.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 48[2mms[22m[39m
+ [32m鉁?[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 118[2mms[22m[39m
+ [32m鉁?[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 131[2mms[22m[39m
+ [32m鉁?[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts [2m([22m[2m37 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+ [32m鉁?[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 249[2mms[22m[39m
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m闄愭祦琛ュ厖 路 璧版涓庢搷浣?[2m > [22m[2m璧版闄愭祦锛氬閲?20锛岀獊鍙?25 娆¤蛋妫嬶紙鍚潪娉曪級瑙﹀彂 RATE_LIMITED锛涢檺娴佷笉浜х敓璧版硶
+[22m[39m[io] 杩炴帴 XQ3vev0fkijmE-dvAAAA
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m娑堟伅椤哄簭淇濇寔锛屾枃鏈師鏍蜂紶閫掞紙鍚?XSS 杞借嵎锛岃浆涔夌敱鍓嶇 React 鏂囨湰鑺傜偣淇濊瘉锛?[22m[39m[io] 杩炴帴 w7OSdc5Uw2oGk80pAAAA
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m鍒涘缓鎴块棿锛氱孩鏂瑰腑浣嶃€亀aiting 鐘舵€併€佹埧闂?ID 楂樼喌鏍煎紡
+[22m[39m[io] 杩炴帴 kdHEOEZFdpuUF9XGAAAA
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍚屼竴 revision 骞跺彂鎻愪氦涓ゆ锛氭伆濂戒竴姝ユ垚鍔熴€佷竴姝?STALE_REVISION锛屾璋卞彧鏈変竴姝?[22m[39m[io] 杩炴帴 411orvC_zsR-zgjjAAAA
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m闄愭祦琛ュ厖 路 璧版涓庢搷浣?[2m > [22m[2m璧版闄愭祦锛氬閲?20锛岀獊鍙?25 娆¤蛋妫嬶紙鍚潪娉曪級瑙﹀彂 RATE_LIMITED锛涢檺娴佷笉浜х敓璧版硶
+[22m[39m[io] 杩炴帴 3vr0FmmqhHIOU1kIAAAB
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m娑堟伅椤哄簭淇濇寔锛屾枃鏈師鏍蜂紶閫掞紙鍚?XSS 杞借嵎锛岃浆涔夌敱鍓嶇 React 鏂囨湰鑺傜偣淇濊瘉锛?[22m[39m[io] 杩炴帴 O6bPtzIaCK1X8lwYAAAB
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m绗簩浜哄姞鍏ワ細榛戞柟甯綅锛宲hase 鈫?playing锛涘箍鎾竴鑷?[22m[39m[io] 鏂紑 kdHEOEZFdpuUF9XGAAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍚屼竴 revision 骞跺彂鎻愪氦涓ゆ锛氭伆濂戒竴姝ユ垚鍔熴€佷竴姝?STALE_REVISION锛屾璋卞彧鏈変竴姝?[22m[39m[io] 杩炴帴 zG4l8p2ITiiuPszIAAAB
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m绗簩浜哄姞鍏ワ細榛戞柟甯綅锛宲hase 鈫?playing锛涘箍鎾竴鑷?[22m[39m[io] 杩炴帴 nwOaYwEvgdGNY1x_AAAB
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m绗簩浜哄姞鍏ワ細榛戞柟甯綅锛宲hase 鈫?playing锛涘箍鎾竴鑷?[22m[39m[io] 杩炴帴 s0ywyONFgKxxlh1-AAAC
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍙屾柟鍚屾椂鍚勮蛋涓€姝ワ紙鍙湁杞埌鐨勪竴鏂规垚鍔燂級
+[22m[39m[io] 鏂紑 zG4l8p2ITiiuPszIAAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍙屾柟鍚屾椂鍚勮蛋涓€姝ワ紙鍙湁杞埌鐨勪竴鏂规垚鍔燂級
+[22m[39m[io] 鏂紑 411orvC_zsR-zgjjAAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍙屾柟鍚屾椂鍚勮蛋涓€姝ワ紙鍙湁杞埌鐨勪竴鏂规垚鍔燂級
+[22m[39m[io] 杩炴帴 p-VaYllpKd7Ya-NtAAAC
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m闄愭祦琛ュ厖 路 璧版涓庢搷浣?[2m > [22m[2m鎿嶄綔闄愭祦锛堟倲妫?鎻愬拰绛夛級锛氬閲?15锛岀獊鍙?20 娆?undo:offer 鍚庤Е鍙?RATE_LIMITED
+[22m[39m[io] 鏂紑 3vr0FmmqhHIOU1kIAAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m闄愭祦琛ュ厖 路 璧版涓庢搷浣?[2m > [22m[2m鎿嶄綔闄愭祦锛堟倲妫?鎻愬拰绛夛級锛氬閲?15锛岀獊鍙?20 娆?undo:offer 鍚庤Е鍙?RATE_LIMITED
+[22m[39m[io] 鏂紑 XQ3vev0fkijmE-dvAAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍙屾柟鍚屾椂鍚勮蛋涓€姝ワ紙鍙湁杞埌鐨勪竴鏂规垚鍔燂級
+[22m[39m[io] 杩炴帴 XpwfYnuoWbXJ8BCPAAAD
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m闄愭祦琛ュ厖 路 璧版涓庢搷浣?[2m > [22m[2m鎿嶄綔闄愭祦锛堟倲妫?鎻愬拰绛夛級锛氬閲?15锛岀獊鍙?20 娆?undo:offer 鍚庤Е鍙?RATE_LIMITED
+[22m[39m[io] 杩炴帴 vHkxQCduGCZyxGIDAAAC
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m闄愭祦琛ュ厖 路 璧版涓庢搷浣?[2m > [22m[2m鎿嶄綔闄愭祦锛堟倲妫?鎻愬拰绛夛級锛氬閲?15锛岀獊鍙?20 娆?undo:offer 鍚庤Е鍙?RATE_LIMITED
+[22m[39m[io] 杩炴帴 uBPA1PILQiILU9f1AAAD
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呬吉閫犵帺瀹惰韩浠借蛋妫?璁よ緭鍧囪鎷?[22m[39m[io] 鏂紑 XpwfYnuoWbXJ8BCPAAAD (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呬吉閫犵帺瀹惰韩浠借蛋妫?璁よ緭鍧囪鎷?[22m[39m[io] 鏂紑 p-VaYllpKd7Ya-NtAAAC (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m鐣稿舰鎴块棿鍙凤紙闀垮害/瀛楃闆嗭級琚嫆
+[22m[39m[io] 杩炴帴 DP0P3kDj2zlm1AoYAAAA
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呬吉閫犵帺瀹惰韩浠借蛋妫?璁よ緭鍧囪鎷?[22m[39m[io] 杩炴帴 -OrFChmc8z4sPO9aAAAE
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts
+[22m[39m[io] 鏂紑 vHkxQCduGCZyxGIDAAAC (server shutting down)
+[io] 鏂紑 uBPA1PILQiILU9f1AAAD (server shutting down)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m闈炲璞?缂哄瓧娈佃浇鑽蜂笉宕╂簝涓旇鎷?[22m[39m[io] 鏂紑 DP0P3kDj2zlm1AoYAAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呬吉閫犵帺瀹惰韩浠借蛋妫?璁よ緭鍧囪鎷?[22m[39m[io] 杩炴帴 c4CjBBdWDS6gfbxwAAAF
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m闈炲璞?缂哄瓧娈佃浇鑽蜂笉宕╂簝涓旇鎷?[22m[39m[io] 杩炴帴 NsMkfJkuKu-lhWeCAAAB
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呬吉閫犵帺瀹惰韩浠借蛋妫?璁よ緭鍧囪鎷?[22m[39m[io] 杩炴帴 0wuyPien2shX4CACAAAG
+
+ [32m鉁?[39m [30m[45m integration [49m[39m tests/integration/ratelimit-extra.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 112[2mms[22m[39m
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m浼氳瘽浠ょ墝璺ㄦ埧闂翠笉鍙敤
+[22m[39m[io] 鏂紑 0wuyPien2shX4CACAAAG (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m璧版杞借嵎瀛楁绫诲瀷浼€犺鎷掞紙from 浼犲璞★級
+[22m[39m[io] 鏂紑 NsMkfJkuKu-lhWeCAAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m浼氳瘽浠ょ墝璺ㄦ埧闂翠笉鍙敤
+[22m[39m[io] 鏂紑 c4CjBBdWDS6gfbxwAAAF (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m浼氳瘽浠ょ墝璺ㄦ埧闂翠笉鍙敤
+[22m[39m[io] 鏂紑 -OrFChmc8z4sPO9aAAAE (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m绗笁浜轰互瑙傛垬鑰呰韩浠藉姞鍏ワ紝涓嶈兘璧版
+[22m[39m[io] 鏂紑 s0ywyONFgKxxlh1-AAAC (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m绗笁浜轰互瑙傛垬鑰呰韩浠藉姞鍏ワ紝涓嶈兘璧版
+[22m[39m[io] 鏂紑 nwOaYwEvgdGNY1x_AAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m璧版杞借嵎瀛楁绫诲瀷浼€犺鎷掞紙from 浼犲璞★級
+[22m[39m[io] 杩炴帴 vfe6TehpyaIGXstFAAAC
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m浼氳瘽浠ょ墝璺ㄦ埧闂翠笉鍙敤
+[22m[39m[io] 杩炴帴 hHzqQpqon5JTbHamAAAH
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m绗笁浜轰互瑙傛垬鑰呰韩浠藉姞鍏ワ紝涓嶈兘璧版
+[22m[39m[io] 杩炴帴 EQIvVsj72-90zmqbAAAD
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m浼氳瘽浠ょ墝璺ㄦ埧闂翠笉鍙敤
+[22m[39m[io] 杩炴帴 nNwQOfNI40jk8bMjAAAI
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m绗笁浜轰互瑙傛垬鑰呰韩浠藉姞鍏ワ紝涓嶈兘璧版
+[22m[39m[io] 杩炴帴 HUu4Xzq0b4vGAm-lAAAE
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m璧版杞借嵎瀛楁绫诲瀷浼€犺鎷掞紙from 浼犲璞★級
+[22m[39m[io] 杩炴帴 IUMru8NmAQVPsK9LAAAD
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m浼氳瘽浠ょ墝璺ㄦ埧闂翠笉鍙敤
+[22m[39m[io] 杩炴帴 Rgo9p4AyXaNQF-ppAAAJ
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m绗笁浜轰互瑙傛垬鑰呰韩浠藉姞鍏ワ紝涓嶈兘璧版
+[22m[39m[io] 杩炴帴 vFJVzracZpbA4hVVAAAF
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呰繘鍑猴細spectators 璁℃暟绮剧‘褰掗浂
+[22m[39m[io] 鏂紑 Rgo9p4AyXaNQF-ppAAAJ (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m鑱婂ぉ杞借嵎娉ㄥ叆瀵硅薄/瓒呴暱灞炴€ц鎷?[22m[39m[io] 鏂紑 IUMru8NmAQVPsK9LAAAD (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m鎴块棿涓嶅瓨鍦ㄦ椂鍔犲叆澶辫触
+[22m[39m[io] 鏂紑 vFJVzracZpbA4hVVAAAF (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呰繘鍑猴細spectators 璁℃暟绮剧‘褰掗浂
+[22m[39m[io] 鏂紑 hHzqQpqon5JTbHamAAAH (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m鑱婂ぉ杞借嵎娉ㄥ叆瀵硅薄/瓒呴暱灞炴€ц鎷?[22m[39m[io] 鏂紑 vfe6TehpyaIGXstFAAAC (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m鎴块棿涓嶅瓨鍦ㄦ椂鍔犲叆澶辫触
+[22m[39m[io] 鏂紑 HUu4Xzq0b4vGAm-lAAAE (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呰繘鍑猴細spectators 璁℃暟绮剧‘褰掗浂
+[22m[39m[io] 杩炴帴 KaqR-MWYfbIteizXAAAK
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m鑱婂ぉ杞借嵎娉ㄥ叆瀵硅薄/瓒呴暱灞炴€ц鎷?[22m[39m[io] 杩炴帴 GiHboNfOSoOqo5kgAAAE
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m鎴块棿涓嶅瓨鍦ㄦ椂鍔犲叆澶辫触
+[22m[39m[io] 鏂紑 EQIvVsj72-90zmqbAAAD (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呰繘鍑猴細spectators 璁℃暟绮剧‘褰掗浂
+[22m[39m[io] 杩炴帴 y-n0GVZUTyG9cTfcAAAL
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m鑱婂ぉ杞借嵎娉ㄥ叆瀵硅薄/瓒呴暱灞炴€ц鎷?[22m[39m[io] 杩炴帴 eRqMBRloceKjcQ_HAAAF
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m鎴块棿涓嶅瓨鍦ㄦ椂鍔犲叆澶辫触
+[22m[39m[io] 杩炴帴 TIm0ytguPJMTy_dPAAAG
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呰繘鍑猴細spectators 璁℃暟绮剧‘褰掗浂
+[22m[39m[io] 杩炴帴 oB4juUoE7AD1uSXcAAAM
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m鍒涘缓鎴块棿鐨勬绉嶆灇涓惧鍊艰鎷?[22m[39m[io] 鏂紑 eRqMBRloceKjcQ_HAAAF (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m寤烘埧闄愭祦锛氬揩閫熻繛寤?3 涓埧闂达紝绗?3 涓鎷掔粷
+[22m[39m[io] 鏂紑 TIm0ytguPJMTy_dPAAAG (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呰繘鍑猴細spectators 璁℃暟绮剧‘褰掗浂
+[22m[39m[io] 杩炴帴 2A70zaxY9lGIYl4dAAAN
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m鍒涘缓鎴块棿鐨勬绉嶆灇涓惧鍊艰鎷?[22m[39m[io] 鏂紑 GiHboNfOSoOqo5kgAAAE (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鎴块棿涓庡腑浣?[2m > [22m[2m寤烘埧闄愭祦锛氬揩閫熻繛寤?3 涓埧闂达紝绗?3 涓鎷掔粷
+[22m[39m[io] 杩炴帴 8uqs-yFCZSRZcFsRAAAH
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呰繘鍑猴細spectators 璁℃暟绮剧‘褰掗浂
+[22m[39m[io] 鏂紑 oB4juUoE7AD1uSXcAAAM (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 杈撳叆鏍￠獙[2m > [22m[2m鍒涘缓鎴块棿鐨勬绉嶆灇涓惧鍊艰鎷?[22m[39m[io] 杩炴帴 hWh8sJyvcmwo1FigAAAG
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m鍚堟硶璧版锛氬弻鏂规敹鍒颁竴鑷村眬闈€佽璋辨纭€乺evision 閫掑
+[22m[39m[io] 鏂紑 8uqs-yFCZSRZcFsRAAAH (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m瑙傛垬鑰呰繘鍑猴細spectators 璁℃暟绮剧‘褰掗浂
+[22m[39m[io] 鏂紑 2A70zaxY9lGIYl4dAAAN (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts
+[22m[39m[io] 鏂紑 hWh8sJyvcmwo1FigAAAG (server shutting down)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m鍚堟硶璧版锛氬弻鏂规敹鍒颁竴鑷村眬闈€佽璋辨纭€乺evision 閫掑
+[22m[39m[io] 杩炴帴 1xkDiGNuX8y73TbNAAAI
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m鍚堟硶璧版锛氬弻鏂规敹鍒颁竴鑷村眬闈€佽璋辨纭€乺evision 閫掑
+[22m[39m[io] 杩炴帴 k91WnySaSgk8mE7CAAAJ
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m闈炴硶璧版琚嫆锛氬眬闈笉鍙?[22m[39m[io] 鏂紑 k91WnySaSgk8mE7CAAAJ (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m闈炴硶璧版琚嫆锛氬眬闈笉鍙?[22m[39m[io] 鏂紑 1xkDiGNuX8y73TbNAAAI (client namespace disconnect)
+
+ [32m鉁?[39m [30m[45m integration [49m[39m tests/integration/security.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 159[2mms[22m[39m
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m闈炴硶璧版琚嫆锛氬眬闈笉鍙?[22m[39m[io] 杩炴帴 oTpIM-gzFz6-phLtAAAK
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m闈炴硶璧版琚嫆锛氬眬闈笉鍙?[22m[39m[io] 杩炴帴 9Z03R7z3l1CAaXnhAAAL
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m杞闄愬埗锛氶粦鏂瑰厛璧拌鎷?[22m[39m[io] 鏂紑 9Z03R7z3l1CAaXnhAAAL (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m杞闄愬埗锛氶粦鏂瑰厛璧拌鎷?[22m[39m[io] 鏂紑 oTpIM-gzFz6-phLtAAAK (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m杞闄愬埗锛氶粦鏂瑰厛璧拌鎷?[22m[39m[io] 杩炴帴 -QKHUwuhdSLO-gsuAAAM
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m杞闄愬埗锛氶粦鏂瑰厛璧拌鎷?[22m[39m[io] 杩炴帴 PXcAzwU6VNBCN_XyAAAN
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m骞傜瓑锛氬悓涓€ requestId 閲嶅鎻愪氦涓嶄骇鐢熺浜屾
+[22m[39m[io] 鏂紑 PXcAzwU6VNBCN_XyAAAN (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m骞傜瓑锛氬悓涓€ requestId 閲嶅鎻愪氦涓嶄骇鐢熺浜屾
+[22m[39m[io] 鏂紑 -QKHUwuhdSLO-gsuAAAM (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m骞傜瓑锛氬悓涓€ requestId 閲嶅鎻愪氦涓嶄骇鐢熺浜屾
+[22m[39m[io] 杩炴帴 LCryI4Zt41OP1PsmAAAO
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m骞傜瓑锛氬悓涓€ requestId 閲嶅鎻愪氦涓嶄骇鐢熺浜屾
+[22m[39m[io] 杩炴帴 wHwvBk53w5NvFirgAAAP
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m杩囨湡 revision 琚嫆骞惰繑鍥炴渶鏂板眬闈?[22m[39m[io] 鏂紑 wHwvBk53w5NvFirgAAAP (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m杩囨湡 revision 琚嫆骞惰繑鍥炴渶鏂板眬闈?[22m[39m[io] 鏂紑 LCryI4Zt41OP1PsmAAAO (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m杩囨湡 revision 琚嫆骞惰繑鍥炴渶鏂板眬闈?[22m[39m[io] 杩炴帴 sPmK9ZMpLvo-qdEUAAAQ
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m杩囨湡 revision 琚嫆骞惰繑鍥炴渶鏂板眬闈?[22m[39m[io] 杩炴帴 E48LqG9c_jITpuPNAAAR
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m绌烘秷鎭笌瓒呴暱娑堟伅锛?200锛夎鎷?[22m[39m[io] 鏂紑 O6bPtzIaCK1X8lwYAAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m璧版硶鍙傛暟鏍￠獙锛氱暩褰㈣緭鍏ヨ鎷?[22m[39m[io] 鏂紑 E48LqG9c_jITpuPNAAAR (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m绌烘秷鎭笌瓒呴暱娑堟伅锛?200锛夎鎷?[22m[39m[io] 鏂紑 w7OSdc5Uw2oGk80pAAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m璧版硶鍙傛暟鏍￠獙锛氱暩褰㈣緭鍏ヨ鎷?[22m[39m[io] 鏂紑 sPmK9ZMpLvo-qdEUAAAQ (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m绌烘秷鎭笌瓒呴暱娑堟伅锛?200锛夎鎷?[22m[39m[io] 杩炴帴 nB00kgEF-uc3Fes4AAAC
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m璧版硶鍙傛暟鏍￠獙锛氱暩褰㈣緭鍏ヨ鎷?[22m[39m[io] 杩炴帴 KRIpuIXw4ZbZc0G2AAAS
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m绌烘秷鎭笌瓒呴暱娑堟伅锛?200锛夎鎷?[22m[39m[io] 杩炴帴 4Oqc-Vb9YFX9cscqAAAD
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璧版鍗忚锛堜腑鍥借薄妫嬶級[2m > [22m[2m璧版硶鍙傛暟鏍￠獙锛氱暩褰㈣緭鍏ヨ鎷?[22m[39m[io] 杩炴帴 mYMFybH3stTlzdg1AAAT
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m闄愰锛氱獊鍙?6 鏉″悗绗?7 鏉¤鎷?[22m[39m[io] 鏂紑 4Oqc-Vb9YFX9cscqAAAD (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鍥介檯璞℃璧版涓庡崌鍙?[2m > [22m[2m瀹屾暣灏忔祦绋嬶細e4 e5 Nf3锛孲AN 姝ｇ‘
+[22m[39m[io] 鏂紑 mYMFybH3stTlzdg1AAAT (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m闄愰锛氱獊鍙?6 鏉″悗绗?7 鏉¤鎷?[22m[39m[io] 鏂紑 nB00kgEF-uc3Fes4AAAC (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鍥介檯璞℃璧版涓庡崌鍙?[2m > [22m[2m瀹屾暣灏忔祦绋嬶細e4 e5 Nf3锛孲AN 姝ｇ‘
+[22m[39m[io] 鏂紑 KRIpuIXw4ZbZc0G2AAAS (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m闄愰锛氱獊鍙?6 鏉″悗绗?7 鏉¤鎷?[22m[39m[io] 杩炴帴 WOM35-jMZJzwaRKPAAAE
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鍥介檯璞℃璧版涓庡崌鍙?[2m > [22m[2m瀹屾暣灏忔祦绋嬶細e4 e5 Nf3锛孲AN 姝ｇ‘
+[22m[39m[io] 杩炴帴 4fBV99_2qae0GNBDAAAU
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m闄愰锛氱獊鍙?6 鏉″悗绗?7 鏉¤鎷?[22m[39m[io] 杩炴帴 Tsfp6-Pi6wiBhvnjAAAF
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鍥介檯璞℃璧版涓庡崌鍙?[2m > [22m[2m瀹屾暣灏忔祦绋嬶細e4 e5 Nf3锛孲AN 姝ｇ‘
+[22m[39m[io] 杩炴帴 7awPvP4Hoys-N3wIAAAV
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏂嚎閲嶈繛鍚庢敹鍒?chat:history 鎭㈠鍘嗗彶
+[22m[39m[io] 鏂紑 Tsfp6-Pi6wiBhvnjAAAF (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鍥介檯璞℃璧版涓庡崌鍙?[2m > [22m[2m鍗囧彉璧版硶甯?promotion 瀛楁骞舵牎楠?[22m[39m[io] 鏂紑 7awPvP4Hoys-N3wIAAAV (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏂嚎閲嶈繛鍚庢敹鍒?chat:history 鎭㈠鍘嗗彶
+[22m[39m[io] 鏂紑 WOM35-jMZJzwaRKPAAAE (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鍥介檯璞℃璧版涓庡崌鍙?[2m > [22m[2m鍗囧彉璧版硶甯?promotion 瀛楁骞舵牎楠?[22m[39m[io] 鏂紑 4fBV99_2qae0GNBDAAAU (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏂嚎閲嶈繛鍚庢敹鍒?chat:history 鎭㈠鍘嗗彶
+[22m[39m[io] 杩炴帴 ykNzieZzma0N5nCaAAAG
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鍥介檯璞℃璧版涓庡崌鍙?[2m > [22m[2m鍗囧彉璧版硶甯?promotion 瀛楁骞舵牎楠?[22m[39m[io] 杩炴帴 9yjbwd7W_RcI7wucAAAW
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鍥介檯璞℃璧版涓庡崌鍙?[2m > [22m[2m鍗囧彉璧版硶甯?promotion 瀛楁骞舵牎楠?[22m[39m[io] 杩炴帴 k2-pCFY6Bkctp4NpAAAX
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏂嚎閲嶈繛鍚庢敹鍒?chat:history 鎭㈠鍘嗗彶
+[22m[39m[io] 杩炴帴 2SJF4HeCWTUqHKO0AAAH
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏂嚎閲嶈繛鍚庢敹鍒?chat:history 鎭㈠鍘嗗彶
+[22m[39m[io] 鏂紑 2SJF4HeCWTUqHKO0AAAH (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏂嚎鍚庨噸杩烇細鍑护鐗屾仮澶嶅腑浣嶄笌灞€闈紝闄岀敓浜轰笉鑳芥姠搴?[22m[39m[io] 鏂紑 k2-pCFY6Bkctp4NpAAAX (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏂嚎鍚庨噸杩烇細鍑护鐗屾仮澶嶅腑浣嶄笌灞€闈紝闄岀敓浜轰笉鑳芥姠搴?[22m[39m[io] 鏂紑 9yjbwd7W_RcI7wucAAAW (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏂嚎鍚庨噸杩烇細鍑护鐗屾仮澶嶅腑浣嶄笌灞€闈紝闄岀敓浜轰笉鑳芥姠搴?[22m[39m[io] 杩炴帴 A91kjl1TuLccYK5cAAAY
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏂嚎鍚庨噸杩烇細鍑护鐗屾仮澶嶅腑浣嶄笌灞€闈紝闄岀敓浜轰笉鑳芥姠搴?[22m[39m[io] 杩炴帴 t0RNj6QTjJo8beltAAAZ
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏂嚎鍚庨噸杩烇細鍑护鐗屾仮澶嶅腑浣嶄笌灞€闈紝闄岀敓浜轰笉鑳芥姠搴?[22m[39m[io] 鏂紑 t0RNj6QTjJo8beltAAAZ (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍚屼竴浼氳瘽澶氭爣绛鹃〉閲嶈繛锛氬腑浣嶄笉閲嶅銆佸悗杩炶€呮帴绠″湪绾跨姸鎬?[22m[39m[io] 鏂紑 y-n0GVZUTyG9cTfcAAAL (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍚屼竴浼氳瘽澶氭爣绛鹃〉閲嶈繛锛氬腑浣嶄笉閲嶅銆佸悗杩炶€呮帴绠″湪绾跨姸鎬?[22m[39m[io] 鏂紑 KaqR-MWYfbIteizXAAAK (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍚屼竴浼氳瘽澶氭爣绛鹃〉閲嶈繛锛氬腑浣嶄笉閲嶅銆佸悗杩炶€呮帴绠″湪绾跨姸鎬?[22m[39m[io] 杩炴帴 6JnBXJemXe_usdoEAAAO
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍚屼竴浼氳瘽澶氭爣绛鹃〉閲嶈繛锛氬腑浣嶄笉閲嶅銆佸悗杩炶€呮帴绠″湪绾跨姸鎬?[22m[39m[io] 杩炴帴 mEZ3kkt-9722pKiOAAAP
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍚屼竴浼氳瘽澶氭爣绛鹃〉閲嶈繛锛氬腑浣嶄笉閲嶅銆佸悗杩炶€呮帴绠″湪绾跨姸鎬?[22m[39m[io] 杩炴帴 2KOafKcCVNx3_ax7AAAQ
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m骞跺彂涓庡師瀛愭€?[2m > [22m[2m鍚屼竴浼氳瘽澶氭爣绛鹃〉閲嶈繛锛氬腑浣嶄笉閲嶅銆佸悗杩炶€呮帴绠″湪绾跨姸鎬?[22m[39m[io] 鏂紑 mEZ3kkt-9722pKiOAAAP (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏂嚎閲嶈繛鍚庢敹鍒?chat:history 鎭㈠鍘嗗彶
+[22m[39m[io] 杩炴帴 KHjdSdjErRfMSBahAAAI
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏂嚎鍚庨噸杩烇細鍑护鐗屾仮澶嶅腑浣嶄笌灞€闈紝闄岀敓浜轰笉鑳芥姠搴?[22m[39m[io] 杩炴帴 cwdBdt53UkCDcXjAAAAa
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏂嚎鍚庨噸杩烇細鍑护鐗屾仮澶嶅腑浣嶄笌灞€闈紝闄岀敓浜轰笉鑳芥姠搴?[22m[39m[io] 鏂紑 cwdBdt53UkCDcXjAAAAa (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏂嚎鍚庨噸杩烇細鍑护鐗屾仮澶嶅腑浣嶄笌灞€闈紝闄岀敓浜轰笉鑳芥姠搴?[22m[39m[io] 杩炴帴 9DS2guEY-SpmqUnJAAAb
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m浠ょ墝閿欒鏃?rejoin 澶辫触
+[22m[39m[io] 鏂紑 9DS2guEY-SpmqUnJAAAb (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m浠ょ墝閿欒鏃?rejoin 澶辫触
+[22m[39m[io] 鏂紑 A91kjl1TuLccYK5cAAAY (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m浠ょ墝閿欒鏃?rejoin 澶辫触
+[22m[39m[io] 杩炴帴 edad3Wfo6C9F8uCJAAAc
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m浠ょ墝閿欒鏃?rejoin 澶辫触
+[22m[39m[io] 杩炴帴 fddNXp2oVyvr3-pYAAAd
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏈嶅姟閲嶅惎鍚庢埧闂淬€佹璋变笌浼氳瘽鍧囨仮澶?[22m[39m[io] 鏂紑 fddNXp2oVyvr3-pYAAAd (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏈嶅姟閲嶅惎鍚庢埧闂淬€佹璋变笌浼氳瘽鍧囨仮澶?[22m[39m[io] 鏂紑 edad3Wfo6C9F8uCJAAAc (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏈嶅姟閲嶅惎鍚庢埧闂淬€佹璋变笌浼氳瘽鍧囨仮澶?[22m[39m[io] 杩炴帴 QLkyTtJlSqFW8NrrAAAe
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏈嶅姟閲嶅惎鍚庢埧闂淬€佹璋变笌浼氳瘽鍧囨仮澶?[22m[39m[io] 杩炴帴 ztMb5p3JACwZ4I3YAAAf
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏈嶅姟閲嶅惎鍚庢埧闂淬€佹璋变笌浼氳瘽鍧囨仮澶?[22m[39m[io] 鏂紑 QLkyTtJlSqFW8NrrAAAe (server shutting down)
+[io] 鏂紑 ztMb5p3JACwZ4I3YAAAf (server shutting down)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏈嶅姟閲嶅惎鍚庢埧闂淬€佹璋变笌浼氳瘽鍧囨仮澶?[22m[39m[io] 杩炴帴 HYMIz7fe8F00MtENAAAg
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 鏂嚎閲嶈繛涓庢寔涔呭寲[2m > [22m[2m鏈嶅姟閲嶅惎鍚庢埧闂淬€佹璋变笌浼氳瘽鍧囨仮澶?[22m[39m[io] 鏂紑 HYMIz7fe8F00MtENAAAg (server shutting down)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m璁よ緭锛氬鏂硅儨鍒╋紝瀵瑰眬缁撴潫锛屼笉鑳藉啀璧版
+[22m[39m[io] 杩炴帴 l6J4kqRQW7v9TkDPAAAh
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m璁よ緭锛氬鏂硅儨鍒╋紝瀵瑰眬缁撴潫锛屼笉鑳藉啀璧版
+[22m[39m[io] 杩炴帴 xVt-YFqU6-14ClBgAAAi
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鎻愬拰 鈫?瀵规柟鍚屾剰 鈫?鍜屾
+[22m[39m[io] 鏂紑 xVt-YFqU6-14ClBgAAAi (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鎻愬拰 鈫?瀵规柟鍚屾剰 鈫?鍜屾
+[22m[39m[io] 鏂紑 l6J4kqRQW7v9TkDPAAAh (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鎻愬拰 鈫?瀵规柟鍚屾剰 鈫?鍜屾
+[22m[39m[io] 杩炴帴 IkQocQnZLPgI6cw7AAAj
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鎻愬拰 鈫?瀵规柟鍚屾剰 鈫?鍜屾
+[22m[39m[io] 杩炴帴 yXuA09aKBUNDgZXDAAAk
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鎮旀锛氳姹?鈫?鍚屾剰 鈫?鍥為€€涓ゆ骞舵仮澶嶅灞€
+[22m[39m[io] 鏂紑 yXuA09aKBUNDgZXDAAAk (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鎮旀锛氳姹?鈫?鍚屾剰 鈫?鍥為€€涓ゆ骞舵仮澶嶅灞€
+[22m[39m[io] 鏂紑 IkQocQnZLPgI6cw7AAAj (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鎮旀锛氳姹?鈫?鍚屾剰 鈫?鍥為€€涓ゆ骞舵仮澶嶅灞€
+[22m[39m[io] 杩炴帴 rUnjphYbwDONfVxIAAAl
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鎮旀锛氳姹?鈫?鍚屾剰 鈫?鍥為€€涓ゆ骞舵仮澶嶅灞€
+[22m[39m[io] 杩炴帴 M_axMlE5L2piJz5RAAAm
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m閲嶅紑锛氬弻鏂瑰悓鎰忓悗鍥炲埌鍒濆灞€闈?[22m[39m[io] 鏂紑 M_axMlE5L2piJz5RAAAm (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m閲嶅紑锛氬弻鏂瑰悓鎰忓悗鍥炲埌鍒濆灞€闈?[22m[39m[io] 鏂紑 rUnjphYbwDONfVxIAAAl (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m閲嶅紑锛氬弻鏂瑰悓鎰忓悗鍥炲埌鍒濆灞€闈?[22m[39m[io] 杩炴帴 vdxnT-FtNa4oLv0RAAAn
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m閲嶅紑锛氬弻鏂瑰悓鎰忓悗鍥炲埌鍒濆灞€闈?[22m[39m[io] 杩炴帴 lKFjQr_h2pd_S7GVAAAo
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鑱婂ぉ锛氬弻鏂规敹鍒版秷鎭紝鍐呭琚牎楠?[22m[39m[io] 鏂紑 lKFjQr_h2pd_S7GVAAAo (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鑱婂ぉ锛氬弻鏂规敹鍒版秷鎭紝鍐呭琚牎楠?[22m[39m[io] 鏂紑 vdxnT-FtNa4oLv0RAAAn (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鑱婂ぉ锛氬弻鏂规敹鍒版秷鎭紝鍐呭琚牎楠?[22m[39m[io] 杩炴帴 SapY66E4cPoqrIHcAAAp
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m鑱旀満 路 璁よ緭 / 鎻愬拰 / 鎮旀 / 閲嶅紑[2m > [22m[2m鑱婂ぉ锛氬弻鏂规敹鍒版秷鎭紝鍐呭琚牎楠?[22m[39m[io] 杩炴帴 V87ltVa6WkaiJHugAAAq
+
+[90mstdout[2m | tests/integration/rooms.test.ts
+[22m[39m[io] 鏂紑 SapY66E4cPoqrIHcAAAp (server shutting down)
+[io] 鏂紑 V87ltVa6WkaiJHugAAAq (server shutting down)
+
+ [32m鉁?[39m [30m[45m integration [49m[39m tests/integration/rooms.test.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 595[2mms[22m[39m
+[90mstdout[2m | tests/integration/concurrency.test.ts
+[22m[39m[io] 鏂紑 nNwQOfNI40jk8bMjAAAI (server shutting down)
+[io] 鏂紑 6JnBXJemXe_usdoEAAAO (server shutting down)
+[io] 鏂紑 2KOafKcCVNx3_ax7AAAQ (server shutting down)
+
+ [32m鉁?[39m [30m[45m integration [49m[39m tests/integration/concurrency.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 663[2mms[22m[39m
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏈嶅姟鍣ㄩ噸鍚悗鑱婂ぉ鍘嗗彶浠?SQLite 鎭㈠骞跺彲涓嬪彂
+[22m[39m[io] 鏂紑 KHjdSdjErRfMSBahAAAI (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏈嶅姟鍣ㄩ噸鍚悗鑱婂ぉ鍘嗗彶浠?SQLite 鎭㈠骞跺彲涓嬪彂
+[22m[39m[io] 鏂紑 ykNzieZzma0N5nCaAAAG (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏈嶅姟鍣ㄩ噸鍚悗鑱婂ぉ鍘嗗彶浠?SQLite 鎭㈠骞跺彲涓嬪彂
+[22m[39m[io] 杩炴帴 tB8q-IATGYxg7bBwAAAJ
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏈嶅姟鍣ㄩ噸鍚悗鑱婂ぉ鍘嗗彶浠?SQLite 鎭㈠骞跺彲涓嬪彂
+[22m[39m[io] 杩炴帴 jvehogrsa7v98gYjAAAK
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏈嶅姟鍣ㄩ噸鍚悗鑱婂ぉ鍘嗗彶浠?SQLite 鎭㈠骞跺彲涓嬪彂
+[22m[39m[io] 鏂紑 tB8q-IATGYxg7bBwAAAJ (server shutting down)
+[io] 鏂紑 jvehogrsa7v98gYjAAAK (server shutting down)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏈嶅姟鍣ㄩ噸鍚悗鑱婂ぉ鍘嗗彶浠?SQLite 鎭㈠骞跺彲涓嬪彂
+[22m[39m[io] 杩炴帴 5BvzMk09us0xw_qFAAAL
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m鑱婂ぉ[2m > [22m[2m鏈嶅姟鍣ㄩ噸鍚悗鑱婂ぉ鍘嗗彶浠?SQLite 鎭㈠骞跺彲涓嬪彂
+[22m[39m[io] 鏂紑 5BvzMk09us0xw_qFAAAL (server shutting down)
+
+ [32m鉁?[39m [30m[45m integration [49m[39m tests/integration/chat.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 853[2mms[22m[39m
+   [33m[2m鉁?[22m[39m 鑱婂ぉ[2m > [22m鏂嚎閲嶈繛鍚庢敹鍒?chat:history 鎭㈠鍘嗗彶 [33m 383[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m      Tests [22m [1m[32m148 passed[39m[22m[90m (148)[39m
+[2m   Start at [22m 21:13:18
+[2m   Duration [22m 2.61s[2m (transform 707ms, setup 0ms, collect 4.31s, tests 3.10s, environment 1ms, prepare 1.14s)[22m
+

@@ -1,0 +1,77 @@
+{
+  "durationSec": 301,
+  "cycles": 287,
+  "animationRuns": 1148,
+  "verifiedMoves": 1148,
+  "failedCycles": 0,
+  "frameSamples": 49432,
+  "avgIntervalMs": 6.08,
+  "avgFps": 164.4,
+  "medianFrameMs": 6.1,
+  "p95FrameMs": 6.2,
+  "p99FrameMs": 6.2,
+  "longFrames": 9,
+  "over16_67ms": 16,
+  "over8_33ms": 63,
+  "memory": [
+    {
+      "t": 31,
+      "heapMB": 9.2,
+      "domNodes": 1055
+    },
+    {
+      "t": 61,
+      "heapMB": 8.4,
+      "domNodes": 1055
+    },
+    {
+      "t": 90,
+      "heapMB": 9.2,
+      "domNodes": 1055
+    },
+    {
+      "t": 121,
+      "heapMB": 12.3,
+      "domNodes": 1055
+    },
+    {
+      "t": 151,
+      "heapMB": 15.5,
+      "domNodes": 1055
+    },
+    {
+      "t": 180,
+      "heapMB": 9.6,
+      "domNodes": 1057
+    },
+    {
+      "t": 211,
+      "heapMB": 15.1,
+      "domNodes": 972
+    },
+    {
+      "t": 240,
+      "heapMB": 12.3,
+      "domNodes": 955
+    },
+    {
+      "t": 271,
+      "heapMB": 12.6,
+      "domNodes": 955
+    },
+    {
+      "t": 301,
+      "heapMB": 14.7,
+      "domNodes": 955
+    }
+  ],
+  "heapGrowthMB": 5.5,
+  "domNodeGrowth": -100,
+  "finalIntegrity": {
+    "pieces": 32,
+    "fly": 0,
+    "cap": 0,
+    "h7": 1,
+    "h2": 1
+  }
+}

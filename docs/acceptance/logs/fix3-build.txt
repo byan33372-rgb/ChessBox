@@ -1,0 +1,21 @@
+﻿
+> dual-chess-online@1.0.0 build
+> npm run build:client && npm run build:server
+
+
+> dual-chess-online@1.0.0 build:client
+> vite build
+
+[36mvite v7.3.7 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 80 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist-client/[22m[32mindex.html                 [39m[1m[2m  0.98 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+[2mdist-client/[22m[35massets/index-D5tzqaqW.css  [39m[1m[2m 26.91 kB[22m[1m[22m[2m │ gzip:   6.66 kB[22m
+[2mdist-client/[22m[36massets/index-DrgBxrHq.js   [39m[1m[2m373.35 kB[22m[1m[22m[2m │ gzip: 118.49 kB[22m
+[32m✓ built in 763ms[39m
+
+> dual-chess-online@1.0.0 build:server
+> tsc -p tsconfig.server.json
+

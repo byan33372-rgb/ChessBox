@@ -1,0 +1,11 @@
+﻿state: {"vis":"visible","focus":true}
+idle rAF fps: 110.3 max gap: 309.1
+ply h7->e7: fly=true gone=true dt=230ms settleEvents=1
+ply h2->e2: fly=true gone=true dt=211ms settleEvents=2
+ply e7->h7: fly=true gone=true dt=213ms settleEvents=3
+ply e2->h2: fly=true gone=true dt=217ms settleEvents=4
+ply h7->e7: fly=true gone=true dt=198ms settleEvents=5
+ply h2->e2: fly=true gone=true dt=209ms settleEvents=6
+ply e7->h7: fly=true gone=true dt=214ms settleEvents=7
+ply e2->h2: fly=true gone=true dt=212ms settleEvents=8
+state end: {"vis":"visible","focus":true}

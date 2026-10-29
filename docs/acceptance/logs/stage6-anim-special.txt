@@ -1,0 +1,8 @@
+﻿PASS SPEC-X1 马腿被蹩：g7 非目标、不发送、无动画 — ring=1 moves=2 fly=false
+PASS SPEC-X2 马腿让开后马跳成功：动画+落位 g7=红马 — fly=true g7马=1 h9空=1
+PASS SPEC-C1 将军指示：e8 黑王格 in-check（Qxe5+ 服务端确认） — in-check=e8 黑王
+PASS SPEC-C2 挡将解除将军：e7=黑象、无 in-check — check=0 e7象=1
+PASS SPEC-C3 愚人杀：Qh4# 动画+终局横幅（将死）+终局锁 — fly=true banner=黑方获胜 · 将死 h4后=1 moves=4
+PASS SPEC-C4 过路兵：captured 层出现、d6=白兵、d5 清空 — cap=true d6兵=1 d5空=1 moves=5
+
+== 特殊局面验证: 6/6 PASS ==

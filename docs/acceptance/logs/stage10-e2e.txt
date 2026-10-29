@@ -1,0 +1,12 @@
+﻿
+Running 7 tests using 1 worker
+
+  ok 1 tests\e2e\app.spec.ts:37:7 › 桌面端双人中国象棋对局 › 创建 → 邀请 → 对弈 → 同步 → 复盘 → 重连 (1.5s)
+  ok 2 tests\e2e\app.spec.ts:100:7 › 桌面端双人中国象棋对局 › 非法走棋请求不改变局面 (892ms)
+  ok 3 tests\e2e\app.spec.ts:123:7 › 国际象棋端到端 › e4 e5 Nf3 双端同步，SAN 正确 (1.1s)
+  ok 4 tests\e2e\app.spec.ts:152:7 › 国际象棋端到端 › 升变对话框：选择后完成升变 (1.4s)
+  ok 5 tests\e2e\app.spec.ts:191:7 › 移动端窄屏 › 375×667 视口可完成走棋，棋盘可操作 (896ms)
+  ok 6 tests\e2e\app.spec.ts:223:7 › 导出功能 › 国际象棋导出 PGN 下载，内容含走法与结果 (1.2s)
+  ok 7 tests\e2e\app.spec.ts:257:7 › 导出功能 › 中国象棋导出中文棋谱与 JSON (1.1s)
+
+  7 passed (10.5s)

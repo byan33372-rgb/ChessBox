@@ -1,0 +1,8 @@
+﻿move h7->e7: OK
+move h0->g2: OK
+move h9->g7: OK
+move b0->c2: OK
+after 开局: e7= null h7= h7 红炮 banner= false
+after 当前: e7= e7 红炮 h7= null banner= false
+move e7->e6: FAIL
+after move: e6= e6 红兵 moves= 4

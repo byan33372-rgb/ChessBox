@@ -1,0 +1,6 @@
+﻿room url: http://127.0.0.1:3001/r/jje5vyv5p6 topbar: ←帥中国象棋jje5vyv5p6已连接
+A topbar: ←帥中国象棋jje5vyv5p6已连接
+A player panels: ["听雨黑方","飞雪红方思考中"]
+A: {"seatText":"你的身份：红方","spectatorHint":false,"actionVisible":true,"actionDisabled":[false],"panels":["听雨黑方","飞雪红方思考中"]}
+C(third): {"seatText":"你的身份：观战","spectatorHint":true,"actionVisible":false,"actionDisabled":[],"panels":["听雨黑方","飞雪红方思考中"]}
+C url: http://127.0.0.1:3001/r/jje5vyv5p6

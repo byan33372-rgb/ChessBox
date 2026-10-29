@@ -1,0 +1,30 @@
+﻿[0.6s] start：duration=300s
+[11.2s] cycles=10 verified=40 failed=0 elapsed=11s
+[21.8s] cycles=20 verified=80 failed=0 elapsed=21s
+[32.3s] cycles=30 verified=120 failed=0 elapsed=32s
+[42.8s] cycles=40 verified=160 failed=0 elapsed=42s
+[53.2s] cycles=50 verified=200 failed=0 elapsed=53s
+[63.8s] cycles=60 verified=240 failed=0 elapsed=63s
+[74.2s] cycles=70 verified=280 failed=0 elapsed=74s
+[84.6s] cycles=80 verified=320 failed=0 elapsed=84s
+[95.1s] cycles=90 verified=360 failed=0 elapsed=94s
+[105.5s] cycles=100 verified=400 failed=0 elapsed=105s
+[115.9s] cycles=110 verified=440 failed=0 elapsed=115s
+[126.4s] cycles=120 verified=480 failed=0 elapsed=126s
+[136.9s] cycles=130 verified=520 failed=0 elapsed=136s
+[147.3s] cycles=140 verified=560 failed=0 elapsed=147s
+[157.7s] cycles=150 verified=600 failed=0 elapsed=157s
+[168.2s] cycles=160 verified=640 failed=0 elapsed=168s
+[178.7s] cycles=170 verified=680 failed=0 elapsed=178s
+[189.3s] cycles=180 verified=720 failed=0 elapsed=189s
+[199.7s] cycles=190 verified=760 failed=0 elapsed=199s
+[210.2s] cycles=200 verified=800 failed=0 elapsed=210s
+[220.7s] cycles=210 verified=840 failed=0 elapsed=220s
+[231.3s] cycles=220 verified=880 failed=0 elapsed=231s
+[241.8s] cycles=230 verified=920 failed=0 elapsed=241s
+[252.3s] cycles=240 verified=960 failed=0 elapsed=252s
+[262.8s] cycles=250 verified=1000 failed=0 elapsed=262s
+[273.2s] cycles=260 verified=1040 failed=0 elapsed=273s
+[283.6s] cycles=270 verified=1080 failed=0 elapsed=283s
+[294.1s] cycles=280 verified=1120 failed=0 elapsed=293s
+O 5min: cycles=287 verified=1148 failedCycles=0 frames=49432 avg=164.4fps p95=6.2ms p99=6.2ms heapΔ=5.5MB domΔ=-100 integrity={"pieces":32,"fly":0,"cap":0,"h7":1,"h2":1}

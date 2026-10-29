@@ -1,0 +1,11 @@
+﻿✅ SEC-01 PASS: 敏感路径全部 404（含 data 目录与日志文件） — /.env:404 /package.json:404 /data/app.db:404 /node_modules:404 /src/server/index.ts:404 /data:404 /logs/server.log:404
+✅ SEC-02 PASS: SPA 路由 / 与 /r/<id> 均 200 — /:200 /r/:200
+✅ SEC-03 PASS: X-Content-Type-Options: nosniff — nosniff
+✅ SEC-04 PASS: X-Frame-Options: SAMEORIGIN — SAMEORIGIN
+✅ SEC-05 PASS: Referrer-Policy: no-referrer — no-referrer
+✅ SEC-06 PASS: Permissions-Policy 含 camera=() — camera=(), microphone=(), geolocation=()
+✅ SEC-07 PASS: CSP 含 default-src self 且无 unsafe-eval — default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src
+✅ SEC-08 PASS: 健康检查 /healthz 200
+✅ SEC-09 PASS: /api/* 404 为 JSON 且不泄露内部信息 — {"ok":false,"error":"not found"}
+────────────────────────────────
+SEC 实时探测：9/9 项通过

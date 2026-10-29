@@ -210,9 +210,10 @@ export function XiangqiBoard({ fen, orientation, selected, targets, lastMove, ch
     !!fly && (fly.to === sq || (!!fly.rook && fly.rook.to === sq));
 
   return (
-    <div className="board xq-board" role="grid" aria-label="中国象棋棋盘">
-      <BoardSvg />
-      <div className="board-overlay">
+    <div className="xq-wrap">
+      <div className="board xq-board" role="grid" aria-label="中国象棋棋盘">
+        <BoardSvg />
+        <div className="board-overlay">
         {lastMove && (
           <>
             <div className="xq-last" style={posStyle(lastMove.from, orientation)} />
@@ -289,22 +290,27 @@ export function XiangqiBoard({ fen, orientation, selected, targets, lastMove, ch
             />
           );
         })}
-        {/* 坐标（随视角翻转）：底部文件字母 + 右侧行号 */}
-        {FILES.split('').map((f) => {
-          const bottomRow = orientation === 'red' ? 9 : 0;
-          const { x } = displayXY(f + String(bottomRow), orientation);
-          return (
-            <span key={`cf-${f}`} className="xq-coord" style={{ left: `${(x / W) * 100}%`, top: `${((H - MARGIN / 2) / H) * 100}%` }}>
-              {f}
-            </span>
-          );
-        })}
+        {/* 坐标标尺：底部列字母 + 右侧行号，均置于棋盘外侧（盘内会被边线棋子遮挡，CN-VIS-007） */}
+      </div>
+    </div>
+      <div className="xq-ranks" aria-hidden="true">
         {Array.from({ length: 10 }, (_, r) => {
           const rightCol = orientation === 'red' ? 8 : 0;
           const { y } = displayXY(FILES[rightCol] + String(r), orientation);
           return (
-            <span key={`cr-${r}`} className="xq-coord" style={{ left: `${((W - MARGIN / 2) / W) * 100}%`, top: `${(y / H) * 100}%` }}>
+            <span key={`rr-${r}`} className="xq-rank" style={{ top: `${(y / H) * 100}%` }}>
               {r}
+            </span>
+          );
+        })}
+      </div>
+      <div className="xq-files" aria-hidden="true">
+        {FILES.split('').map((f) => {
+          const bottomRow = orientation === 'red' ? 9 : 0;
+          const { x } = displayXY(f + String(bottomRow), orientation);
+          return (
+            <span key={`ff-${f}`} className="xq-file" style={{ left: `${(x / W) * 100}%` }}>
+              {f}
             </span>
           );
         })}

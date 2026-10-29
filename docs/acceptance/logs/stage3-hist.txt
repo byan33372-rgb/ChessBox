@@ -1,0 +1,17 @@
+﻿PASS HIST-001 每步一条记录（4 手=4 条且双方一致） — ["炮二平五","马8进7","马二进三","马2进3"]
+PASS HIST-002 中象棋谱双列对齐（2 行，红先黑后） — ["1.炮二平五马8进7","2.马二进三马2进3"]
+PASS HIST-004 开局/上一步/下一步/当前导航位置正确 — start=h7 红炮,ply1=e7 红炮,end=g7 红马/g2 黑马
+PASS HIST-006 浏览历史期间对方棋谱/局面不变 — B moves=4
+PASS HIST-007 返回当前后可继续对弈（6 手双端一致） — ["兵五进一","卒7进1"]
+PASS HIST-005 快速连续导航后无飞行残影 — {"fly":0,"pieces":32}
+PASS HIST-008u FEN 复制成功并有 toast — FEN 已复制
+PASS HIST-011 刷新后棋谱与 FEN 一致 — 6 moves, fenMatch=true
+PASS HIST-009 中象 JSON 明确自定义格式/非标准声明/终局一致 — file=xiangqi-7dqq7z4rj5.json, format=chessbox-xiangqi-v1, moves=6, lastFenMatch=true
+PASS HIST-009b 中文棋谱导出（纵线记谱、红黑分行） — lines=7
+PASS HIST-003 国象棋谱 SAN 记法（e4/e5/Nf3） — ["e4","e5","Nf3"]
+PASS HIST-008 FEN 导出可被 chess.js 解析且局面一致 — fen=rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP...
+PASS HIST-008b PGN 导出可回放/含对局信息 — file=chess-zuwncsaqf2.pgn, replayed=3 moves
+PASS HIST-010 剪贴板权限被拒时有失败反馈且不崩溃 — 复制失败
+PASS HIST-012 空棋谱导航禁用且导出安全（moves=[]） — {"firstDisabled":true,"prevDisabled":true,"nextDisabled":true,"rows":0}
+
+SUMMARY: 15/15 PASS

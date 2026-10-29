@@ -1,0 +1,18 @@
+﻿
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/projects/chessbox[39m
+
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · PGN[2m > [22m空棋谱：只有头部元数据，无走法，Result=*[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · PGN[2m > [22m走法顺序与 SAN 正确，含王车易位与吃子[32m 24[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · PGN[2m > [22m吃过路兵的 PGN：exd6 走法记录正确[32m 8[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · PGN[2m > [22mPGN 可完整回放且终局面与引擎一致[32m 11[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · PGN[2m > [22m结果映射：白胜 1-0 / 黑胜 0-1 / 协议和 1/2-1/2[32m 11[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · PGN[2m > [22m玩家名含引号/反斜杠不会破坏 PGN 结构（净化为可解析文本）[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · 中文棋谱与 JSON[2m > [22m两列对齐：红黑各半，红先行[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · 中文棋谱与 JSON[2m > [22m空棋谱文本可用[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts[2m > [22m导出 · 中文棋谱与 JSON[2m > [22mJSON：本项目格式声明 + 逐步记录完整[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m9 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 19:53:59
+[2m   Duration [22m 1.08s[2m (transform 44ms, setup 0ms, collect 69ms, tests 62ms, environment 0ms, prepare 82ms)[22m
+

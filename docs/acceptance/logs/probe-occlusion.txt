@@ -1,0 +1,1 @@
+﻿occluded-window rAF: {"n":399,"fps":165,"median":6.1,"p95":6.2,"max":6.2}

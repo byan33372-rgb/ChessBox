@@ -1,0 +1,93 @@
+﻿
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/projects/chessbox[39m
+
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 基础[2m > [22m初始局面 20 个合法走法，白先[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 基础[2m > [22m拒绝轮次外的走法（白回合走黑子）[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 基础[2m > [22m拒绝非法走法且状态不变[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 基础[2m > [22mapplyMove 返回 SAN、吃子与将军标记[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 王车易位[2m > [22m白方双翼易位可用，SAN 为 O-O / O-O-O[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 王车易位[2m > [22m易位路径受攻击时被禁止（f1 被控制 → 不能短易位）[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 吃过路兵[2m > [22m兵刚双步时可吃过路兵[32m 10[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 吃过路兵[2m > [22m吃过路兵窗口过期后不可吃[32m 7[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 升变[2m > [22m升变走法有 4 个升变选项[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 升变[2m > [22m升变为后并生成 SAN[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 升变[2m > [22m拒绝非法升变子[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 终局判定[2m > [22m scholar 将杀：将死[32m 13[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 终局判定[2m > [22m逼和（无子可动且未被将军）[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 终局判定[2m > [22m三次重复局面判和[32m 7[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 终局判定[2m > [22m子力不足判和（单王 vs 单王）[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 终局判定[2m > [22m50 回合无吃子判和[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 终局判定[2m > [22m将军时 checkedKingSquare 指向被将的王[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts[2m > [22m国象适配器 · 棋盘网格[2m > [22mboardGrid 行 0 为第 8 横线（黑方底线）[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 兵[2m > [22m首步可双格，之后只能单格[32m 13[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 兵[2m > [22m兵只能斜向吃子，不能斜走到空格[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 兵[2m > [22m兵不能向前吃子[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 吃过路兵[2m > [22m对方刚双步时可吃过路兵，FEN 记录 ep 目标格[32m 12[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 吃过路兵[2m > [22m再走一着后过期[32m 9[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 吃过路兵[2m > [22m不能吃过路兵的"假目标"（对方单步推进）[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 吃过路兵[2m > [22m吃过路兵若使己王暴露（牵制）→ 非法；普通兵进不受此限[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 王车易位[2m > [22m双侧易位后 FEN 反映车王新位与权利清空[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 王车易位[2m > [22m王被将时不可易位[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 王车易位[2m > [22m经过格/目的格受攻时不可易位（f1/g1 被控制）[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 王车易位[2m > [22m己方棋子阻挡易位路径 → 易位非法（b1 阻长易位、f1 阻短易位）[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 王车易位[2m > [22m车被攻击不影响易位资格（仅王与王路径受攻才禁）[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 王车易位[2m > [22m车动过或王动过 → 易位权丧失（FEN 同步）[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 升变[2m > [22m四种升变均合法且 FEN/SAN 正确[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 升变[2m > [22m不带 promotion 的升变走法被拒[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 终局与限着[2m > [22m将死（后兵杀）[32m 14[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 终局与限着[2m > [22m逼和[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 终局与限着[2m > [22m50 回合：半回合计数达 100 判和；吃子重置[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 终局与限着[2m > [22m75 回合规则：本项目沿用 chess.js 的 50 回合自动判和（半回合≥100），故 75 回合不会先触发——语义如实记录[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 终局与限着[2m > [22m三次重复与子力不足[32m 8[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 终局与限着[2m > [22m三次重复的判和时点：一个周期（4 步）后不判，两个周期（P0 第三次出现）才判[32m 10[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 终局与限着[2m > [22m子力不足标准逐例：与 FIDE 一致（chess.js 语义）[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 初始局面[2m > [22m初始 FEN 可解析并还原，红先行[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 初始局面[2m > [22m开局红方合法走法 = 44，各兵种数量正确[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 初始局面[2m > [22m开局炮无炮架不能隔空吃 b2，但隔 b2 炮架可吃 b0[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 马腿[2m > [22m空盘马 8 个走法[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 马腿[2m > [22me6 有子蹩马腿，向前的两格被封[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 象眼与过河[2m > [22m塞象眼：b8 有黑子则相不能走 a7[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 象眼与过河[2m > [22m相不能过河[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 炮架[2m > [22m炮需恰好一个炮架才能吃子[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 炮架[2m > [22m两个炮架时不能吃最远的子（但可隔一子吃第二子）[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 兵卒[2m > [22m红兵未过河只能直进[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 兵卒[2m > [22m红兵过河后可横走、不能后退[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 兵卒[2m > [22m黑卒过河后可横走[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 兵卒[2m > [22m红兵到底线只能横走，且不可吃将[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 九宫[2m > [22m仕只能在九宫内斜走[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 九宫[2m > [22m仕在宫边只能进中路（d8 仕唯一走法 e7）[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 九宫[2m > [22m帅九宫直走 + 照面约束（f9 与 f0 黑将同列，被禁止）[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 将帅照面[2m > [22m挡子沿原列移动（仍在中途）合法，离开此列即照面非法[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 将帅照面[2m > [22mkingsFacing 工具正确[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 将军与应将[2m > [22m被将军时必须应将：其余走法全部非法[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 将军与应将[2m > [22m其他棋子不解将时其所有走法均非法[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 将死与困毙[2m > [22m将死：黑将 e0 被红车 a0 将军、e8 车封线[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 将死与困毙[2m > [22m困毙：无子可动且未被将军，判负[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 将死与困毙[2m > [22m将死局面不再接受走法[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 重复局面与长将[2m > [22m三次重复局面且无长将 → 判和[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 重复局面与长将[2m > [22m长将方三次重复后判负[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 子力不足与限着[2m > [22m双方仅剩将/士/象时自动判和[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 子力不足与限着[2m > [22m120 步（60 回合）无吃子判和[32m 78[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 记谱与 FEN[2m > [22m开局常用记谱正确[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 记谱与 FEN[2m > [22mapplyMove 返回中文记谱与吃子信息[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 记谱与 FEN[2m > [22m前后消歧：同线两车用前/后[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 记谱与 FEN[2m > [22mFEN 解析拒绝非法输入[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 车的直线走法与阻挡（XI-004）[2m > [22m车沿纵线滑行，遇阻挡不能越过[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 车的直线走法与阻挡（XI-004）[2m > [22m车沿横线滑行同样受阻[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 吃子约束（XI-011）[2m > [22m不可吃己方棋子[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 吃子约束（XI-011）[2m > [22m吃子后棋子数量与棋谱一致[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 轮次约束（XI-015）[2m > [22m非当前走棋方的走法被拒绝且不改变状态[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts[2m > [22m象棋引擎 · 非法坐标与越界（XI-016 引擎层）[2m > [22m非法/越界坐标被拒绝[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 终局与限着[2m > [22m黑方将死白方 → 胜方记 b（愚人杀）[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · FEN 字段级断言[2m > [22m初始 FEN 六字段逐项正确[32m 0[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · FEN 字段级断言[2m > [22m黑走一步后 fullmove +1、白走只加 halfmove[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · PGN 与重放[2m > [22m含特殊着法（易位/升变/吃过路兵/将军）的 PGN 往返一致[32m 23[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · PGN 与重放[2m > [22m从 PublicMove 风格记录逐步重放：每个中间局面与历史一致[32m 16[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 非法走法与终局后落子[2m > [22m越界/不存在坐标、错误棋子、非轮次[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts[2m > [22m规则 · 非法走法与终局后落子[2m > [22m终局后拒绝一切走法[32m 13[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m84 passed[39m[22m[90m (84)[39m
+[2m   Start at [22m 21:15:58
+[2m   Duration [22m 1.07s[2m (transform 120ms, setup 0ms, collect 208ms, tests 326ms, environment 0ms, prepare 208ms)[22m
+

@@ -1,0 +1,506 @@
+﻿
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/projects/chessbox[39m
+
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/board-anim.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 52[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-adapter.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 89[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/exporters.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 96[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/xiangqi-engine.test.ts [2m([22m[2m37 tests[22m[2m)[22m[32m 148[2mms[22m[39m
+ [32m✓[39m [30m[42m unit [49m[39m tests/unit/chess-rules-deep.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 205[2mms[22m[39m
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m创建房间：红方席位、waiting 状态、房间 ID 高熵格式
+[22m[39m[io] 连接 Sy_6b9CFCRaftxrgAAAA
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m限流补充 · 走棋与操作[2m > [22m[2m走棋限流：容量 20，突发 25 次走棋（含非法）触发 RATE_LIMITED；限流不产生走法
+[22m[39m[io] 连接 sJN2HyZBWeAO1qe6AAAA
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m同一 revision 并发提交两步：恰好一步成功、一步 STALE_REVISION，棋谱只有一步
+[22m[39m[io] 连接 Y9MjC76Qe_flJaM5AAAA
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m消息顺序保持，文本原样传递（含 XSS 载荷，转义由前端 React 文本节点保证）
+[22m[39m[io] 连接 EyHju_wDHz1jzM3cAAAA
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m消息顺序保持，文本原样传递（含 XSS 载荷，转义由前端 React 文本节点保证）
+[22m[39m[io] 连接 M-Eg1OwH2Lr2_p09AAAB
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m限流补充 · 走棋与操作[2m > [22m[2m走棋限流：容量 20，突发 25 次走棋（含非法）触发 RATE_LIMITED；限流不产生走法
+[22m[39m[io] 连接 ddJN5qFIQ1gU393SAAAB
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m第二人加入：黑方席位，phase → playing；广播一致
+[22m[39m[io] 断开 Sy_6b9CFCRaftxrgAAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m同一 revision 并发提交两步：恰好一步成功、一步 STALE_REVISION，棋谱只有一步
+[22m[39m[io] 连接 za-vQ98DD0zqcg62AAAB
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m第二人加入：黑方席位，phase → playing；广播一致
+[22m[39m[io] 连接 niHDYdW7dlFDxCRrAAAB
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m第二人加入：黑方席位，phase → playing；广播一致
+[22m[39m[io] 连接 Qet1RzWfiEt7VvPwAAAC
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m双方同时各走一步（只有轮到的一方成功）
+[22m[39m[io] 断开 za-vQ98DD0zqcg62AAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m双方同时各走一步（只有轮到的一方成功）
+[22m[39m[io] 断开 Y9MjC76Qe_flJaM5AAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m双方同时各走一步（只有轮到的一方成功）
+[22m[39m[io] 连接 tGRUARa71jYgoYlqAAAC
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m限流补充 · 走棋与操作[2m > [22m[2m操作限流（悔棋/提和等）：容量 15，突发 20 次 undo:offer 后触发 RATE_LIMITED
+[22m[39m[io] 断开 ddJN5qFIQ1gU393SAAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m限流补充 · 走棋与操作[2m > [22m[2m操作限流（悔棋/提和等）：容量 15，突发 20 次 undo:offer 后触发 RATE_LIMITED
+[22m[39m[io] 断开 sJN2HyZBWeAO1qe6AAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m双方同时各走一步（只有轮到的一方成功）
+[22m[39m[io] 连接 SvoBwrvFF72Y-_-aAAAD
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m限流补充 · 走棋与操作[2m > [22m[2m操作限流（悔棋/提和等）：容量 15，突发 20 次 undo:offer 后触发 RATE_LIMITED
+[22m[39m[io] 连接 I6HMIPO-BXOaxMlJAAAC
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者伪造玩家身份走棋/认输均被拒
+[22m[39m[io] 断开 SvoBwrvFF72Y-_-aAAAD (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者伪造玩家身份走棋/认输均被拒
+[22m[39m[io] 断开 tGRUARa71jYgoYlqAAAC (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts[2m > [22m[2m限流补充 · 走棋与操作[2m > [22m[2m操作限流（悔棋/提和等）：容量 15，突发 20 次 undo:offer 后触发 RATE_LIMITED
+[22m[39m[io] 连接 QNi-EZhjTa51uFMDAAAD
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者伪造玩家身份走棋/认输均被拒
+[22m[39m[io] 连接 _QbhDhyYCqXYWliyAAAE
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m畸形房间号（长度/字符集）被拒
+[22m[39m[io] 连接 UhJd-fHsf5afpHgtAAAA
+
+[90mstdout[2m | tests/integration/ratelimit-extra.test.ts
+[22m[39m[io] 断开 I6HMIPO-BXOaxMlJAAAC (server shutting down)
+[io] 断开 QNi-EZhjTa51uFMDAAAD (server shutting down)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者伪造玩家身份走棋/认输均被拒
+[22m[39m[io] 连接 8WU8IVvRMWRIPuUSAAAF
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者伪造玩家身份走棋/认输均被拒
+[22m[39m[io] 连接 1Xc0MBitgIUtw24_AAAG
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m非对象/缺字段载荷不崩溃且被拒
+[22m[39m[io] 断开 UhJd-fHsf5afpHgtAAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m非对象/缺字段载荷不崩溃且被拒
+[22m[39m[io] 连接 QwD922HSa1wzopPJAAAB
+
+ [32m✓[39m [30m[45m integration [49m[39m tests/integration/ratelimit-extra.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 103[2mms[22m[39m
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m会话令牌跨房间不可用
+[22m[39m[io] 断开 1Xc0MBitgIUtw24_AAAG (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m会话令牌跨房间不可用
+[22m[39m[io] 断开 8WU8IVvRMWRIPuUSAAAF (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m会话令牌跨房间不可用
+[22m[39m[io] 断开 _QbhDhyYCqXYWliyAAAE (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m走棋载荷字段类型伪造被拒（from 传对象）
+[22m[39m[io] 断开 QwD922HSa1wzopPJAAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m会话令牌跨房间不可用
+[22m[39m[io] 连接 ry9VUtRKrgV0ptpeAAAH
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m走棋载荷字段类型伪造被拒（from 传对象）
+[22m[39m[io] 连接 f5bzDroM-karRfdnAAAC
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m会话令牌跨房间不可用
+[22m[39m[io] 连接 CI3x-rKk5W8mwChrAAAI
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m第三人以观战者身份加入，不能走棋
+[22m[39m[io] 断开 Qet1RzWfiEt7VvPwAAAC (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m第三人以观战者身份加入，不能走棋
+[22m[39m[io] 断开 niHDYdW7dlFDxCRrAAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m第三人以观战者身份加入，不能走棋
+[22m[39m[io] 连接 Yqse2yNPi3wixInrAAAD
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m会话令牌跨房间不可用
+[22m[39m[io] 连接 qtiPCbo_l8CASIZuAAAJ
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m走棋载荷字段类型伪造被拒（from 传对象）
+[22m[39m[io] 连接 vrmhErHpVYiJ6px3AAAD
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者进出：spectators 计数精确归零
+[22m[39m[io] 断开 qtiPCbo_l8CASIZuAAAJ (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者进出：spectators 计数精确归零
+[22m[39m[io] 断开 ry9VUtRKrgV0ptpeAAAH (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者进出：spectators 计数精确归零
+[22m[39m[io] 连接 BivsGeouy3FeyvGcAAAK
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m第三人以观战者身份加入，不能走棋
+[22m[39m[io] 连接 nPr8jzZkBvrZPpmEAAAE
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m聊天载荷注入对象/超长属性被拒
+[22m[39m[io] 断开 vrmhErHpVYiJ6px3AAAD (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m聊天载荷注入对象/超长属性被拒
+[22m[39m[io] 断开 f5bzDroM-karRfdnAAAC (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者进出：spectators 计数精确归零
+[22m[39m[io] 连接 9QPtbRtrGVdCwvciAAAL
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m第三人以观战者身份加入，不能走棋
+[22m[39m[io] 连接 j_XDDI7j-frcEeIMAAAF
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m聊天载荷注入对象/超长属性被拒
+[22m[39m[io] 连接 wmNiSN66wPA4kmerAAAE
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者进出：spectators 计数精确归零
+[22m[39m[io] 连接 CHbllqGryHgTLxFxAAAM
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m房间不存在时加入失败
+[22m[39m[io] 断开 j_XDDI7j-frcEeIMAAAF (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m聊天载荷注入对象/超长属性被拒
+[22m[39m[io] 连接 HFKBmYFYapOkXGa7AAAF
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者进出：spectators 计数精确归零
+[22m[39m[io] 连接 bJPvn2YMc3ZZaV6YAAAN
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m房间不存在时加入失败
+[22m[39m[io] 断开 nPr8jzZkBvrZPpmEAAAE (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m创建房间的棋种枚举外值被拒
+[22m[39m[io] 断开 HFKBmYFYapOkXGa7AAAF (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者进出：spectators 计数精确归零
+[22m[39m[io] 断开 CHbllqGryHgTLxFxAAAM (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m房间不存在时加入失败
+[22m[39m[io] 断开 Yqse2yNPi3wixInrAAAD (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m创建房间的棋种枚举外值被拒
+[22m[39m[io] 断开 wmNiSN66wPA4kmerAAAE (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m观战者进出：spectators 计数精确归零
+[22m[39m[io] 断开 bJPvn2YMc3ZZaV6YAAAN (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m房间不存在时加入失败
+[22m[39m[io] 连接 8mPXbHE1pY1mvfq5AAAG
+
+[90mstdout[2m | tests/integration/security.test.ts[2m > [22m[2mSocket 输入校验[2m > [22m[2m创建房间的棋种枚举外值被拒
+[22m[39m[io] 连接 xpE7uKdunU4-i_n_AAAG
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m建房限流：快速连建 3 个房间，第 3 个被拒绝
+[22m[39m[io] 断开 8mPXbHE1pY1mvfq5AAAG (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/security.test.ts
+[22m[39m[io] 断开 xpE7uKdunU4-i_n_AAAG (server shutting down)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 房间与席位[2m > [22m[2m建房限流：快速连建 3 个房间，第 3 个被拒绝
+[22m[39m[io] 连接 yNl4ey_jHH2dz98mAAAH
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m合法走棋：双方收到一致局面、记谱正确、revision 递增
+[22m[39m[io] 断开 yNl4ey_jHH2dz98mAAAH (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m合法走棋：双方收到一致局面、记谱正确、revision 递增
+[22m[39m[io] 连接 XM-jNlKnSFta-gTbAAAI
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m合法走棋：双方收到一致局面、记谱正确、revision 递增
+[22m[39m[io] 连接 3jrn2YwNF2v8iOeMAAAJ
+
+ [32m✓[39m [30m[45m integration [49m[39m tests/integration/security.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 140[2mms[22m[39m
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m非法走棋被拒：局面不变
+[22m[39m[io] 断开 3jrn2YwNF2v8iOeMAAAJ (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m非法走棋被拒：局面不变
+[22m[39m[io] 断开 XM-jNlKnSFta-gTbAAAI (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m非法走棋被拒：局面不变
+[22m[39m[io] 连接 lVg1qaadF4JeTCKMAAAK
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m非法走棋被拒：局面不变
+[22m[39m[io] 连接 _7eDVUGfmEVbZttgAAAL
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m轮次限制：黑方先走被拒
+[22m[39m[io] 断开 _7eDVUGfmEVbZttgAAAL (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m轮次限制：黑方先走被拒
+[22m[39m[io] 断开 lVg1qaadF4JeTCKMAAAK (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m轮次限制：黑方先走被拒
+[22m[39m[io] 连接 MA3J7etVL8NCXYONAAAM
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m轮次限制：黑方先走被拒
+[22m[39m[io] 连接 r2VkNuGXoUfGhHDYAAAN
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m幂等：同一 requestId 重复提交不产生第二步
+[22m[39m[io] 断开 r2VkNuGXoUfGhHDYAAAN (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m幂等：同一 requestId 重复提交不产生第二步
+[22m[39m[io] 断开 MA3J7etVL8NCXYONAAAM (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m幂等：同一 requestId 重复提交不产生第二步
+[22m[39m[io] 连接 bPSvAxG1PtdXrotFAAAO
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m幂等：同一 requestId 重复提交不产生第二步
+[22m[39m[io] 连接 6BtXUM_pw5Va9vKQAAAP
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m过期 revision 被拒并返回最新局面
+[22m[39m[io] 断开 6BtXUM_pw5Va9vKQAAAP (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m过期 revision 被拒并返回最新局面
+[22m[39m[io] 断开 bPSvAxG1PtdXrotFAAAO (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m过期 revision 被拒并返回最新局面
+[22m[39m[io] 连接 s6H9CDXV25FrrYSjAAAQ
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m过期 revision 被拒并返回最新局面
+[22m[39m[io] 连接 JVkIA_9vlCbuaUtDAAAR
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m走法参数校验：畸形输入被拒
+[22m[39m[io] 断开 JVkIA_9vlCbuaUtDAAAR (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m走法参数校验：畸形输入被拒
+[22m[39m[io] 断开 s6H9CDXV25FrrYSjAAAQ (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m走法参数校验：畸形输入被拒
+[22m[39m[io] 连接 hxnFR_e3-y-lF81hAAAS
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 走棋协议（中国象棋）[2m > [22m[2m走法参数校验：畸形输入被拒
+[22m[39m[io] 连接 Wqz5YWwjAU8ET26CAAAT
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 国际象棋走棋与升变[2m > [22m[2m完整小流程：e4 e5 Nf3，SAN 正确
+[22m[39m[io] 断开 Wqz5YWwjAU8ET26CAAAT (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 国际象棋走棋与升变[2m > [22m[2m完整小流程：e4 e5 Nf3，SAN 正确
+[22m[39m[io] 断开 hxnFR_e3-y-lF81hAAAS (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 国际象棋走棋与升变[2m > [22m[2m完整小流程：e4 e5 Nf3，SAN 正确
+[22m[39m[io] 连接 i2zhPFAqSCoypuZxAAAU
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 国际象棋走棋与升变[2m > [22m[2m完整小流程：e4 e5 Nf3，SAN 正确
+[22m[39m[io] 连接 QOtcit8dlVKTq97HAAAV
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 国际象棋走棋与升变[2m > [22m[2m升变走法带 promotion 字段并校验
+[22m[39m[io] 断开 QOtcit8dlVKTq97HAAAV (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 国际象棋走棋与升变[2m > [22m[2m升变走法带 promotion 字段并校验
+[22m[39m[io] 断开 i2zhPFAqSCoypuZxAAAU (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 国际象棋走棋与升变[2m > [22m[2m升变走法带 promotion 字段并校验
+[22m[39m[io] 连接 SUnGa76xxZMkjXVtAAAW
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 国际象棋走棋与升变[2m > [22m[2m升变走法带 promotion 字段并校验
+[22m[39m[io] 连接 KFRi_7Wyz42LU7mPAAAX
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m空消息与超长消息（>200）被拒
+[22m[39m[io] 断开 M-Eg1OwH2Lr2_p09AAAB (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m空消息与超长消息（>200）被拒
+[22m[39m[io] 断开 EyHju_wDHz1jzM3cAAAA (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m空消息与超长消息（>200）被拒
+[22m[39m[io] 连接 gAwoVV4Qisxj28TdAAAC
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m空消息与超长消息（>200）被拒
+[22m[39m[io] 连接 Ayvg9b9L53-fz2GQAAAD
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m限频：突发 6 条后第 7 条被拒
+[22m[39m[io] 断开 Ayvg9b9L53-fz2GQAAAD (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m限频：突发 6 条后第 7 条被拒
+[22m[39m[io] 断开 gAwoVV4Qisxj28TdAAAC (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m限频：突发 6 条后第 7 条被拒
+[22m[39m[io] 连接 6u3waDrQ-bG440fCAAAE
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m断线后重连：凭令牌恢复席位与局面，陌生人不能抢座
+[22m[39m[io] 断开 KFRi_7Wyz42LU7mPAAAX (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m断线后重连：凭令牌恢复席位与局面，陌生人不能抢座
+[22m[39m[io] 断开 SUnGa76xxZMkjXVtAAAW (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m限频：突发 6 条后第 7 条被拒
+[22m[39m[io] 连接 e-KRlV8AA74fm_QgAAAF
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m断线后重连：凭令牌恢复席位与局面，陌生人不能抢座
+[22m[39m[io] 连接 LXL8L41U5rx9zyCeAAAY
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m断线后重连：凭令牌恢复席位与局面，陌生人不能抢座
+[22m[39m[io] 连接 naHsoFhFlRovwdOUAAAZ
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m断线后重连：凭令牌恢复席位与局面，陌生人不能抢座
+[22m[39m[io] 断开 naHsoFhFlRovwdOUAAAZ (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m断线重连后收到 chat:history 恢复历史
+[22m[39m[io] 断开 e-KRlV8AA74fm_QgAAAF (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m断线重连后收到 chat:history 恢复历史
+[22m[39m[io] 断开 6u3waDrQ-bG440fCAAAE (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m断线重连后收到 chat:history 恢复历史
+[22m[39m[io] 连接 oYVmRT4zGgDoHJBTAAAG
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m断线重连后收到 chat:history 恢复历史
+[22m[39m[io] 连接 M0dlpaW0JW6_s0siAAAH
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m断线重连后收到 chat:history 恢复历史
+[22m[39m[io] 断开 M0dlpaW0JW6_s0siAAAH (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m同一会话多标签页重连：席位不重复、后连者接管在线状态
+[22m[39m[io] 断开 9QPtbRtrGVdCwvciAAAL (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m同一会话多标签页重连：席位不重复、后连者接管在线状态
+[22m[39m[io] 断开 BivsGeouy3FeyvGcAAAK (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m同一会话多标签页重连：席位不重复、后连者接管在线状态
+[22m[39m[io] 连接 dsJrbkX_Td6GqPw6AAAO
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m同一会话多标签页重连：席位不重复、后连者接管在线状态
+[22m[39m[io] 连接 0jtsx2EvaKCcx0DNAAAP
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m同一会话多标签页重连：席位不重复、后连者接管在线状态
+[22m[39m[io] 连接 JMEyU5cnHLnp6sesAAAQ
+
+[90mstdout[2m | tests/integration/concurrency.test.ts[2m > [22m[2m并发与原子性[2m > [22m[2m同一会话多标签页重连：席位不重复、后连者接管在线状态
+[22m[39m[io] 断开 0jtsx2EvaKCcx0DNAAAP (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m断线后重连：凭令牌恢复席位与局面，陌生人不能抢座
+[22m[39m[io] 连接 y7H1vlm2PrWHF950AAAa
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m断线后重连：凭令牌恢复席位与局面，陌生人不能抢座
+[22m[39m[io] 断开 y7H1vlm2PrWHF950AAAa (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m断线重连后收到 chat:history 恢复历史
+[22m[39m[io] 连接 Wnr4DnLZhrh3EqPMAAAI
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m断线后重连：凭令牌恢复席位与局面，陌生人不能抢座
+[22m[39m[io] 连接 vhte3PkD0j84Wm0iAAAb
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m令牌错误时 rejoin 失败
+[22m[39m[io] 断开 vhte3PkD0j84Wm0iAAAb (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m令牌错误时 rejoin 失败
+[22m[39m[io] 断开 LXL8L41U5rx9zyCeAAAY (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m令牌错误时 rejoin 失败
+[22m[39m[io] 连接 CbijUd78doD-XQPkAAAc
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m令牌错误时 rejoin 失败
+[22m[39m[io] 连接 pfag17vObOHr-LGNAAAd
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m服务重启后房间、棋谱与会话均恢复
+[22m[39m[io] 断开 pfag17vObOHr-LGNAAAd (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m服务重启后房间、棋谱与会话均恢复
+[22m[39m[io] 断开 CbijUd78doD-XQPkAAAc (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m服务重启后房间、棋谱与会话均恢复
+[22m[39m[io] 连接 SWPJEvreLyv_2QvsAAAe
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m服务重启后房间、棋谱与会话均恢复
+[22m[39m[io] 连接 xlL7jL6Bp_kk6NK_AAAf
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m服务重启后房间、棋谱与会话均恢复
+[22m[39m[io] 断开 SWPJEvreLyv_2QvsAAAe (server shutting down)
+[io] 断开 xlL7jL6Bp_kk6NK_AAAf (server shutting down)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m服务重启后房间、棋谱与会话均恢复
+[22m[39m[io] 连接 ZljwcDFSbc7UtJc2AAAg
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 断线重连与持久化[2m > [22m[2m服务重启后房间、棋谱与会话均恢复
+[22m[39m[io] 断开 ZljwcDFSbc7UtJc2AAAg (server shutting down)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m认输：对方胜利，对局结束，不能再走棋
+[22m[39m[io] 连接 1bzkPDwn1Nk0Eif3AAAh
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m认输：对方胜利，对局结束，不能再走棋
+[22m[39m[io] 连接 JEh5iqH7Z2mhEpaSAAAi
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m提和 → 对方同意 → 和棋
+[22m[39m[io] 断开 JEh5iqH7Z2mhEpaSAAAi (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m提和 → 对方同意 → 和棋
+[22m[39m[io] 断开 1bzkPDwn1Nk0Eif3AAAh (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m提和 → 对方同意 → 和棋
+[22m[39m[io] 连接 ah4VRIap8GU4z_fJAAAj
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m提和 → 对方同意 → 和棋
+[22m[39m[io] 连接 KyEGNXVHFJCsaP9FAAAk
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m悔棋：请求 → 同意 → 回退两步并恢复对局
+[22m[39m[io] 断开 KyEGNXVHFJCsaP9FAAAk (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m悔棋：请求 → 同意 → 回退两步并恢复对局
+[22m[39m[io] 断开 ah4VRIap8GU4z_fJAAAj (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m悔棋：请求 → 同意 → 回退两步并恢复对局
+[22m[39m[io] 连接 9g2CUpYpeazItzNPAAAl
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m悔棋：请求 → 同意 → 回退两步并恢复对局
+[22m[39m[io] 连接 ELtHXfq7ht61ORMZAAAm
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m重开：双方同意后回到初始局面
+[22m[39m[io] 断开 ELtHXfq7ht61ORMZAAAm (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m重开：双方同意后回到初始局面
+[22m[39m[io] 断开 9g2CUpYpeazItzNPAAAl (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m重开：双方同意后回到初始局面
+[22m[39m[io] 连接 mK8ONcMAVNeua7xYAAAn
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m重开：双方同意后回到初始局面
+[22m[39m[io] 连接 Qh6vijWVfbN8QpaFAAAo
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m聊天：双方收到消息，内容被校验
+[22m[39m[io] 断开 Qh6vijWVfbN8QpaFAAAo (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m聊天：双方收到消息，内容被校验
+[22m[39m[io] 断开 mK8ONcMAVNeua7xYAAAn (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m聊天：双方收到消息，内容被校验
+[22m[39m[io] 连接 JKRwibi9Fac_aZcFAAAp
+
+[90mstdout[2m | tests/integration/rooms.test.ts[2m > [22m[2m联机 · 认输 / 提和 / 悔棋 / 重开[2m > [22m[2m聊天：双方收到消息，内容被校验
+[22m[39m[io] 连接 mqO57vTTX9OvS5HbAAAq
+
+[90mstdout[2m | tests/integration/rooms.test.ts
+[22m[39m[io] 断开 JKRwibi9Fac_aZcFAAAp (server shutting down)
+[io] 断开 mqO57vTTX9OvS5HbAAAq (server shutting down)
+
+ [32m✓[39m [30m[45m integration [49m[39m tests/integration/rooms.test.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 545[2mms[22m[39m
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m服务器重启后聊天历史从 SQLite 恢复并可下发
+[22m[39m[io] 断开 Wnr4DnLZhrh3EqPMAAAI (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m服务器重启后聊天历史从 SQLite 恢复并可下发
+[22m[39m[io] 断开 oYVmRT4zGgDoHJBTAAAG (client namespace disconnect)
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m服务器重启后聊天历史从 SQLite 恢复并可下发
+[22m[39m[io] 连接 6cn9NXd8h6ESL4v-AAAJ
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m服务器重启后聊天历史从 SQLite 恢复并可下发
+[22m[39m[io] 连接 XPEvsD6eJYsSX6kBAAAK
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m服务器重启后聊天历史从 SQLite 恢复并可下发
+[22m[39m[io] 断开 6cn9NXd8h6ESL4v-AAAJ (server shutting down)
+[io] 断开 XPEvsD6eJYsSX6kBAAAK (server shutting down)
+
+[90mstdout[2m | tests/integration/concurrency.test.ts
+[22m[39m[io] 断开 CI3x-rKk5W8mwChrAAAI (server shutting down)
+[io] 断开 dsJrbkX_Td6GqPw6AAAO (server shutting down)
+[io] 断开 JMEyU5cnHLnp6sesAAAQ (server shutting down)
+
+ [32m✓[39m [30m[45m integration [49m[39m tests/integration/concurrency.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 646[2mms[22m[39m
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m服务器重启后聊天历史从 SQLite 恢复并可下发
+[22m[39m[io] 连接 kDu7GJKxx2sSluMnAAAL
+
+[90mstdout[2m | tests/integration/chat.test.ts[2m > [22m[2m聊天[2m > [22m[2m服务器重启后聊天历史从 SQLite 恢复并可下发
+[22m[39m[io] 断开 kDu7GJKxx2sSluMnAAAL (server shutting down)
+
+ [32m✓[39m [30m[45m integration [49m[39m tests/integration/chat.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 822[2mms[22m[39m
+   [33m[2m✓[22m[39m 聊天[2m > [22m断线重连后收到 chat:history 恢复历史 [33m 367[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m      Tests [22m [1m[32m148 passed[39m[22m[90m (148)[39m
+[2m   Start at [22m 20:46:50
+[2m   Duration [22m 2.29s[2m (transform 666ms, setup 0ms, collect 3.86s, tests 2.85s, environment 1ms, prepare 1.09s)[22m
+

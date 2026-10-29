@@ -1,0 +1,7 @@
+﻿[0.7s] start：duration=60s
+[11.3s] cycles=10 verified=40 failed=0 elapsed=11s
+[21.6s] cycles=20 verified=80 failed=0 elapsed=21s
+[32.1s] cycles=30 verified=120 failed=0 elapsed=31s
+[42.5s] cycles=40 verified=160 failed=0 elapsed=42s
+[52.9s] cycles=50 verified=200 failed=0 elapsed=52s
+O 5min: cycles=58 verified=232 failedCycles=0 frames=9940 avg=163.8fps p95=6.1ms p99=6.2ms heapΔ=-0.3MB domΔ=0 integrity={"pieces":32,"fly":0,"cap":0,"h7":1,"h2":1}

@@ -1,0 +1,5 @@
+﻿saved shots/anim-mobile-xiangqi-m375.png
+saved shots/anim-mobile-xiangqi-tablet768.png
+saved shots/anim-mobile-chess-m375.png
+saved shots/anim-mobile-chess-hidpi2x.png
+DONE mobile evidence

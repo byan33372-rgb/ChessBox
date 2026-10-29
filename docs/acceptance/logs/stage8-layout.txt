@@ -1,0 +1,23 @@
+﻿PASS  首页桌面无横向溢出  (overflow=0px)
+PASS  首页两张创建卡片
+PASS  创建卡片宽度合理  ({"x":40,"y":113.328125,"width":590,"height":605.703125})
+PASS  加入按钮高度达标  (minHeight=40px)
+PASS  象棋房间桌面无横向溢出  (overflow=0px)
+PASS  象棋棋盘存在且比例≈0.9  (w/h=0.900)
+PASS  象棋 32 枚棋子渲染  (count=32)
+PASS  象棋棋子对齐交叉点
+PASS  侧栏位于棋盘右侧  (panel.x=844)
+PASS  棋谱显示 3 步  (count=3)
+PASS  选中显示合法落点  (dots=2)
+PASS  国象 64 格  (count=64)
+FAIL  国象 32 枚棋子渲染  (count=33)
+PASS  国象棋盘为正方形  (w/h=1.000)
+PASS  国象棋子位于格子内
+PASS  国象坐标标注存在  (count=16)
+PASS  移动端无横向溢出  (overflow=0px)
+PASS  移动端棋盘宽度自适应  (w=337)
+PASS  移动端操作按钮触控高度≥40px  (heights=42,42,42,42,42)
+PASS  移动端点击热区≥30px  (size=31)
+---
+PASS  无控制台错误
+RESULT: 1 项失败

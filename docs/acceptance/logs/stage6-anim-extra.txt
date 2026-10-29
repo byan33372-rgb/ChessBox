@@ -1,0 +1,15 @@
+﻿PASS ANIM-X1 resize 中动画：最终局面精确对位 — e7=1 fly=false 炮位=(90.8,449.4) (270.0,449.4) 目标=(270,450)
+PASS ANIM-X2 reduced-motion：跳过动画、走棋正常 — fly=false e4=1
+  step0: moves=1 status=轮到黑方走棋
+  step1: moves=2 status=轮到你走棋
+  step2: moves=3 status=轮到黑方走棋
+  step3: moves=4 status=轮到你走棋
+  step4: moves=5 status=轮到黑方走棋
+  step5: moves=6 status=轮到你走棋
+  step6: moves=7 status=轮到黑方走棋
+  step7: moves=8 status=轮到你走棋
+  step8: moves=9 status=轮到黑方走棋
+PASS ANIM-X3 升变：对话框确认后 b8=白后（ANIM-016 服务端确认后呈现） — b8白后=1
+PASS ANIM-X4 快速连续走棋：无残影/无多余层/32 子完整 — {"fly":0,"cap":0,"pieces":32,"moves":2}
+
+== 动画补充验证: 4/4 PASS ==
