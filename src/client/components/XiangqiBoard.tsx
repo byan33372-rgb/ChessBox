@@ -14,7 +14,7 @@ export interface XqBoardProps {
   orientation: XqOrientation;
   selected: string | null;
   targets: Map<string, boolean>; // to → 是否吃子
-  lastMove: { from: string; to: string } | null;
+  lastMove: { from: string; to: string; extra?: Array<{ from: string; to: string }> } | null;
   checkSquare: string | null;
   onSquareClick(sq: string): void;
   /** 服务端确认后的走棋动画描述（null=无动画直同步） */
@@ -216,8 +216,19 @@ export function XiangqiBoard({ fen, orientation, selected, targets, lastMove, ch
         <div className="board-overlay">
         {lastMove && (
           <>
-            <div className="xq-last" style={posStyle(lastMove.from, orientation)} />
-            <div className="xq-last" style={posStyle(lastMove.to, orientation)} />
+            {/* 统一上一手标记（MOVE-021/022）：起点琥珀虚线+「起」、终点青绿实线+「终」（形状+颜色双编码） */}
+            {(lastMove.extra ?? []).map((e, i) => (
+              <div key={`lxe-${i}`} className="xq-last extra" style={posStyle(e.from, orientation)} />
+            ))}
+            {(lastMove.extra ?? []).map((e, i) => (
+              <div key={`lxe2-${i}`} className="xq-last extra" style={posStyle(e.to, orientation)} />
+            ))}
+            <div className="xq-last from" style={posStyle(lastMove.from, orientation)}>
+              <span className="last-tag tag-from">起</span>
+            </div>
+            <div className="xq-last to" style={posStyle(lastMove.to, orientation)}>
+              <span className="last-tag tag-to">终</span>
+            </div>
           </>
         )}
         {pieces.map(({ sq, code }) => {

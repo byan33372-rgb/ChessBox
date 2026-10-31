@@ -77,9 +77,32 @@ export class ChessEngine implements GameEngine {
       return null;
     }
     const gaveCheck = this.c.inCheck(); // 轮次已翻转，即对方被将军
+
+    // 特殊动作轨迹（MOVE-006/007/008）：
+    // - 王车易位：extra 携带车的完整位移（服务端权威推导，前端直接展示）
+    // - 吃过路兵：capturedSq = 被吃兵实际所在格（≠ 落点）
+    // - 普通吃子：capturedSq = 落点
+    const flags = res.flags ?? '';
+    const extra: AppliedMove['extra'] = [];
+    if (flags.includes('k')) {
+      const rank = res.from[1];
+      extra.push({ from: `h${rank}`, to: `f${rank}`, piece: res.color === 'w' ? 'R' : 'r' });
+    } else if (flags.includes('q')) {
+      const rank = res.from[1];
+      extra.push({ from: `a${rank}`, to: `d${rank}`, piece: res.color === 'w' ? 'R' : 'r' });
+    }
+    const capturedSq =
+      res.captured !== undefined
+        ? flags.includes('e')
+          ? `${res.to[0]}${res.from[1]}` // 过路兵：被吃兵在 to 的纵线、from 的横线
+          : res.to
+        : null;
+
     return {
       notation: res.san,
       captured: res.captured ?? null,
+      capturedSq,
+      extra: extra.length > 0 ? extra : undefined,
       gaveCheck,
       fenBefore,
       fenAfter: this.c.fen(),

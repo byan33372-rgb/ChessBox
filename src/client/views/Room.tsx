@@ -104,6 +104,32 @@ export function Room({ roomId, onExit }: RoomProps) {
     if (viewPly !== null) setAnim(null);
   }, [viewPly]);
 
+  // —— 对手走棋短暂提示（MOVE-031~033）：新着来自他人时 toast；同一 ply 只提示一次 ——
+  const lastNotifiedPlyRef = useRef(0);
+  useEffect(() => {
+    if (!state || conn !== 'online') return;
+    const last = state.moves[state.moves.length - 1];
+    if (!last || last.ply <= lastNotifiedPlyRef.current) {
+      if (last && last.ply > lastNotifiedPlyRef.current) lastNotifiedPlyRef.current = last.ply;
+      return;
+    }
+    lastNotifiedPlyRef.current = last.ply;
+    if (seat !== null && last.side !== seat) {
+      const who = last.side;
+      const name =
+        state.kind === 'xiangqi'
+          ? who === 'a'
+            ? '红方'
+            : '黑方'
+          : state.kind === 'chess'
+            ? who === 'a'
+              ? '白方'
+              : '黑方'
+            : (CHECKERS_NAMES[who] ?? who);
+      toast(`对方移动了：${name} ${last.notation}`, 'info');
+    }
+  }, [state, conn, seat, toast]);
+
   // —— 跳棋飞行动画闸门：与上面 FLIP 闸门同条件；单步/连跳都从 from 飞向 to ——
   useEffect(() => {
     if (!state) return;
@@ -354,7 +380,11 @@ export function Room({ roomId, onExit }: RoomProps) {
         orientation={xqOrientation}
         selected={selected}
         targets={targets}
-        lastMove={display.lastMove ? { from: display.lastMove.from, to: display.lastMove.to } : null}
+        lastMove={
+          display.lastMove
+            ? { from: display.lastMove.from, to: display.lastMove.to, extra: display.lastMove.extra }
+            : null
+        }
         checkSquare={checkSquare}
         onSquareClick={handleSquareClick}
         anim={display.viewing ? null : anim}
@@ -376,7 +406,11 @@ export function Room({ roomId, onExit }: RoomProps) {
         orientation={chessOrientation}
         selected={selected}
         targets={targets}
-        lastMove={display.lastMove ? { from: display.lastMove.from, to: display.lastMove.to } : null}
+        lastMove={
+          display.lastMove
+            ? { from: display.lastMove.from, to: display.lastMove.to, extra: display.lastMove.extra }
+            : null
+        }
         checkSquare={checkSquare}
         onSquareClick={handleSquareClick}
         anim={display.viewing ? null : anim}
@@ -554,6 +588,8 @@ export function Room({ roomId, onExit }: RoomProps) {
               </button>
             </div>
           )}
+
+          <LastMoveBar lastMove={display.lastMove} kind={state.kind} />
 
           <MoveList
             moves={state.moves}
@@ -832,6 +868,53 @@ function StatusCard({
       {amPlayer && offers.draw === seat && <p className="pending-line">已提议和棋，等待对方回应…</p>}
       {amPlayer && offers.undo && offers.undo.by === seat && <p className="pending-line">已请求悔棋，等待对方回应…</p>}
       {amPlayer && offers.restart === seat && <p className="pending-line">已请求重开，等待对方回应…</p>}
+    </div>
+  );
+}
+
+
+/** 最近一步信息区（MOVE-025/026/027，三棋统一）：着法语义 + 起终点图例 */
+function LastMoveBar({
+  lastMove,
+  kind,
+}: {
+  lastMove: { side: Side; from: string; to: string; notation: string; path?: string[]; extra?: Array<{ from: string; to: string }> } | null;
+  kind: RoomState['kind'];
+}) {
+  if (!lastMove) {
+    return (
+      <div className="card last-move-bar empty" aria-label="最近一步">
+        <p className="hint">还没有走棋——第一步由{'红方/白方/红方'}先走。</p>
+      </div>
+    );
+  }
+  const who =
+    kind === 'xiangqi'
+      ? lastMove.side === 'a'
+        ? '红方'
+        : '黑方'
+      : kind === 'chess'
+        ? lastMove.side === 'a'
+          ? '白方'
+          : '黑方'
+        : (CHECKERS_NAMES[lastMove.side] ?? lastMove.side);
+  const trail = lastMove.path && lastMove.path.length > 2 ? `（连跳 ${lastMove.path.length - 1} 段）` : '';
+  return (
+    <div className="card last-move-bar" aria-label="最近一步">
+      <div className="lmb-main">
+        <span className="lmb-label">上一手</span>
+        <span className="lmb-text">
+          {who} · {lastMove.notation}
+          {trail}
+        </span>
+      </div>
+      <div className="lmb-legend" aria-hidden="true">
+        <span className="legend-dot from" />
+        起点 {lastMove.from}
+        <span className="legend-arrow">→</span>
+        <span className="legend-dot to" />
+        终点 {lastMove.to}
+      </div>
     </div>
   );
 }

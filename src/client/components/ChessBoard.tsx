@@ -13,7 +13,7 @@ export interface ChessBoardProps {
   orientation: ChessOrientation;
   selected: string | null;
   targets: Map<string, boolean>;
-  lastMove: { from: string; to: string } | null;
+  lastMove: { from: string; to: string; extra?: Array<{ from: string; to: string }> } | null;
   checkSquare: string | null;
   onSquareClick(sq: string): void;
   /** 服务端确认后的走棋动画描述（null=无动画直同步） */
@@ -117,6 +117,7 @@ export function ChessBoard({ fen, orientation, selected, targets, lastMove, chec
           const isCapture = targets.get(sq) === true;
           const isLastFrom = lastMove?.from === sq;
           const isLastTo = lastMove?.to === sq;
+          const isLastExtra = (lastMove?.extra ?? []).some((e) => e.from === sq || e.to === sq);
           const isCheck = checkSquare === sq;
           const cls = [
             'chess-sq',
@@ -124,6 +125,7 @@ export function ChessBoard({ fen, orientation, selected, targets, lastMove, chec
             isSel ? 'selected' : '',
             isLastFrom ? 'last-from' : '',
             isLastTo ? 'last-to' : '',
+            isLastExtra ? 'last-extra' : '',
             isCheck ? 'in-check' : '',
             landSq === sq ? 'just-landed' : '',
           ]
@@ -145,6 +147,8 @@ export function ChessBoard({ fen, orientation, selected, targets, lastMove, chec
               )}
               {isTarget && !isCapture && <span className="chess-dot" />}
               {isTarget && isCapture && <span className="chess-ring" />}
+              {isLastFrom && <span className="last-tag tag-from">起</span>}
+              {isLastTo && <span className="last-tag tag-to">终</span>}
               {orientation === 'white' && rank === 7 && <span className={`coord coord-file ${light ? 'on-light' : 'on-dark'}`}>{sq[0]}</span>}
               {orientation === 'black' && rank === 7 && <span className={`coord coord-file ${light ? 'on-light' : 'on-dark'}`}>{sq[0]}</span>}
               {orientation === 'white' && file === 0 && <span className={`coord coord-rank ${light ? 'on-light' : 'on-dark'}`}>{sq[1]}</span>}
