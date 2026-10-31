@@ -10,10 +10,15 @@ import { ROOM_ID_PATTERN, SESSION_TOKEN_PATTERN } from '../shared/protocol';
 import { RateLimiter } from './ratelimit';
 import { RoomManager, type Room, type SessionInfo } from './rooms';
 
+/** 全棋种兼容坐标：中象 a0-i9、国象 a1-h8、跳棋 a1-q17（两位行号） */
+const CELL_RE = /^[a-q][0-9]{1,2}$/;
+
 const Schemas = {
   create: z.object({
-    kind: z.enum(['xiangqi', 'chess']),
+    kind: z.enum(['xiangqi', 'chess', 'checkers']),
     name: z.string().trim().min(1).max(12).optional(),
+    // 仅跳棋多人生效；其他棋种忽略
+    seatCount: z.union([z.literal(2), z.literal(3), z.literal(4), z.literal(6)]).optional(),
   }),
   join: z.object({
     roomId: z.string().regex(ROOM_ID_PATTERN),
@@ -26,9 +31,11 @@ const Schemas = {
   move: z.object({
     requestId: z.string().regex(/^[A-Za-z0-9-]{8,64}$/),
     revision: z.number().int().min(0).max(1_000_000_000),
-    from: z.string().regex(/^[a-i][0-9]$/),
-    to: z.string().regex(/^[a-i][0-9]$/),
+    from: z.string().regex(CELL_RE),
+    to: z.string().regex(CELL_RE),
     promotion: z.enum(['q', 'r', 'b', 'n']).optional(),
+    // 跳棋连续跳跃完整路径：2~16 点、逐格合法性格式（权威校验在引擎层）
+    path: z.array(z.string().regex(CELL_RE)).min(2).max(16).optional(),
   }),
   respond: z.object({ accept: z.boolean() }),
   chat: z.object({ text: z.string().trim().min(1).max(200) }),
@@ -93,12 +100,12 @@ export function setupSocket(io: AppServer, rooms: RoomManager): void {
       if (!createLimit.allow(socket.id)) return fail(ack, 'RATE_LIMITED', '操作过于频繁，请稍后再试');
       const parsed = Schemas.create.safeParse(payload);
       if (!parsed.success) return fail(ack, 'INVALID_INPUT', '参数不合法');
-      const { room, session } = rooms.createRoom(parsed.data.kind, parsed.data.name);
+      const { room, session } = rooms.createRoom(parsed.data.kind, parsed.data.name, parsed.data.seatCount);
       socket.data.roomId = room.id;
       socket.data.session = session;
       socket.join(room.id);
       rooms.bindSocket(session, room, socket.id);
-      ack({ ok: true, roomId: room.id, token: session.token, seat: 'a', state: rooms.publicState(room) });
+      ack({ ok: true, roomId: room.id, token: session.token, seat: session.seat, state: rooms.publicState(room) });
       rooms.broadcast(room.id, rooms.publicState(room), 'join');
     });
 

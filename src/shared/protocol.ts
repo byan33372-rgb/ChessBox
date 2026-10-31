@@ -13,11 +13,17 @@ export interface PublicMove {
   to: string;
   /** 国际象棋升变：q/r/b/n */
   promotion?: string;
-  /** 国象 SAN；中象中文纵线记谱 */
+  /** 国象 SAN；中象中文纵线记谱；跳棋路径记法 */
   notation: string;
   fenBefore: string;
   fenAfter: string;
   captured?: string | null;
+  /** 被吃棋子实际所在格（过路兵 ≠ to；普通吃子 = to 或省略） */
+  capturedSq?: string | null;
+  /** 中国跳棋：规范化完整跳跃路径（含起点与终点；单步省略） */
+  path?: string[];
+  /** 特殊动作附加轨迹（国象王车易位的车、吃过路兵被吃兵等） */
+  extra?: Array<{ from: string; to: string; piece: string }>;
   /** 本步是否将军 */
   check: boolean;
   ts: number;
@@ -51,7 +57,11 @@ export interface RoomState {
   checkedKing: string | null;
   lastMove: PublicMove | null;
   moves: PublicMove[];
-  seats: { a: SeatPublic | null; b: SeatPublic | null };
+  /** 座位占用/在线情况；键为棋种的有效座位（中象/国象 a,b；跳棋 a..f 中前 N 个） */
+  seats: Partial<Record<Side, SeatPublic>>;
+  /** 本房间的座位轮转顺序与座位数（跳棋 2/3/4/6；其余 2） */
+  seatOrder: Side[];
+  seatCount: number;
   spectators: number;
   outcome: GameOutcome | null;
   offers: OffersState;
@@ -89,12 +99,12 @@ export interface AckBase {
 export interface CreateAck extends AckBase {
   roomId?: string;
   token?: string;
-  seat?: 'a' | 'b';
+  seat?: Side | 'spectator';
 }
 
 export interface JoinAck extends AckBase {
   token?: string;
-  seat?: 'a' | 'b' | 'spectator';
+  seat?: Side | 'spectator';
 }
 
 export interface MoveAck extends AckBase {
@@ -114,6 +124,8 @@ export interface MoveRequest {
   from: string;
   to: string;
   promotion?: string;
+  /** 中国跳棋：连续跳跃完整路径（含起点与终点） */
+  path?: string[];
 }
 
 /** 广播状态变化的原因（客户端提示用） */
@@ -131,7 +143,7 @@ export type StateReason =
   | 'spectator';
 
 export interface ClientToServerEvents {
-  'room:create': (p: { kind: GameKind; name?: string }, ack: (r: CreateAck) => void) => void;
+  'room:create': (p: { kind: GameKind; name?: string; seatCount?: number }, ack: (r: CreateAck) => void) => void;
   'room:join': (p: { roomId: string; name?: string }, ack: (r: JoinAck) => void) => void;
   'room:rejoin': (p: { roomId: string; token: string }, ack: (r: JoinAck) => void) => void;
   'room:leave': (p: Record<string, never>, ack: (r: AckBase) => void) => void;
@@ -155,4 +167,11 @@ export interface ServerToClientEvents {
 
 export const ROOM_ID_PATTERN = /^[a-z2-9]{10}$/;
 export const SESSION_TOKEN_PATTERN = /^[A-Za-z0-9_-]{24,64}$/;
-export const SIDE_NAMES: Record<Side, string> = { a: '红方/白方', b: '黑方' };
+export const SIDE_NAMES: Record<Side, string> = {
+  a: '红方/白方',
+  b: '黑方/蓝方',
+  c: '绿方',
+  d: '黄方',
+  e: '黑方',
+  f: '紫方',
+};

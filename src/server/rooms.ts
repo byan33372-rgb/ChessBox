@@ -8,7 +8,8 @@
  * - 令牌仅内存持有明文，数据库只存 SHA-256；日志只打印前 6 位。
  */
 
-import { createEngine, replayEngine } from '../games';
+import { createEngine, createCheckersEngine, replayEngine } from '../games';
+import { CheckersEngine, SUPPORTED_SEAT_COUNTS } from '../games';
 import type { GameEngine, GameKind, GameOutcome, MoveInput, Side } from '../games/types';
 import type {
   AckBase,
@@ -22,6 +23,7 @@ import type {
   RoomState,
   StateReason,
 } from '../shared/protocol';
+import { SIDE_NAMES } from '../shared/protocol';
 import { newRoomId, newSessionToken, randomNick, sha256 } from './ids';
 import { Store, type RoomPersist } from './store';
 
@@ -29,7 +31,7 @@ export interface SessionInfo {
   token: string;
   tokenHash: string;
   name: string;
-  seat: 'a' | 'b' | 'spectator';
+  seat: Side | 'spectator';
   socketId: string | null;
   roomId: string;
 }
@@ -41,7 +43,8 @@ export interface Room {
   revision: number;
   moves: PublicMove[];
   outcome: GameOutcome | null;
-  seats: { a: SessionInfo | null; b: SessionInfo | null };
+  /** 键 = 本房间有效座位字母；缺失 = 未占用（多座位跳棋为 a..f 中前 N 个） */
+  seats: Partial<Record<Side, SessionInfo>>;
   spectators: Set<string>;
   offers: OffersState;
   chat: ChatMessage[];
@@ -53,6 +56,27 @@ export interface Room {
 
 function err(code: AppError['code'], message: string): AppError {
   return { code, message };
+}
+
+/** 本房间的有效座位字母（跳棋按引擎座位序；其余固定 a,b） */
+function seatLettersOf(room: Room): Side[] {
+  if (room.kind === 'checkers' && room.engine instanceof CheckersEngine) {
+    return room.engine.seatOrder();
+  }
+  return ['a', 'b'];
+}
+
+/** 全部有效座位都有玩家 → 对局可开始 */
+function seatsAllFilled(room: Room): boolean {
+  return seatLettersOf(room).every((s) => room.seats[s] != null);
+}
+
+/** 按本房间座位数创建全新引擎（重开/悔棋重建用） */
+function freshEngine(room: Room): GameEngine {
+  if (room.kind === 'checkers' && room.engine instanceof CheckersEngine) {
+    return createCheckersEngine(room.engine.seatCount() as 2 | 3 | 4 | 6, room.engine.seatOrder()[0]);
+  }
+  return createEngine(room.kind);
 }
 
 const MAX_NAME = 12;
@@ -82,7 +106,10 @@ export class RoomManager {
     for (const p of persisted) {
       try {
         const moves = this.store.loadMoves(p.roomId);
-        const engine = moves.length > 0 ? replayEngine(p.kind, moves) : createEngine(p.kind, p.fen);
+        const engine =
+          moves.length > 0
+            ? replayEngine(p.kind, moves, p.kind === 'checkers' ? (p.seatCount ?? 2) : undefined)
+            : createEngine(p.kind, p.fen);
         const room: Room = {
           id: p.roomId,
           kind: p.kind,
@@ -90,7 +117,7 @@ export class RoomManager {
           revision: p.revision,
           moves,
           outcome: engine.outcome() ?? p.outcome,
-          seats: { a: null, b: null },
+          seats: {},
           spectators: new Set(),
           offers: p.offers ?? { draw: null, undo: null, restart: null },
           chat: this.store.loadChat(p.roomId),
@@ -99,7 +126,7 @@ export class RoomManager {
           createdAt: p.createdAt,
           updatedAt: p.updatedAt,
         };
-        for (const seat of ['a', 'b'] as const) {
+        for (const seat of seatLettersOf(room)) {
           const persistedSeat = p.seats[seat];
           if (!persistedSeat) continue;
           const s = sessionByHash.get(persistedSeat.tokenHash);
@@ -135,17 +162,22 @@ export class RoomManager {
     return next;
   }
 
-  createRoom(kind: GameKind, rawName?: string): { room: Room; session: SessionInfo } {
+  createRoom(kind: GameKind, rawName?: string, seatCount?: number): { room: Room; session: SessionInfo } {
     let id = newRoomId();
     while (this.rooms.has(id)) id = newRoomId();
+    // 跳棋按座位数创建（2/3/4/6）；其余棋种固定双人
+    const engine =
+      kind === 'checkers' && seatCount != null && (SUPPORTED_SEAT_COUNTS as readonly number[]).includes(seatCount)
+        ? createCheckersEngine(seatCount as 2 | 3 | 4 | 6)
+        : createEngine(kind);
     const room: Room = {
       id,
       kind,
-      engine: createEngine(kind),
+      engine,
       revision: 1,
       moves: [],
       outcome: null,
-      seats: { a: null, b: null },
+      seats: {},
       spectators: new Set(),
       offers: { draw: null, undo: null, restart: null },
       chat: [],
@@ -155,8 +187,10 @@ export class RoomManager {
       updatedAt: Date.now(),
     };
     const name = this.cleanName(rawName) ?? `${randomNick()}`;
-    const session = this.newSession(room, 'a', name);
-    room.seats.a = session;
+    // 创建者永远坐第一个座位（跳棋与双人棋均为 'a'）
+    const firstSeat: Side = seatLettersOf(room)[0];
+    const session = this.newSession(room, firstSeat, name);
+    room.seats[firstSeat] = session;
     this.rooms.set(id, room);
     this.persist(room);
     return { room, session };
@@ -166,10 +200,11 @@ export class RoomManager {
     const room = this.rooms.get(roomId);
     if (!room) return { ok: false, error: err('ROOM_NOT_FOUND', '房间不存在或已过期') };
     const name = this.cleanName(rawName) ?? `${randomNick()}`;
-    // 席位原子分配：a → b → 观战（已绑定的席位永不静默抢占）
-    const seat: 'a' | 'b' | 'spectator' = !room.seats.a ? 'a' : !room.seats.b ? 'b' : 'spectator';
+    // 席位原子分配：按座位顺序取第一个空位 → 观战（已绑定的席位永不静默抢占）
+    const letters = seatLettersOf(room);
+    const seat: Side | 'spectator' = letters.find((s) => room.seats[s] == null) ?? 'spectator';
     const session = this.newSession(room, seat, name);
-    if (seat === 'a' || seat === 'b') {
+    if (seat !== 'spectator') {
       room.seats[seat] = session;
       room.revision += 1; // 席位绑定改变对局状态（waiting → playing）
     }
@@ -211,7 +246,7 @@ export class RoomManager {
     if (!room) return null;
     room.spectators.delete(socketId);
     let leftSeat: Side | null = null;
-    for (const seat of ['a', 'b'] as const) {
+    for (const seat of seatLettersOf(room)) {
       const s = room.seats[seat];
       if (s && s.socketId === socketId) {
         s.socketId = null;
@@ -224,7 +259,7 @@ export class RoomManager {
   findSessionBySocket(socketId: string, roomId: string): SessionInfo | null {
     const room = this.rooms.get(roomId);
     if (!room) return null;
-    for (const seat of ['a', 'b'] as const) {
+    for (const seat of seatLettersOf(room)) {
       const s = room.seats[seat];
       if (s && s.socketId === socketId) return s;
     }
@@ -243,11 +278,11 @@ export class RoomManager {
 
     if (session.seat === 'spectator') return ackFail('NOT_PLAYER', '观战者不能走棋');
     if (room.outcome) return ackFail('GAME_ENDED', '对局已结束');
-    if (!room.seats.a || !room.seats.b) return ackFail('GAME_NOT_PLAYING', '等待对手加入');
+    if (!seatsAllFilled(room)) return ackFail('GAME_NOT_PLAYING', '等待对手加入');
     if (room.engine.turn() !== session.seat) return ackFail('NOT_YOUR_TURN', '还没轮到你走棋');
     if (req.revision !== room.revision) return ackFail('STALE_REVISION', '局面版本不一致，已为你同步最新局面');
 
-    const input: MoveInput = { from: req.from, to: req.to, promotion: req.promotion };
+    const input: MoveInput = { from: req.from, to: req.to, promotion: req.promotion, path: req.path };
     const applied = room.engine.applyMove(input);
     if (!applied) return ackFail('ILLEGAL_MOVE', '非法走法');
 
@@ -261,6 +296,9 @@ export class RoomManager {
       fenBefore: applied.fenBefore,
       fenAfter: applied.fenAfter,
       captured: applied.captured,
+      capturedSq: applied.capturedSq,
+      path: applied.path,
+      extra: applied.extra,
       check: applied.gaveCheck,
       ts: Date.now(),
     };
@@ -287,14 +325,17 @@ export class RoomManager {
   resign(room: Room, session: SessionInfo): AckBase {
     if (session.seat === 'spectator') return { ok: false, error: err('NOT_PLAYER', '观战者不能认输') };
     if (room.outcome) return { ok: false, error: err('GAME_ENDED', '对局已结束') };
-    if (!room.seats.a || !room.seats.b) return { ok: false, error: err('GAME_NOT_PLAYING', '对局尚未开始') };
-    const winner: Side = session.seat === 'a' ? 'b' : 'a';
-    const sideName = session.seat === 'a' ? '红方/白方' : '黑方';
-    room.outcome = {
-      type: 'resignation',
-      winner,
-      reason: `${sideName}认输`,
-    };
+    if (!seatsAllFilled(room)) return { ok: false, error: err('GAME_NOT_PLAYING', '对局尚未开始') };
+    const sideName = SIDE_NAMES[session.seat];
+    if (room.kind === 'checkers' && room.engine instanceof CheckersEngine) {
+      // 多人跳棋：认输者退出轮转；仅剩一人时由引擎判定获胜（CHECKERS-024）
+      const outcome = room.engine.resignSeat(session.seat as never);
+      room.outcome = outcome;
+    } else {
+      const letters = seatLettersOf(room);
+      const winner: Side = letters.find((s) => s !== session.seat) ?? (session.seat === 'a' ? 'b' : 'a');
+      room.outcome = { type: 'resignation', winner, reason: `${sideName}认输` };
+    }
     room.revision += 1;
     room.updatedAt = Date.now();
     room.offers = { draw: null, undo: null, restart: null };
@@ -355,9 +396,14 @@ export class RoomManager {
     if (room.offers.undo && room.offers.undo.by !== me) {
       return { ok: false, error: err('ALREADY_OFFERED', '对方已发悔棋请求，请回应') };
     }
-    const last = room.moves[room.moves.length - 1];
-    // 回退到请求方行棋前的局面：若最后一手是对方走的则退 2 步（自己那一手+对方应手），否则退 1 步
-    const plies = Math.min(last.side === me ? 1 : 2, room.moves.length);
+    // 回退到请求方行棋前的局面：从最后一手向前找到请求方最近一手（双人局等价于退 1/2 步）
+    let plies = 1;
+    for (let i = room.moves.length - 1; i >= 0; i--) {
+      if (room.moves[i].side === me) {
+        plies = room.moves.length - i;
+        break;
+      }
+    }
     room.offers.undo = { by: me, plies };
     room.revision += 1;
     room.updatedAt = Date.now();
@@ -381,7 +427,8 @@ export class RoomManager {
     }
     try {
       const kept = room.moves.slice(0, room.moves.length - plies);
-      const engine = kept.length > 0 ? replayEngine(room.kind, kept) : createEngine(room.kind);
+      const seatCount = room.kind === 'checkers' ? seatLettersOf(room).length : undefined;
+      const engine = kept.length > 0 ? replayEngine(room.kind, kept, seatCount) : freshEngine(room);
       room.engine = engine;
       room.moves = kept;
       room.outcome = engine.outcome();
@@ -433,7 +480,7 @@ export class RoomManager {
   }
 
   private doRestart(room: Room): AckBase {
-    room.engine = createEngine(room.kind);
+    room.engine = freshEngine(room);
     room.moves = [];
     room.outcome = null;
     room.offers = { draw: null, undo: null, restart: null };
@@ -464,6 +511,12 @@ export class RoomManager {
 
   publicState(room: Room): RoomState {
     const engine = room.engine;
+    const letters = seatLettersOf(room);
+    const seats: RoomState['seats'] = {};
+    for (const s of letters) {
+      const info = room.seats[s];
+      if (info) seats[s] = { name: info.name, connected: info.socketId !== null };
+    }
     return {
       roomId: room.id,
       kind: room.kind,
@@ -475,10 +528,9 @@ export class RoomManager {
       checkedKing: engine.checkedKingSquare(),
       lastMove: room.moves.length > 0 ? room.moves[room.moves.length - 1] : null,
       moves: room.moves,
-      seats: {
-        a: room.seats.a ? { name: room.seats.a.name, connected: room.seats.a.socketId !== null } : null,
-        b: room.seats.b ? { name: room.seats.b.name, connected: room.seats.b.socketId !== null } : null,
-      },
+      seats,
+      seatOrder: letters,
+      seatCount: letters.length,
       spectators: room.spectators.size,
       outcome: room.outcome,
       offers: room.offers,
@@ -487,7 +539,7 @@ export class RoomManager {
 
   phaseOf(room: Room): RoomPhase {
     if (room.outcome) return 'ended';
-    return room.seats.a && room.seats.b ? 'playing' : 'waiting';
+    return seatsAllFilled(room) ? 'playing' : 'waiting';
   }
 
   cleanupStale(): number {
@@ -512,7 +564,7 @@ export class RoomManager {
     return removed;
   }
 
-  private newSession(room: Room, seat: 'a' | 'b' | 'spectator', name: string): SessionInfo {
+  private newSession(room: Room, seat: Side | 'spectator', name: string): SessionInfo {
     const token = newSessionToken();
     const tokenHash = sha256(token);
     const session: SessionInfo = { token, tokenHash, name, seat, socketId: null, roomId: room.id };
@@ -534,6 +586,11 @@ export class RoomManager {
   }
 
   private buildPersist(room: Room): RoomPersist {
+    const seats: RoomPersist['seats'] = {};
+    for (const s of seatLettersOf(room)) {
+      const info = room.seats[s];
+      seats[s] = info ? { tokenHash: info.tokenHash, name: info.name } : null;
+    }
     return {
       roomId: room.id,
       kind: room.kind,
@@ -542,10 +599,8 @@ export class RoomManager {
       phase: this.phaseOf(room),
       outcome: room.outcome,
       offers: room.offers,
-      seats: {
-        a: room.seats.a ? { tokenHash: room.seats.a.tokenHash, name: room.seats.a.name } : null,
-        b: room.seats.b ? { tokenHash: room.seats.b.tokenHash, name: room.seats.b.name } : null,
-      },
+      seats,
+      seatCount: room.kind === 'checkers' ? seatLettersOf(room).length : undefined,
       createdAt: room.createdAt,
       updatedAt: room.updatedAt,
     };

@@ -22,7 +22,10 @@ export interface RoomPersist {
   phase: RoomPhase;
   outcome: GameOutcome | null;
   offers: OffersState;
-  seats: { a: SeatPersist | null; b: SeatPersist | null };
+  /** 键为该房间有效座位字母（中象/国象 a,b；跳棋 a..f 中前 N 个）；缺失 = 未占用 */
+  seats: Partial<Record<Side, SeatPersist | null>>;
+  /** 跳棋 2/3/4/6；其余缺省 2 */
+  seatCount?: number;
   createdAt: number;
   updatedAt: number;
 }
@@ -30,7 +33,7 @@ export interface RoomPersist {
 export interface SessionPersist {
   tokenHash: string;
   roomId: string;
-  seat: 'a' | 'b' | 'spectator';
+  seat: Side | 'spectator';
   name: string;
   createdAt: number;
 }
@@ -101,17 +104,33 @@ export class Store {
       CREATE INDEX IF NOT EXISTS idx_moves_room ON moves(room_id);
       CREATE INDEX IF NOT EXISTS idx_sessions_room ON sessions(room_id);
     `);
+    // 三棋升级迁移（DATA-001~003）：全部为「可空附加列」，向后兼容。
+    // 回滚设计：旧版本代码 SELECT * 会忽略新增列、INSERT 不含新列（默认 NULL），
+    // 因此回滚到旧构建时无需任何数据库操作；本迁移亦不修改/删除任何既有列。
+    // rooms.seat_count：跳棋房间座位数（2/3/4/6）；旧行为 NULL（=2）。
+    // moves.path_json / extra_json / captured_sq：跳棋连跳路径、特殊动作轨迹、被吃子实际格。
+    const migrate = (sql: string) => {
+      try {
+        this.db.exec(sql);
+      } catch {
+        // 列已存在（重复启动）：忽略
+      }
+    };
+    migrate('ALTER TABLE rooms ADD COLUMN seat_count INTEGER');
+    migrate('ALTER TABLE moves ADD COLUMN captured_sq TEXT');
+    migrate('ALTER TABLE moves ADD COLUMN path_json TEXT');
+    migrate('ALTER TABLE moves ADD COLUMN extra_json TEXT');
     this.stmtUpsertRoom = this.db.prepare(
-      `INSERT INTO rooms (room_id, kind, fen, revision, phase, outcome_json, offers_json, seats_json, created_at, updated_at)
-       VALUES (@roomId, @kind, @fen, @revision, @phase, @outcomeJson, @offersJson, @seatsJson, @createdAt, @updatedAt)
+      `INSERT INTO rooms (room_id, kind, fen, revision, phase, outcome_json, offers_json, seats_json, seat_count, created_at, updated_at)
+       VALUES (@roomId, @kind, @fen, @revision, @phase, @outcomeJson, @offersJson, @seatsJson, @seatCount, @createdAt, @updatedAt)
        ON CONFLICT(room_id) DO UPDATE SET kind=@kind, fen=@fen, revision=@revision, phase=@phase,
-         outcome_json=@outcomeJson, offers_json=@offersJson, seats_json=@seatsJson, updated_at=@updatedAt`,
+         outcome_json=@outcomeJson, offers_json=@offersJson, seats_json=@seatsJson, seat_count=@seatCount, updated_at=@updatedAt`,
     );
     this.stmtLoadRooms = this.db.prepare('SELECT * FROM rooms ORDER BY created_at');
     this.stmtDeleteRoom = this.db.prepare('DELETE FROM rooms WHERE room_id = ?');
     this.stmtAppendMove = this.db.prepare(
-      `INSERT INTO moves (room_id, ply, side, from_sq, to_sq, promotion, notation, fen_before, fen_after, captured, check_flag, ts)
-       VALUES (@roomId, @ply, @side, @from, @to, @promotion, @notation, @fenBefore, @fenAfter, @captured, @check, @ts)`,
+      `INSERT INTO moves (room_id, ply, side, from_sq, to_sq, promotion, notation, fen_before, fen_after, captured, captured_sq, path_json, extra_json, check_flag, ts)
+       VALUES (@roomId, @ply, @side, @from, @to, @promotion, @notation, @fenBefore, @fenAfter, @captured, @capturedSq, @pathJson, @extraJson, @check, @ts)`,
     );
     this.stmtLoadMoves = this.db.prepare('SELECT * FROM moves WHERE room_id = ? ORDER BY ply');
     this.stmtDeleteMovesFrom = this.db.prepare('DELETE FROM moves WHERE room_id = ? AND ply >= ?');
@@ -140,6 +159,7 @@ export class Store {
       outcomeJson: r.outcome ? JSON.stringify(r.outcome) : null,
       offersJson: JSON.stringify(r.offers),
       seatsJson: JSON.stringify(r.seats),
+      seatCount: r.seatCount ?? null,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
     });
@@ -158,7 +178,8 @@ export class Store {
           phase: row.phase as RoomPhase,
           outcome: row.outcome_json ? (JSON.parse(String(row.outcome_json)) as GameOutcome) : null,
           offers: JSON.parse(String(row.offers_json)) as OffersState,
-          seats: JSON.parse(String(row.seats_json)),
+          seats: JSON.parse(String(row.seats_json)) as RoomPersist['seats'],
+          seatCount: row.seat_count != null ? Number(row.seat_count) : undefined,
           createdAt: Number(row.created_at),
           updatedAt: Number(row.updated_at),
         });
@@ -190,6 +211,9 @@ export class Store {
       fenBefore: m.fenBefore,
       fenAfter: m.fenAfter,
       captured: m.captured ?? null,
+      capturedSq: m.capturedSq ?? null,
+      pathJson: m.path ? JSON.stringify(m.path) : null,
+      extraJson: m.extra ? JSON.stringify(m.extra) : null,
       check: m.check ? 1 : 0,
       ts: m.ts,
     });
@@ -216,6 +240,9 @@ export class Store {
       fenBefore: String(row.fen_before),
       fenAfter: String(row.fen_after),
       captured: row.captured ? String(row.captured) : null,
+      capturedSq: row.captured_sq ? String(row.captured_sq) : undefined,
+      path: row.path_json ? (JSON.parse(String(row.path_json)) as string[]) : undefined,
+      extra: row.extra_json ? (JSON.parse(String(row.extra_json)) as PublicMove['extra']) : undefined,
       check: Number(row.check_flag) === 1,
       ts: Number(row.ts),
     }));
@@ -238,7 +265,7 @@ export class Store {
     return rows.map((row) => ({
       tokenHash: String(row.token_hash),
       roomId: String(row.room_id),
-      seat: row.seat as 'a' | 'b' | 'spectator',
+      seat: row.seat as SessionPersist['seat'],
       name: String(row.name),
       createdAt: Number(row.created_at),
     }));

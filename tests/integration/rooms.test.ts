@@ -112,7 +112,7 @@ describe('联机 · 房间与席位', () => {
     expect(roomId).toMatch(/^[a-z2-9]{10}$/);
     expect(token.length).toBeGreaterThanOrEqual(24);
     expect(state.seats.a?.name).toBe('甲方');
-    expect(state.seats.b).toBeNull();
+    expect(state.seats.b).toBeUndefined(); // 多座位模型：未占用座位缺失
     expect(state.phase).toBe('waiting');
     expect(state.turn).toBe('a');
     expect(state.revision).toBe(1);
@@ -358,7 +358,7 @@ describe('联机 · 断线重连与持久化', () => {
     playerB.disconnect();
     await new Promise((r) => setTimeout(r, 200));
     const left = server.rooms.get(roomId)!;
-    expect(left.seats.b).not.toBeNull(); // 席位仍保留
+    expect(left.seats.b).toBeDefined(); // 席位仍保留
     expect(left.seats.b?.socketId).toBeNull(); // 连接已断开
     // 陌生人无法抢座
     const stranger = await joinAs(server, roomId, '路人');

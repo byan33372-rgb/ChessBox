@@ -3,6 +3,7 @@ import type { GameEngine, GameKind, Side } from './types';
 import { ChessEngine } from './chess/adapter';
 import { XiangqiEngine } from './xiangqi/engine';
 import { CheckersEngine } from './checkers/engine';
+import { SUPPORTED_SEAT_COUNTS } from './checkers/board';
 import { START_FEN as XIANGQI_START_FEN } from './xiangqi/engine';
 
 export { ChessEngine } from './chess/adapter';
@@ -17,7 +18,7 @@ export {
   SEAT_CAMP_MAPS,
   SUPPORTED_SEAT_COUNTS,
   campOf,
-  cellAxial,
+  cellRC,
   cellPixel,
   isValidCell,
   neighborsOf,
