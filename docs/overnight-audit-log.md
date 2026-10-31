@@ -120,3 +120,17 @@ tests/unit/chess-rules-deep.test.ts：兵双步/斜吃/前吃、吃过路兵（�
 2. `npm test && npx playwright test`（前置：dist 已构建）
 3. 服务：`npm start`（后台）+ `npm run tunnel`（cloudflared 在 tools/）
 4. 本文件各阶段记录含具体命令；所有阶段已完成，无未竟事项。
+
+---
+
+# 三棋升级轮次（2026-10-31 ~ 11-01）
+
+- 基线检查点 ebe0b58（中象/国象 148 vitest + 7 e2e 全绿）。
+- 阶段A 跳棋引擎（行模型121格/连跳逐段/营地/胜利/多人认输）25 单测。
+- 阶段B 多座位协议（protocol/rooms/store/socket）+11 集成；数据库可空附加列迁移（回滚零操作设计见 store.ts 注释）。
+- 阶段C 跳棋前端（CheckersBoard/checkersUi/Room分支/首页第三入口/导出/主题）。
+- 阶段D 三棋统一上一手追踪（起/终双编码标记、LastMoveBar、对手toast、易位extra/过路兵capturedSq/连跳path）。
+- 阶段E 历史回看（最近5步面板/窗口化虚拟列表/多座位单列记谱）。
+- 阶段G 全量回归：vitest 188（unit134+integration54）+ e2e 13 全绿；真实浏览器双人跳棋全流程实测；公网 Quick Tunnel 验证（HTTP 200 + Cloudflare 边缘 + 公网建房走棋）；PERF e2e P95≈169FPS。
+- BLOCKED 如实记录：IAB 截图面超时（DOM 断言替代）；物理 60/120Hz 真机、跨物理局域网真机 NOT_TESTED。
+- 验收报告：docs/acceptance/three-games-upgrade-report.md（15 Gate 全表）。
