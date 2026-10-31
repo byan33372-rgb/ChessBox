@@ -1,7 +1,8 @@
 /** 引擎工厂：按棋种创建权威规则引擎（前后端共用） */
-import type { GameEngine, GameKind } from './types';
+import type { GameEngine, GameKind, Side } from './types';
 import { ChessEngine } from './chess/adapter';
 import { XiangqiEngine } from './xiangqi/engine';
+import { CheckersEngine } from './checkers/engine';
 import { START_FEN as XIANGQI_START_FEN } from './xiangqi/engine';
 
 export { ChessEngine } from './chess/adapter';
@@ -9,19 +10,67 @@ export { XiangqiEngine, START_FEN, parseFen, squareOf, parseSquare, kingsFacing,
 export type { XColor, XBoard } from './xiangqi/engine';
 export { chineseNotation, pieceLabel } from './xiangqi/notation';
 export { CHESS_START_FEN } from './chess/adapter';
+export { CheckersEngine, CHECKERS_COLORS, CHECKERS_NAMES, CHECKERS_PIECE_COUNT } from './checkers/engine';
+export {
+  ALL_CELLS,
+  CELL_IDS,
+  SEAT_CAMP_MAPS,
+  SUPPORTED_SEAT_COUNTS,
+  campOf,
+  cellAxial,
+  cellPixel,
+  isValidCell,
+  neighborsOf,
+  targetCamp,
+} from './checkers/board';
+export type { CellInfo } from './checkers/board';
 
-export function startFenOf(kind: GameKind): string {
-  return kind === 'xiangqi' ? XIANGQI_START_FEN : new ChessEngine().fen();
+/** 各棋种的座位数：中象/国象固定 2；跳棋 2/3/4/6 */
+export function seatCountOf(kind: GameKind): number[] {
+  return kind === 'checkers' ? [...SUPPORTED_SEAT_COUNTS] : [2];
+}
+
+export function isGameKind(v: unknown): v is GameKind {
+  return v === 'xiangqi' || v === 'chess' || v === 'checkers';
+}
+
+export function isSide(v: unknown): v is Side {
+  return typeof v === 'string' && /^[a-f]$/.test(v);
+}
+
+export function startFenOf(kind: GameKind, seatCount?: number): string {
+  if (kind === 'xiangqi') return XIANGQI_START_FEN;
+  if (kind === 'chess') return new ChessEngine().fen();
+  const n = (seatCount ?? 2) as 2 | 3 | 4 | 6;
+  return CheckersEngine.create(n).fen();
 }
 
 export function createEngine(kind: GameKind, fen?: string): GameEngine {
   if (kind === 'xiangqi') return new XiangqiEngine(fen ?? XIANGQI_START_FEN);
+  if (kind === 'checkers') return new CheckersEngine(fen);
   return new ChessEngine(fen);
 }
 
+/** 跳棋：按座位数与先手座位创建（房间创建时使用） */
+export function createCheckersEngine(seatCount: 2 | 3 | 4 | 6, firstSeat: Side = 'a'): CheckersEngine {
+  return CheckersEngine.create(seatCount, firstSeat as never);
+}
+
 /** 从初始局面重放到指定 FEN 之后（用于悔棋/重启后重建引擎状态） */
-export function replayEngine(kind: GameKind, moves: Array<{ from: string; to: string; promotion?: string }>): GameEngine {
-  const engine = createEngine(kind);
+export function replayEngine(
+  kind: GameKind,
+  moves: Array<{ from: string; to: string; promotion?: string; path?: string[] }>,
+  seatCount?: number,
+): GameEngine {
+  let engine: GameEngine;
+  if (kind === 'checkers') {
+    // 从首着的 fenBefore 恢复初始座位顺序；无着法时按 seatCount 新建
+    const first = moves[0] as unknown as { fenBefore?: string } | undefined;
+    engine = new CheckersEngine(first?.fenBefore);
+    if (!first?.fenBefore) engine = createCheckersEngine((seatCount ?? 2) as 2 | 3 | 4 | 6);
+  } else {
+    engine = createEngine(kind);
+  }
   for (const m of moves) {
     const applied = engine.applyMove(m);
     if (!applied) throw new Error(`重放失败: ${JSON.stringify(m)}`);
