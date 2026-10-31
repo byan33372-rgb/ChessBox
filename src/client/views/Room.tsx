@@ -21,7 +21,7 @@ import {
   stepTargetsFrom,
   type CheckersSim,
 } from '../components/checkersUi';
-import { MoveList } from '../components/MoveList';
+import { MoveList, RecentMovesPanel } from '../components/MoveList';
 import { ChatPanel } from '../components/ChatPanel';
 import {
   buildCheckersJson,
@@ -589,11 +589,14 @@ export function Room({ roomId, onExit }: RoomProps) {
             </div>
           )}
 
+          <RecentMovesPanel moves={state.moves} viewPly={display.viewing ? display.ply : null} onSelect={(ply) => setViewPly(ply === state.moves.length ? null : ply)} />
+
           <LastMoveBar lastMove={display.lastMove} kind={state.kind} />
 
           <MoveList
             moves={state.moves}
             kind={state.kind}
+            seatOrder={state.seatOrder}
             viewPly={display.viewing ? display.ply : null}
             onSelect={(ply) => setViewPly(ply === state.moves.length ? null : ply)}
           />

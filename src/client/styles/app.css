@@ -2309,3 +2309,94 @@ li.unverified .status-label {
 .legend-arrow {
   opacity: 0.7;
 }
+
+
+/* —— 棋谱窗口化 + 最近 5 步面板（HISTORY-005~014） —— */
+.move-list.virtualized {
+  height: 288px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.move-row {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.move-row.solo {
+  gap: 8px;
+}
+.mv-seat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: -1px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+.recent-moves {
+  padding: 0;
+  overflow: hidden;
+}
+.recent-head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.recent-caret {
+  color: var(--muted);
+}
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+.recent-item:last-child {
+  border-bottom: none;
+}
+.recent-item:hover {
+  background: var(--hover);
+}
+.recent-item.active {
+  background: var(--active-bg);
+}
+.recent-ply {
+  color: var(--muted);
+  font-size: 11px;
+  width: 24px;
+  flex: none;
+}
+.recent-side {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-ink);
+  width: 18px;
+  flex: none;
+}
+.recent-notation {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
