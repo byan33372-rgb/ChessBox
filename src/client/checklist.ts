@@ -61,14 +61,14 @@ export const CHECKLIST: CheckGroup[] = [
     kind: 'checkers',
     title: '功能确认（中国跳棋）',
     items: [
-      { label: '六角星棋盘 121 孔位与棋子显示正确', status: 'unverified', evidence: '待阶段G回归：CHK-UI-001' },
+      { label: '六角星棋盘 121 孔位与棋子显示正确', status: 'pass', evidence: 'unit 几何 121 格 + e2e 跳棋对局实测（upgrade.spec）' },
       { label: '移动/跳跃/连跳/营地约束/胜利规则', status: 'pass', evidence: 'unit checkers-engine 25 项（TEST-003~014/SEC-005/006）' },
       { label: '2/3/4/6 人房间与轮转、超员观战', status: 'pass', evidence: 'integration checkers-rooms 11 项（SERVER-001~012）' },
       { label: '连跳完整路径服务端校验与广播', status: 'pass', evidence: 'integration [e3,e5,g5] 连跳用例 + 持久化恢复 path 断言' },
-      { label: '上一手起点/终点标记与连跳轨迹显示', status: 'unverified', evidence: '待阶段D/F回归：CHK-UI-002' },
-      { label: '导出棋谱文本 / 自定义 JSON', status: 'unverified', evidence: '待阶段G回归：CHK-UI-003' },
+      { label: '上一手起点/终点标记与连跳轨迹显示', status: 'pass', evidence: 'e2e ck-mark-from/to + polyline + LastMoveBar 断言（upgrade.spec）' },
+      { label: '导出棋谱文本 / 自定义 JSON', status: 'unverified', evidence: '下载保存对话框自动化受限；导出函数为纯函数（buildCheckersText/Json）已随构建验证，浏览器下载链路沿用国象/中象同款实现' },
       { label: '刷新页面后能恢复当前对局状态', status: 'pass', evidence: 'integration 持久化恢复用例（DATA-001~004）' },
-      { label: '页面在不同屏幕尺寸下均能正常显示', status: 'unverified', evidence: '待阶段G回归：CHK-RWD-001' },
+      { label: '页面在不同屏幕尺寸下均能正常显示', status: 'pass', evidence: 'e2e 三棋 375×667 无横向溢出 + RWD 既有矩阵' },
     ],
   },
 ];

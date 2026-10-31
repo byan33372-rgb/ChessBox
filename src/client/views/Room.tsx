@@ -899,7 +899,11 @@ function LastMoveBar({
           ? '白方'
           : '黑方'
         : (CHECKERS_NAMES[lastMove.side] ?? lastMove.side);
-  const trail = lastMove.path && lastMove.path.length > 2 ? `（连跳 ${lastMove.path.length - 1} 段）` : '';
+  // notation 已含「连跳×N」时不重复追加
+  const trail =
+    lastMove.path && lastMove.path.length > 2 && !lastMove.notation.includes('连跳')
+      ? `（连跳 ${lastMove.path.length - 1} 段）`
+      : '';
   return (
     <div className="card last-move-bar" aria-label="最近一步">
       <div className="lmb-main">
