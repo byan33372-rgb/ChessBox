@@ -292,3 +292,84 @@ test.describe('导出功能', () => {
     await ctxB.close();
   });
 });
+
+// ==================== 中国跳棋（三棋升级轮次） ====================
+
+async function createCheckersRoom(page: Page, seatCount?: 2 | 3 | 4 | 6): Promise<string> {
+  await page.goto('/');
+  await page.locator('.create-card.checkers').waitFor({ state: 'visible' });
+  if (seatCount) {
+    await page.locator(`.create-card.checkers .seat-count-btn:has-text("${seatCount}人")`).click();
+  }
+  await page.locator('.create-card.checkers .gc-create-btn').click();
+  await expect(page).toHaveURL(/\/r\/[a-z2-9]{10}/, { timeout: 15_000 });
+  await expect(page.locator('.conn-pill.ok')).toBeVisible({ timeout: 15_000 });
+  return page.url().split('/r/')[1];
+}
+
+async function clickCell(page: Page, cell: string): Promise<void> {
+  await page.locator(`.checkers-hit[data-cell="${cell}"]`).click();
+}
+
+test.describe('中国跳棋端到端', () => {
+  test('2 人对弈：单步→标记/最近一步/最近5步→连跳逐段→复盘', async ({ browser }) => {
+    const ctxA = await browser.newContext();
+    const ctxB = await browser.newContext();
+    const pageA = await ctxA.newPage();
+    const pageB = await ctxB.newPage();
+
+    const roomId = await createCheckersRoom(pageA, 2);
+    await expect(pageA.locator('.waiting-overlay')).toBeVisible();
+    await joinRoom(pageB, roomId);
+    await expect(pageB.locator('.waiting-overlay')).not.toBeVisible({ timeout: 10_000 });
+
+    // a：f4→f5（普通单步）
+    await clickCell(pageA, 'f4');
+    await clickCell(pageA, 'f5');
+    await expect(pageA.locator('.last-move-bar .lmb-text')).toContainText('f4→f5', { timeout: 10_000 });
+    // 统一标记：起点琥珀 + 终点青绿
+    await expect(pageA.locator('.ck-mark-from')).toBeVisible();
+    await expect(pageA.locator('.ck-mark-to')).toBeVisible();
+    // b 端同步
+    await expect(pageB.locator('.last-move-bar .lmb-text')).toContainText('f4→f5', { timeout: 10_000 });
+    await expect(pageB.locator('.recent-item').first()).toContainText('f4→f5');
+
+    // b：m14→m13
+    await clickCell(pageB, 'm14');
+    await clickCell(pageB, 'm13');
+    await expect(pageB.locator('.last-move-bar .lmb-text')).toContainText('m14→m13', { timeout: 10_000 });
+
+    // a：连跳 e3 → e5 → g5（先造跳板 f5 已在盘上）——逐段选点，末段自动提交
+    await clickCell(pageA, 'e3');
+    await clickCell(pageA, 'e5');
+    // 连跳未结束（g5 之后可能还有跳）——横幅可见
+    await clickCell(pageA, 'g5');
+    await expect(pageA.locator('.last-move-bar .lmb-text')).toContainText('连跳×2', { timeout: 10_000 });
+    await expect(pageA.locator('.last-move-bar .lmb-text')).toContainText('e3→e5→g5');
+    // 连跳完整路径折线
+    await expect(pageA.locator('.ck-mark-to')).toBeVisible();
+    await expect(pageB.locator('.last-move-bar .lmb-text')).toContainText('e3→e5→g5', { timeout: 10_000 });
+    await expectMoveCount(pageA, 3);
+
+    // 对手提示 toast（b 上一步后 a 收到提示；此处 a 连跳后 b 收到）
+    // 复盘定位
+    await pageA.locator('.recent-item', { hasText: 'm14→m13' }).first().click();
+    await expect(pageA.locator('.replay-banner')).toBeVisible();
+    await expect(pageA.locator('.replay-pos')).toHaveText('2 / 3');
+    await pageA.locator('.replay-banner .btn').click();
+
+    await ctxA.close();
+    await ctxB.close();
+  });
+
+  test('首页第三入口与人数选择；3 人房座位条与等待文案', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.create-card.checkers .card-title')).toHaveText('中国跳棋');
+    await expect(page.locator('.create-card.checkers .seat-count-btn')).toHaveCount(4);
+    await createCheckersRoom(page, 3);
+    // 多座位条渲染 3 个座位，创建者 a 占 1 席
+    await expect(page.locator('.checkers-seats .checkers-seat')).toHaveCount(3);
+    await expect(page.locator('.checkers-seat').first()).toContainText('红方');
+    await expect(page.locator('.waiting-overlay')).toContainText(/等待/);
+  });
+});

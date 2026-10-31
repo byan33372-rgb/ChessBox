@@ -84,6 +84,16 @@ export function simAfterChain(sim: CheckersSim, chain: string[], seat: CheckersC
   return next;
 }
 
+/**
+ * 连跳链尾的后续跳跃目标（SEC-006 前端同款防循环）：
+ * 排除链内已用格（重复落点会被服务端整条拒绝，UI 不得提供）。
+ */
+export function nextChainTargets(sim: CheckersSim, chain: string[], targetCamp: number): string[] {
+  const simTail = simAfterChain(sim, chain, /* seat 占位：跳跃判定不依赖 */ 'a');
+  const tail = chain[chain.length - 1];
+  return jumpTargetsFrom(simTail, tail, targetCamp).filter((t) => !chain.includes(t));
+}
+
 export type CheckersClickResult =
   | { type: 'none' }
   | { type: 'select'; cell: string }
@@ -116,8 +126,7 @@ export function checkersClick(
     }
     if (jumpTargetsFrom(simBase, last, targetCamp).includes(sq)) {
       const nextChain = [...base, sq];
-      const simNext = simAfterChain(sim, nextChain, seat);
-      const more = jumpTargetsFrom(simNext, sq, targetCamp);
+      const more = nextChainTargets(sim, nextChain, targetCamp);
       if (more.length === 0) {
         return nextChain.length > 2
           ? { type: 'commit', from: nextChain[0], to: sq, path: nextChain }

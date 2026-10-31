@@ -16,10 +16,9 @@ import type { BoardAnim } from './boardAnim';
 import { useAnimPref } from './animPref';
 import {
   checkersClick,
+  nextChainTargets,
   parseCheckersFenPieces,
-  simAfterChain,
   stepTargetsFrom,
-  jumpTargetsFrom,
   type CheckersSim,
 } from './checkersUi';
 import type { GameKind } from '../../games/types';
@@ -69,12 +68,10 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
     if (!selected) return map;
     if (isCheckers && ckSim) {
       const base = chainRef.current ?? [selected];
-      const simBase = simAfterChain(ckSim, base, engine.turn());
-      const last = base[base.length - 1];
       if (base.length === 1) {
-        for (const t of stepTargetsFrom(simBase, last, ckTargetCamp)) map.set(t, false);
+        for (const t of stepTargetsFrom(ckSim, base[0], ckTargetCamp)) map.set(t, false);
       }
-      for (const t of jumpTargetsFrom(simBase, last, ckTargetCamp)) map.set(t, false);
+      for (const t of nextChainTargets(ckSim, base, ckTargetCamp)) map.set(t, false);
       return map;
     }
     for (const m of engine.legalMoves()) {

@@ -15,9 +15,8 @@ import type { BoardAnim } from '../components/boardAnim';
 import { useAnimPref } from '../components/animPref';
 import {
   checkersClick,
-  jumpTargetsFrom,
+  nextChainTargets,
   parseCheckersFenPieces,
-  simAfterChain,
   stepTargetsFrom,
   type CheckersSim,
 } from '../components/checkersUi';
@@ -215,12 +214,11 @@ export function Room({ roomId, onExit }: RoomProps) {
     if (!engine || !selected) return map;
     if (isCheckers && ckSim) {
       const base = chain ?? [selected];
-      const simBase = simAfterChain(ckSim, base, state?.turn ?? 'a');
-      const last = base[base.length - 1];
       if (base.length === 1) {
-        for (const t of stepTargetsFrom(simBase, last, viewTargetCamp)) map.set(t, false);
+        for (const t of stepTargetsFrom(ckSim, base[0], viewTargetCamp)) map.set(t, false);
       }
-      for (const t of jumpTargetsFrom(simBase, last, viewTargetCamp)) map.set(t, false);
+      // 连跳延伸目标：排除链内已用格（防循环，与 checkersClick 同源）
+      for (const t of nextChainTargets(ckSim, base, viewTargetCamp)) map.set(t, false);
       return map;
     }
     for (const m of engine.legalMoves()) {

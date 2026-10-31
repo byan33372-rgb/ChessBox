@@ -145,6 +145,7 @@ export function CheckersBoard({
           {lastMove && (
             <>
               <circle
+                className="ck-mark-from"
                 cx={pos(lastMove.from).x}
                 cy={pos(lastMove.from).y}
                 r={HOLE_R + 4}
@@ -164,6 +165,7 @@ export function CheckersBoard({
                 起
               </text>
               <circle
+                className="ck-mark-to"
                 cx={pos(lastMove.to).x}
                 cy={pos(lastMove.to).y}
                 r={HOLE_R + 4}
@@ -244,6 +246,7 @@ export function CheckersBoard({
             return (
               <circle
                 key={`hit-${cell.id}`}
+                data-cell={cell.id}
                 cx={p.x}
                 cy={p.y}
                 r={HIT_R}
