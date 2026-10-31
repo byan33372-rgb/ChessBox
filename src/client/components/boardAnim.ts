@@ -28,6 +28,8 @@ function isUpper(ch: string): boolean {
   return ch >= 'A' && ch <= 'Z';
 }
 
+import type { GameKind } from '../../games/types';
+
 /** 解析 FEN 棋子表 → Map<格, 代码>。kind 决定行序（chess 首行=rank8；xiangqi 首行=r0）。 */
 export function fenPieceMap(kind: 'xiangqi' | 'chess', fen: string): Map<string, string> {
   const map = new Map<string, string>();
@@ -78,12 +80,13 @@ function sqDist(a: string, b: string): number {
  * 局面不符（如 from 处无子）时返回 null（调用方直接呈现权威局面，不动画）。
  */
 export function buildBoardAnim(
-  kind: 'xiangqi' | 'chess',
+  kind: GameKind,
   fenBefore: string,
   fenAfter: string,
   from: string,
   to: string,
 ): BoardAnim | null {
+  if (kind === 'checkers') return null; // 跳棋飞行动画走 CheckersBoard 的 flight 层，不走 FEN 行解析
   const prev = fenPieceMap(kind, fenBefore);
   const next = fenPieceMap(kind, fenAfter);
   const moverCode = prev.get(from);

@@ -4,13 +4,24 @@
  * 与在线对局的区别在界面上明示（"试玩"徽标 + 结束后可重置），不冒充在线房间。
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { createEngine, startFenOf } from '../../games';
+import { createEngine, startFenOf, CheckersEngine, SEAT_CAMP_MAPS } from '../../games';
+import { targetCamp } from '../../games/checkers/board';
+import { CHECKERS_NAMES } from '../../games/checkers/engine';
 import type { GameEngine } from '../../games/types';
 import { XiangqiBoard } from './XiangqiBoard';
 import { ChessBoard } from './ChessBoard';
+import { CheckersBoard } from './CheckersBoard';
 import { buildBoardAnim } from './boardAnim';
 import type { BoardAnim } from './boardAnim';
 import { useAnimPref } from './animPref';
+import {
+  checkersClick,
+  parseCheckersFenPieces,
+  simAfterChain,
+  stepTargetsFrom,
+  jumpTargetsFrom,
+  type CheckersSim,
+} from './checkersUi';
 import type { GameKind } from '../../games/types';
 
 export function PracticeBoard({ kind }: { kind: GameKind }) {
@@ -28,6 +39,11 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
   const selectedRef = useRef<string | null>(null);
   selectedRef.current = selected;
 
+  // 跳棋连跳链（沙盒与房间同一交互规则）
+  const [chain, setChain] = useState<string[] | null>(null);
+  const chainRef = useRef<string[] | null>(null);
+  chainRef.current = chain;
+
   // 沙盒动画：本地引擎走棋成功（=本沙盒的权威确认）即构造 FLIP 描述
   const { enabled: animEnabled } = useAnimPref();
   const [anim, setAnim] = useState<BoardAnim | null>(null);
@@ -37,20 +53,67 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
   const outcome = engine.outcome();
   const checkSquare = engine.checkedKingSquare();
 
+  // —— 跳棋：sim 与连跳感知 targets ——
+  const isCheckers = kind === 'checkers' && engine instanceof CheckersEngine;
+  const ckSim = useMemo(() => (isCheckers ? parseCheckersFenPieces(engine.fen()) : null), [isCheckers, fen]) as CheckersSim | null;
+  const ckTargetCamp = useMemo(() => {
+    if (!isCheckers) return -1;
+    const n = (engine as CheckersEngine).seatCount() as 2 | 3 | 4 | 6;
+    const seat = engine.turn();
+    const start = SEAT_CAMP_MAPS[n][seat];
+    return start != null ? targetCamp(start) : -1;
+  }, [isCheckers, fen]);
+
   const targets = useMemo(() => {
     const map = new Map<string, boolean>();
     if (!selected) return map;
+    if (isCheckers && ckSim) {
+      const base = chainRef.current ?? [selected];
+      const simBase = simAfterChain(ckSim, base, engine.turn());
+      const last = base[base.length - 1];
+      if (base.length === 1) {
+        for (const t of stepTargetsFrom(simBase, last, ckTargetCamp)) map.set(t, false);
+      }
+      for (const t of jumpTargetsFrom(simBase, last, ckTargetCamp)) map.set(t, false);
+      return map;
+    }
     for (const m of engine.legalMoves()) {
       if (m.from === selected) map.set(m.to, m.capture);
     }
     return map;
-  }, [engine, selected]);
+  }, [engine, selected, isCheckers, ckSim, ckTargetCamp, chain]);
 
   const handleSquareClick = (sq: string) => {
     const eng = engineRef.current;
     const sel = selectedRef.current;
     if (!eng || eng.outcome()) {
       setSelected(null);
+      return;
+    }
+    // —— 跳棋分支：连跳逐段选点 ——
+    if (isCheckers && ckSim) {
+      const result = checkersClick(ckSim, eng.turn(), ckTargetCamp, sel, chainRef.current, sq);
+      if (result.type === 'select') {
+        selectedRef.current = result.cell;
+        setSelected(result.cell);
+        setChain(null);
+        return;
+      }
+      if (result.type === 'extend') {
+        setChain(result.chain);
+        return;
+      }
+      if (result.type === 'commit') {
+        const applied = eng.applyMove({ from: result.from, to: result.to, path: result.path });
+        if (applied) {
+          setSelected(null);
+          setChain(null);
+          bump();
+        }
+        return;
+      }
+      setSelected(null);
+      setChain(null);
       return;
     }
     const myTargets = new Map<string, boolean>();
@@ -90,7 +153,14 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
     }
   };
 
-  const turnLabel = engine.turn() === 'a' ? (kind === 'xiangqi' ? '红方行棋' : '白方行棋') : '黑方行棋';
+  const turnLabel =
+    kind === 'checkers'
+      ? `${CHECKERS_NAMES[engine.turn()] ?? engine.turn()}行棋`
+      : engine.turn() === 'a'
+        ? kind === 'xiangqi'
+          ? '红方行棋'
+          : '白方行棋'
+        : '黑方行棋';
 
   const board =
     kind === 'xiangqi' ? (
@@ -103,6 +173,15 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
         checkSquare={checkSquare}
         onSquareClick={handleSquareClick}
         anim={anim}
+      />
+    ) : kind === 'checkers' ? (
+      <CheckersBoard
+        pieces={ckSim ?? new Map()}
+        selected={selected}
+        chain={chain}
+        targets={targets}
+        lastMove={null}
+        onSquareClick={handleSquareClick}
       />
     ) : (
       <ChessBoard
@@ -132,6 +211,7 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
           onClick={() => {
             setResetKey((k) => k + 1);
             setSelected(null);
+            setChain(null);
             bump();
           }}
         >

@@ -1,18 +1,38 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRoom } from '../net/roomClient';
-import { createEngine, START_FEN as XQ_START_FEN } from '../../games';
+import { createEngine, START_FEN as XQ_START_FEN, CheckersEngine, SEAT_CAMP_MAPS, CHECKERS_NAMES } from '../../games';
 import { CHESS_START_FEN } from '../../games';
+import { targetCamp } from '../../games/checkers/board';
 import { pieceLabel } from '../../games/xiangqi/notation';
 import type { Side } from '../../games/types';
 import type { RoomState } from '../../shared/protocol';
 import { ChessBoard } from '../components/ChessBoard';
 import { XiangqiBoard } from '../components/XiangqiBoard';
+import { CheckersBoard } from '../components/CheckersBoard';
+import type { CheckersFlight } from '../components/CheckersBoard';
 import { buildBoardAnim } from '../components/boardAnim';
 import type { BoardAnim } from '../components/boardAnim';
 import { useAnimPref } from '../components/animPref';
+import {
+  checkersClick,
+  jumpTargetsFrom,
+  parseCheckersFenPieces,
+  simAfterChain,
+  stepTargetsFrom,
+  type CheckersSim,
+} from '../components/checkersUi';
 import { MoveList } from '../components/MoveList';
 import { ChatPanel } from '../components/ChatPanel';
-import { buildPgn, buildXiangqiJson, buildXiangqiText, copyText, downloadJson, downloadText } from '../export/exporters';
+import {
+  buildCheckersJson,
+  buildCheckersText,
+  buildPgn,
+  buildXiangqiJson,
+  buildXiangqiText,
+  copyText,
+  downloadJson,
+  downloadText,
+} from '../export/exporters';
 
 export interface RoomProps {
   roomId: string;
@@ -39,12 +59,19 @@ export function Room({ roomId, onExit }: RoomProps) {
   const [pendingPromo, setPendingPromo] = useState<PendingPromotion | null>(null);
   const { enabled: animEnabled, userOn: animUserOn, toggle: toggleAnimPref } = useAnimPref();
   const [anim, setAnim] = useState<BoardAnim | null>(null);
+  /** 跳棋连跳链（逐段选点进行中；[起点, ...落点]） */
+  const [chain, setChain] = useState<string[] | null>(null);
+  const chainRef = useRef<string[] | null>(null);
+  chainRef.current = chain;
+  /** 跳棋飞行动画层 */
+  const [ckFlight, setCkFlight] = useState<CheckersFlight | null>(null);
   /** 动画闸门游标：上次见过的 moves.length 与 ply（服务端确认后 +1 判定 + 去重） */
   const lastMoveCountRef = useRef(0);
   const lastAnimPlyRef = useRef(-1);
 
   useEffect(() => {
     setSelected(null);
+    setChain(null);
   }, [state?.fen]);
 
   // 新对局（重开/悔棋清空）时退出复盘视图；平时新着法不打断本地复盘
@@ -76,6 +103,22 @@ export function Room({ roomId, onExit }: RoomProps) {
   useEffect(() => {
     if (viewPly !== null) setAnim(null);
   }, [viewPly]);
+
+  // —— 跳棋飞行动画闸门：与上面 FLIP 闸门同条件；单步/连跳都从 from 飞向 to ——
+  useEffect(() => {
+    if (!state) return;
+    const moves = state.moves;
+    const prevCount = lastMoveCountRef.current;
+    const last = moves.length > 0 ? moves[moves.length - 1] : null;
+    const freshPly = last !== null && last.ply > lastAnimPlyRef.current;
+    const canAnimate = animEnabled && conn === 'online' && viewPly === null && (state.phase === 'playing' || state.phase === 'ended');
+    if (state.kind === 'checkers' && moves.length === prevCount + 1 && last && freshPly && canAnimate) {
+      setCkFlight({ seat: last.side, from: last.from, to: last.to, key: last.ply });
+      const t = setTimeout(() => setCkFlight(null), 240);
+      return () => clearTimeout(t);
+    }
+    if (state.kind === 'checkers') setCkFlight(null);
+  }, [state, animEnabled, conn, viewPly]);
 
   // 关闭动效时立即清掉在飞的层
   useEffect(() => {
@@ -109,6 +152,27 @@ export function Room({ roomId, onExit }: RoomProps) {
 
   const checkSquare = useMemo(() => engine?.checkedKingSquare() ?? null, [engine]);
 
+  // —— 跳棋：sim / 目标营地 / 连跳感知 targets ——
+  const isCheckers = state?.kind === 'checkers' && engine instanceof CheckersEngine;
+  const ckSim = useMemo(
+    () => (isCheckers && display ? parseCheckersFenPieces(display.fen) : null),
+    [isCheckers, display?.fen],
+  ) as CheckersSim | null;
+  const ckTargetCamp = useMemo(() => {
+    if (!isCheckers || !state || !seat || seat === 'spectator') return -1;
+    const n = state.seatCount as 2 | 3 | 4 | 6;
+    const start = SEAT_CAMP_MAPS[n]?.[seat];
+    return start != null ? targetCamp(start) : -1;
+  }, [isCheckers, state?.seatCount, seat]);
+  /** 我的棋子的目标营地（旁观时看当前轮次者，仅用于 UI 提示） */
+  const viewTargetCamp = useMemo(() => {
+    if (!isCheckers || !state) return -1;
+    const n = state.seatCount as 2 | 3 | 4 | 6;
+    const who = seat && seat !== 'spectator' ? seat : state.turn;
+    const start = SEAT_CAMP_MAPS[n]?.[who];
+    return start != null ? targetCamp(start) : -1;
+  }, [isCheckers, state?.seatCount, state?.turn, seat]);
+
   /** 同步引用：点击处理器即时读取，避免快速连点命中过期闭包（丢步偶发缺陷修复） */
   const engineRef = useRef(engine);
   const selectedRef = useRef<string | null>(null);
@@ -123,11 +187,21 @@ export function Room({ roomId, onExit }: RoomProps) {
   const targets = useMemo(() => {
     const map = new Map<string, boolean>();
     if (!engine || !selected) return map;
+    if (isCheckers && ckSim) {
+      const base = chain ?? [selected];
+      const simBase = simAfterChain(ckSim, base, state?.turn ?? 'a');
+      const last = base[base.length - 1];
+      if (base.length === 1) {
+        for (const t of stepTargetsFrom(simBase, last, viewTargetCamp)) map.set(t, false);
+      }
+      for (const t of jumpTargetsFrom(simBase, last, viewTargetCamp)) map.set(t, false);
+      return map;
+    }
     for (const m of engine.legalMoves()) {
       if (m.from === selected) map.set(m.to, m.capture);
     }
     return map;
-  }, [engine, selected]);
+  }, [engine, selected, isCheckers, ckSim, viewTargetCamp, chain, state?.turn]);
 
   const isLive = viewPly === null;
   const canMove =
@@ -146,6 +220,32 @@ export function Room({ roomId, onExit }: RoomProps) {
     if (!eng || !state || !canMove) {
       selectedRef.current = null;
       setSelected(null);
+      setChain(null);
+      return;
+    }
+    // —— 跳棋分支：连跳逐段选点（与沙盒同一交互函数） ——
+    if (state.kind === 'checkers' && ckSim && seat) { // canMove 已排除观战
+      const result = checkersClick(ckSim, seat, ckTargetCamp, sel, chainRef.current, sq);
+      if (result.type === 'select') {
+        selectedRef.current = result.cell;
+        setSelected(result.cell);
+        setChain(null);
+        return;
+      }
+      if (result.type === 'extend') {
+        setChain(result.chain);
+        return;
+      }
+      if (result.type === 'commit') {
+        void actions.move({ from: result.from, to: result.to, path: result.path });
+        selectedRef.current = null;
+        setSelected(null);
+        setChain(null);
+        return;
+      }
+      selectedRef.current = null;
+      setSelected(null);
+      setChain(null);
       return;
     }
     const piece = eng.pieceAt(sq);
@@ -178,6 +278,16 @@ export function Room({ roomId, onExit }: RoomProps) {
       selectedRef.current = null;
       setSelected(null);
     }
+  };
+
+  /** 连跳进行中：手动确认提交当前链（有后续跳跃时可用） */
+  const commitChain = () => {
+    const cur = chainRef.current;
+    if (!cur || cur.length < 2) return;
+    void actions.move({ from: cur[0], to: cur[cur.length - 1], path: cur });
+    selectedRef.current = null;
+    setSelected(null);
+    setChain(null);
   };
 
   const finishPromotion = (code: string) => {
@@ -234,7 +344,8 @@ export function Room({ roomId, onExit }: RoomProps) {
     );
   }
 
-  const sideName = (s: Side) => (state.kind === 'xiangqi' ? (s === 'a' ? '红方' : '黑方') : s === 'a' ? '白方' : '黑方');
+  const sideName = (s: Side) =>
+    state.kind === 'xiangqi' ? (s === 'a' ? '红方' : '黑方') : state.kind === 'chess' ? (s === 'a' ? '白方' : '黑方') : (CHECKERS_NAMES[s] ?? s);
 
   const board =
     state.kind === 'xiangqi' ? (
@@ -247,6 +358,17 @@ export function Room({ roomId, onExit }: RoomProps) {
         checkSquare={checkSquare}
         onSquareClick={handleSquareClick}
         anim={display.viewing ? null : anim}
+      />
+    ) : state.kind === 'checkers' ? (
+      <CheckersBoard
+        pieces={ckSim ?? new Map()}
+        selected={selected}
+        chain={chain}
+        targets={targets}
+        lastMove={display.lastMove ? { from: display.lastMove.from, to: display.lastMove.to, path: display.lastMove.path } : null}
+        flipped={flipped || seat === 'b'}
+        onSquareClick={handleSquareClick}
+        flight={display.viewing ? null : ckFlight}
       />
     ) : (
       <ChessBoard
@@ -271,10 +393,12 @@ export function Room({ roomId, onExit }: RoomProps) {
           ←
         </button>
         <span className="room-kind-ico" aria-hidden="true">
-          {state.kind === 'xiangqi' ? '帥' : '♞'}
+          {state.kind === 'xiangqi' ? '帥' : state.kind === 'checkers' ? '⬡' : '♞'}
         </span>
         <div className="room-title">
-          <span className={`kind-badge ${state.kind}`}>{state.kind === 'xiangqi' ? '中国象棋' : '国际象棋'}</span>
+          <span className={`kind-badge ${state.kind}`}>
+            {state.kind === 'xiangqi' ? '中国象棋' : state.kind === 'checkers' ? '中国跳棋' : '国际象棋'}
+          </span>
           <span className="room-code" title="房间号">
             {roomId}
           </span>
@@ -286,7 +410,15 @@ export function Room({ roomId, onExit }: RoomProps) {
 
       <div className="room-body">
         <div className="board-col">
-          <PlayerCard state={state} side={state.turn === 'a' ? 'b' : 'a'} seat={seat} turnLabel={turnLabel} isOpponentTop />
+          {state.kind === 'checkers' && state.seatCount > 2 ? (
+            <div className="checkers-seats" aria-label="多座位状态">
+              {state.seatOrder.map((s) => (
+                <CheckersSeatCard key={s} state={state} side={s} mySeat={seat} />
+              ))}
+            </div>
+          ) : (
+            <PlayerCard state={state} side={state.turn === 'a' ? 'b' : 'a'} seat={seat} turnLabel={turnLabel} isOpponentTop />
+          )}
           <div className="board-wrap">
             {board}
             {display.viewing && (
@@ -300,14 +432,22 @@ export function Room({ roomId, onExit }: RoomProps) {
             {state.outcome && isLive && (
               <div className="game-over-banner" role="status">
                 <span className="go-text">
-                  {state.outcome.winner === null ? '和棋' : state.outcome.winner === 'a' ? '红方/白方获胜' : '黑方获胜'} · {state.outcome.reason}
+                  {state.outcome.winner === null ? '和棋' : `${sideName(state.outcome.winner)}获胜`} · {state.outcome.reason}
                 </span>
+              </div>
+            )}
+            {chain && chain.length >= 2 && canMove && (
+              <div className="chain-banner" role="status">
+                连跳进行中（已跳 {chain.length - 1} 段）
+                <button type="button" className="btn small" onClick={commitChain}>
+                  完成跳跃
+                </button>
               </div>
             )}
             {state.phase === 'waiting' && (
               <div className="waiting-overlay">
                 <div className="card waiting-card">
-                  <h3>等待对手加入</h3>
+                  <h3>{state.kind === 'checkers' && state.seatCount > 2 ? `等待玩家加入（${Object.keys(state.seats).length}/${state.seatCount}）` : '等待对手加入'}</h3>
                   <p>把邀请链接发给朋友，TA 打开即可对弈</p>
                   <div className="invite-row">
                     <input readOnly value={inviteUrl} aria-label="邀请链接" onFocus={(e) => e.target.select()} />
@@ -319,7 +459,9 @@ export function Room({ roomId, onExit }: RoomProps) {
               </div>
             )}
           </div>
-          <PlayerCard state={state} side={state.turn === 'a' ? 'a' : 'b'} seat={seat} turnLabel={turnLabel} />
+          {state.kind === 'checkers' && state.seatCount > 2 ? null : (
+            <PlayerCard state={state} side={state.turn === 'a' ? 'a' : 'b'} seat={seat} turnLabel={turnLabel} />
+          )}
 
           <div className="replay-controls" role="toolbar" aria-label="复盘控制">
             <button type="button" className="icon-btn" disabled={display.ply === 0} onClick={() => setViewPly(0)} aria-label="跳到开局">
@@ -444,6 +586,29 @@ export function Room({ roomId, onExit }: RoomProps) {
                 >
                   导出 PGN
                 </button>
+              ) : state.kind === 'checkers' ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      downloadText(`checkers-${roomId}.txt`, buildCheckersText(state));
+                      toast('跳棋棋谱已导出', 'success');
+                    }}
+                  >
+                    导出棋谱文本
+                  </button>
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      downloadJson(`checkers-${roomId}.json`, buildCheckersJson(state, initialFen));
+                      toast('JSON 棋谱已导出', 'success');
+                    }}
+                  >
+                    导出 JSON
+                  </button>
+                </>
               ) : (
                 <>
                   <button
@@ -516,13 +681,14 @@ function PlayerCard({
 }: {
   state: RoomState;
   side: Side;
-  seat: 'a' | 'b' | 'spectator' | null;
+  seat: Side | 'spectator' | null;
   turnLabel: string;
   isOpponentTop?: boolean;
 }) {
-  const info = side === 'a' ? state.seats.a : state.seats.b;
+  const info = state.seats[side];
   const kind = state.kind;
-  const sideName = kind === 'xiangqi' ? (side === 'a' ? '红方' : '黑方') : side === 'a' ? '白方' : '黑方';
+  const sideName =
+    kind === 'xiangqi' ? (side === 'a' ? '红方' : '黑方') : kind === 'chess' ? (side === 'a' ? '白方' : '黑方') : (CHECKERS_NAMES[side] ?? side);
   const captured = state.moves
     .filter((m) => m.side === side && m.captured)
     .map((m) => m.captured as string);
@@ -531,7 +697,10 @@ function PlayerCard({
   void isOpponentTop;
   return (
     <div className={`player-card ${side} ${isTurn ? 'turn' : ''} ${info ? '' : 'empty'}`}>
-      <span className={`seat-dot ${kind === 'xiangqi' ? (side === 'a' ? 'r' : 'k') : side === 'a' ? 'w' : 'b'}`} aria-hidden="true" />
+      <span
+        className={`seat-dot ${kind === 'xiangqi' ? (side === 'a' ? 'r' : 'k') : kind === 'checkers' ? `ck-${side}` : side === 'a' ? 'w' : 'b'}`}
+        aria-hidden="true"
+      />
       <div className="player-info">
         <span className="player-name">{info ? info.name : '等待加入'}</span>
         <span className="player-side">{sideName}</span>
@@ -551,6 +720,23 @@ function PlayerCard({
   );
 }
 
+/** 跳棋多座位条目（3/4/6 人）：紧凑显示每个座位的名字/在线/轮次 */
+function CheckersSeatCard({ state, side, mySeat }: { state: RoomState; side: Side; mySeat: Side | 'spectator' | null }) {
+  const info = state.seats[side];
+  const isTurn = state.phase === 'playing' && state.turn === side;
+  const isMe = mySeat === side;
+  return (
+    <div className={`checkers-seat ${isTurn ? 'turn' : ''} ${info ? '' : 'empty'} ${isMe ? 'me' : ''}`}>
+      <span className={`seat-dot ck-${side}`} aria-hidden="true" />
+      <span className="seat-name">{info ? info.name : '等待加入'}</span>
+      <span className="seat-side">{CHECKERS_NAMES[side] ?? side}</span>
+      {isMe && <span className="me-badge">我</span>}
+      {info && !info.connected && <span className="offline-badge">离线</span>}
+      {isTurn && <span className="turn-badge">思考中</span>}
+    </div>
+  );
+}
+
 function StatusCard({
   state,
   seat,
@@ -562,7 +748,7 @@ function StatusCard({
   onCopyInvite,
 }: {
   state: RoomState;
-  seat: 'a' | 'b' | 'spectator' | null;
+  seat: Side | 'spectator' | null;
   turnLabel: string;
   mySideLabel: string;
   actions: ReturnType<typeof useRoom>['actions'];
@@ -571,16 +757,14 @@ function StatusCard({
   onCopyInvite(): void;
 }) {
   const offers = state.offers;
-  const amPlayer = seat === 'a' || seat === 'b';
+  const amPlayer = seat !== null && seat !== 'spectator';
+  const winnerName = (w: Side) =>
+    state.kind === 'xiangqi' ? (w === 'a' ? '红方' : '黑方') : state.kind === 'chess' ? (w === 'a' ? '白方' : '黑方') : (CHECKERS_NAMES[w] ?? w);
   return (
     <div className="card status-card">
       {state.outcome ? (
         <div className="game-over">
-          <h3>
-            {state.outcome.winner === null
-              ? '和棋'
-              : `${state.outcome.winner === 'a' ? (state.kind === 'xiangqi' ? '红方' : '白方') : '黑方'}获胜`}
-          </h3>
+          <h3>{state.outcome.winner === null ? '和棋' : `${winnerName(state.outcome.winner)}获胜`}</h3>
           <p>{state.outcome.reason}</p>
           {amPlayer && (
             <button type="button" className="btn primary wide" onClick={onRestartOffer}>

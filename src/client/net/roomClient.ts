@@ -14,6 +14,7 @@ import type {
   MoveAck,
   RoomState,
 } from '../../shared/protocol';
+import type { GameKind, Side } from '../../games/types';
 
 export type ConnState = 'connecting' | 'online' | 'reconnecting';
 
@@ -55,7 +56,7 @@ function emitWithAck<T extends AckBase>(socket: Socket, event: string, payload: 
 }
 
 export interface RoomActions {
-  move(input: { from: string; to: string; promotion?: string }): Promise<void>;
+  move(input: { from: string; to: string; promotion?: string; path?: string[] }): Promise<void>;
   resign(): Promise<void>;
   drawOffer(): Promise<void>;
   drawRespond(accept: boolean): Promise<void>;
@@ -72,7 +73,7 @@ export interface RoomSession {
   /** 加入流程状态 */
   status: 'joining' | 'ready' | 'fatal';
   fatal: string | null;
-  seat: 'a' | 'b' | 'spectator' | null;
+  seat: Side | 'spectator' | null;
   state: RoomState | null;
   chat: ChatMessage[];
   toasts: Toast[];
@@ -86,7 +87,7 @@ export function useRoom(roomId: string | null): RoomSession {
   const [conn, setConn] = useState<ConnState>('connecting');
   const [status, setStatus] = useState<'joining' | 'ready' | 'fatal'>('joining');
   const [fatal, setFatal] = useState<string | null>(null);
-  const [seat, setSeat] = useState<'a' | 'b' | 'spectator' | null>(null);
+  const [seat, setSeat] = useState<Side | 'spectator' | null>(null);
   const [state, setState] = useState<RoomState | null>(null);
   const [chat, setChat] = useState<ChatMessage[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -216,6 +217,7 @@ export function useRoom(roomId: string | null): RoomSession {
           from: input.from,
           to: input.to,
           promotion: input.promotion,
+          path: input.path,
         });
         if (ack.ok) {
           if (ack.state) setState(ack.state);
@@ -302,11 +304,11 @@ export function useRoom(roomId: string | null): RoomSession {
   return { conn, status, fatal, seat, state, chat, toasts, dismissToast, toast, actions };
 }
 
-/** 创建房间（首页使用）：独立短连接 */
-export async function createRoomViaSocket(kind: 'xiangqi' | 'chess', name?: string): Promise<CreateAck> {
+/** 创建房间（首页使用）：独立短连接；seatCount 仅跳棋多人生效 */
+export async function createRoomViaSocket(kind: GameKind, name?: string, seatCount?: number): Promise<CreateAck> {
   const socket = io({ transports: ['websocket', 'polling'] });
   try {
-    const ack = await emitWithAck<CreateAck>(socket, 'room:create', { kind, name });
+    const ack = await emitWithAck<CreateAck>(socket, 'room:create', { kind, name, seatCount });
     if (ack.ok && ack.roomId && ack.token) {
       storeToken(ack.roomId, ack.token);
     }

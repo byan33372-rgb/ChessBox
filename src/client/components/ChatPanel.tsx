@@ -4,7 +4,7 @@ import type { Side } from '../../games/types';
 
 export interface ChatPanelProps {
   chat: ChatMessage[];
-  seat: 'a' | 'b' | 'spectator' | null;
+  seat: Side | 'spectator' | null;
   onSend(text: string): void;
 }
 

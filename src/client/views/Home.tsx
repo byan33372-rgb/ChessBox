@@ -5,6 +5,7 @@ import { PracticeBoard } from '../components/PracticeBoard';
 import { CHECKLIST, CHECKLIST_NOTE } from '../checklist';
 import xqArt from '../assets/xiangqi-theme.svg';
 import chessArt from '../assets/chess-theme.svg';
+import checkersArt from '../assets/checkers-theme.svg';
 
 export interface HomeProps {
   onEnter(roomId: string): void;
@@ -29,25 +30,36 @@ const PROMPTS: Record<
     art: chessArt,
     alt: '国际象棋主题：标准棋盘与经典造型棋子（深墨绿胡桃木，象牙白棋子）',
   },
+  checkers: {
+    title: '中国跳棋图片提示词',
+    text: '请设计一张精美的中国跳棋对弈界面图，保持与整体相同的深色风格。要点：六角星形棋盘（六个彩色营地 + 中心六角蜂窝网格），红蓝绿黄黑紫彩色玻璃质感棋子；界面左侧为棋盘，右侧为房间信息、棋谱记录（含连跳完整路径）、导出按钮和聊天区域；显示房间号、当前回合与多人座位状态；采用深紫夜色与多彩营地的主题风格，界面简洁、清晰、易读；适配桌面端与移动端。',
+    reqs: ['六角星棋盘', '六色营地', '连跳路径显示', '房间信息', '多人座位', '棋谱记录', '导航与导出', '响应式设计'],
+    art: checkersArt,
+    alt: '中国跳棋主题：六角星棋盘与彩色棋子（深紫夜色，连跳路径示意）',
+  },
 };
 
 const CARDS: Array<{ kind: GameKind; icon: string; title: string; sub: string }> = [
   { kind: 'xiangqi', icon: '帥', title: '中国象棋', sub: '车马炮 · 九宫格 · 将帅照面' },
   { kind: 'chess', icon: '♞', title: '国际象棋', sub: '王车易位 · 吃过路兵 · 升变' },
+  { kind: 'checkers', icon: '⬡', title: '中国跳棋', sub: '六角星盘 · 连跳竞速 · 2~6 人' },
 ];
+
+const CHECKER_SEAT_COUNTS = [2, 3, 4, 6] as const;
 
 export function Home({ onEnter }: HomeProps) {
   const [name, setName] = useState(getSavedName());
   const [joinCode, setJoinCode] = useState('');
   const [creating, setCreating] = useState<GameKind | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [checkerSeats, setCheckerSeats] = useState<2 | 3 | 4 | 6>(2);
 
   const handleCreate = async (kind: GameKind) => {
     setError(null);
     setCreating(kind);
     saveName(name.trim());
     try {
-      const ack = await createRoomViaSocket(kind, name.trim() || undefined);
+      const ack = await createRoomViaSocket(kind, name.trim() || undefined, kind === 'checkers' ? checkerSeats : undefined);
       if (ack.ok && ack.roomId) {
         onEnter(ack.roomId);
       } else {
@@ -77,8 +89,8 @@ export function Home({ onEnter }: HomeProps) {
         <div className="brand">
           <span className="brand-mark">弈</span>
           <div>
-            <h1>双人对弈</h1>
-            <p className="brand-sub">中国象棋 · 国际象棋 · 打开链接即玩</p>
+            <h1>三人棋坊</h1>
+            <p className="brand-sub">中国象棋 · 国际象棋 · 中国跳棋 · 打开链接即玩</p>
           </div>
         </div>
       </header>
@@ -104,6 +116,22 @@ export function Home({ onEnter }: HomeProps) {
                   <PracticeBoard kind={kind} />
                 </div>
                 <footer className="gc-foot">
+                  {kind === 'checkers' && (
+                    <div className="seat-count-row" role="radiogroup" aria-label="跳棋人数">
+                      {CHECKER_SEAT_COUNTS.map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          role="radio"
+                          aria-checked={checkerSeats === n}
+                          className={`seat-count-btn ${checkerSeats === n ? 'on' : ''}`}
+                          onClick={() => setCheckerSeats(n)}
+                        >
+                          {n}人
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <span className="card-desc">本地规则沙盒 · 点击棋子试走 · 创建房间后与朋友联机对弈</span>
                   <button
                     type="button"
@@ -157,7 +185,7 @@ export function Home({ onEnter }: HomeProps) {
 
         {/* —— 下半：图片提示词 + 功能确认（人工维护的真实记录） —— */}
         <section className="prompt-docs">
-          {(['xiangqi', 'chess'] as const).map((kind) => {
+          {(['xiangqi', 'chess', 'checkers'] as const).map((kind) => {
             const p = PROMPTS[kind];
             const group = CHECKLIST.find((g) => g.kind === kind)!;
             return (

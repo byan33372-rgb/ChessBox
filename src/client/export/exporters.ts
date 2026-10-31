@@ -6,6 +6,7 @@
 
 import { Chess } from 'chess.js';
 import type { GameOutcome, Side } from '../../games/types';
+import { CHECKERS_NAMES } from '../../games/checkers/engine';
 import type { PublicMove, RoomState } from '../../shared/protocol';
 
 function resultString(outcome: GameOutcome | null): string {
@@ -115,6 +116,65 @@ export function buildXiangqiJson(state: RoomState, startFen: string): XiangqiJso
       fenAfter: m.fenAfter,
       captured: m.captured,
       check: m.check,
+      ts: m.ts,
+    })),
+  };
+}
+
+export function buildCheckersText(state: RoomState): string {
+  const lines: string[] = [];
+  const names = state.seatOrder.map((s) => `${s.toUpperCase()}（${CHECKERS_NAMES[s] ?? s}）：${state.seats[s]?.name ?? '等待加入'}`);
+  lines.push('中国跳棋对局记录');
+  lines.push(names.join('    '));
+  lines.push(`结果：${checkersOutcomeZh(state.outcome)}`);
+  lines.push('');
+  for (const m of state.moves) {
+    lines.push(`${m.ply}. ${CHECKERS_NAMES[m.side] ?? m.side}  ${m.notation}`);
+  }
+  return lines.join('\n');
+}
+
+function checkersOutcomeZh(outcome: GameOutcome | null): string {
+  if (!outcome) return '对局进行中';
+  const winner = outcome.winner === null ? '和棋' : `${CHECKERS_NAMES[outcome.winner] ?? outcome.winner}胜`;
+  return `${winner}（${outcome.reason}）`;
+}
+
+export interface CheckersJson {
+  format: 'chessbox-checkers-v1';
+  note: string;
+  roomId: string;
+  seatOrder: Side[];
+  result: string;
+  startFen: string;
+  moves: Array<{
+    ply: number;
+    side: Side;
+    from: string;
+    to: string;
+    path?: string[];
+    notation: string;
+    fenAfter: string;
+    ts: number;
+  }>;
+}
+
+export function buildCheckersJson(state: RoomState, startFen: string): CheckersJson {
+  return {
+    format: 'chessbox-checkers-v1',
+    note: '本项目自定义跳棋棋谱格式（非通用标准）；path 为连续跳跃完整路径（含起终点）',
+    roomId: state.roomId,
+    seatOrder: state.seatOrder,
+    result: checkersOutcomeZh(state.outcome),
+    startFen,
+    moves: state.moves.map((m: PublicMove) => ({
+      ply: m.ply,
+      side: m.side,
+      from: m.from,
+      to: m.to,
+      path: m.path,
+      notation: m.notation,
+      fenAfter: m.fenAfter,
       ts: m.ts,
     })),
   };

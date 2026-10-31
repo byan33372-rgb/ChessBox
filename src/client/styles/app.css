@@ -2012,3 +2012,194 @@ li.unverified .status-label {
     height: 110px;
   }
 }
+
+/* ============================================================
+   中国跳棋（三棋升级轮次）
+   - .theme-checkers：深紫夜色 + 多彩营地
+   - .checkers-board：六角星 SVG 棋盘
+   - 座位条 / 连跳横幅 / 人数选择
+   ============================================================ */
+.theme-checkers {
+  --bg: #14101c;
+  --panel: #1e1828;
+  --panel-2: #272033;
+  --border: #372c48;
+  --border-strong: #56446e;
+  --ink: #ece7f5;
+  --muted: #a89fc0;
+  --accent: #9d7fd4;
+  --accent-ink: #b89ee6;
+  --accent-contrast: #191221;
+  --red: #d5543f;
+  --ok: #7fb77f;
+  --warn: #d9a951;
+  --danger: #e06a56;
+  --btn-bg: #272033;
+  --btn-hover: #312942;
+  --input-bg: #171221;
+  --hover: #2e2540;
+  --active-bg: #3b3050;
+  --active-border: #6d5890;
+  --frost: rgba(18, 13, 26, 0.6);
+  --frost-strong: rgba(18, 13, 26, 0.82);
+  --gold: #b39ade;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.32);
+}
+
+.checkers-board {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  user-select: none;
+}
+.checkers-board.flipped {
+  /* 翻转由 SVG 内 rotate 处理，这里仅占位保持布局稳定 */
+}
+.checkers-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: manipulation;
+}
+.checkers-hit {
+  cursor: pointer;
+}
+.checkers-hit:hover + * {
+  cursor: pointer;
+}
+.checkers-svg .target-dot {
+  animation: ck-pulse 1.6s ease-in-out infinite;
+}
+@keyframes ck-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+.checkers-flight {
+  animation: ck-fly 240ms var(--anim-ease, ease) forwards;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+}
+@keyframes ck-fly {
+  from { transform: translate(0, 0); }
+  to { transform: translate(var(--flight-dx, 0), var(--flight-dy, 0)); }
+}
+.mark-label {
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .checkers-svg .target-dot,
+  .checkers-flight {
+    animation: none;
+  }
+}
+
+/* 多座位条（3/4/6 人） */
+.checkers-seats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.checkers-seat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  font-size: 13px;
+  color: var(--muted);
+}
+.checkers-seat.turn {
+  border-color: var(--accent);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.checkers-seat.me {
+  outline: 1px dashed var(--accent-ink);
+  outline-offset: 1px;
+}
+.checkers-seat.empty {
+  opacity: 0.6;
+}
+.seat-name {
+  color: var(--ink);
+  font-weight: 600;
+}
+.seat-side {
+  font-size: 12px;
+}
+.me-badge {
+  font-size: 11px;
+  color: var(--accent-ink);
+  border: 1px solid var(--accent-ink);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+/* 六座位圆点配色（与 CHECKERS_COLORS 一致） */
+.seat-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  flex: none;
+}
+.seat-dot.ck-a { background: #c43e2f; }
+.seat-dot.ck-b { background: #2f6fb0; }
+.seat-dot.ck-c { background: #3f8f4f; }
+.seat-dot.ck-d { background: #d9a521; }
+.seat-dot.ck-e { background: #2b2620; border-color: #6a6156; }
+.seat-dot.ck-f { background: #7d5bb5; }
+
+/* 连跳进行中横幅 */
+.chain-banner {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--frost-strong);
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  font-size: 13px;
+  backdrop-filter: blur(6px);
+  z-index: 5;
+}
+
+/* 首页人数选择 */
+.seat-count-row {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.seat-count-btn {
+  border: 1px solid var(--border-strong);
+  background: var(--btn-bg);
+  color: var(--ink);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.seat-count-btn.on {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+/* 首页三卡片栅格（原有两列，扩展为自适应三列） */
+.showcase-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}

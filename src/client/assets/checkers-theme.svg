@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" role="img" aria-label="中国跳棋主题：六角星棋盘与彩色棋子">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c1226"/>
+      <stop offset="1" stop-color="#120b18"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b1f33"/>
+      <stop offset="1" stop-color="#241a2b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.45" r="0.65">
+      <stop offset="0" stop-color="#6d4fa3" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#6d4fa3" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="560" fill="url(#bg)"/>
+  <rect x="24" y="24" width="752" height="512" rx="16" fill="url(#panel)" stroke="#4a3a55"/>
+  <rect x="24" y="24" width="752" height="512" rx="16" fill="url(#glow)"/>
+
+  <!-- 六角星棋盘（示意：三行六角格 + 六营地色区） -->
+  <g transform="translate(400 268)">
+    <!-- 六营地色楔形 -->
+    <g opacity="0.9">
+      <polygon points="0,-176 26,-130 -26,-130" fill="#c43e2f"/>
+      <polygon points="152,-88 111,-88 131,-122" fill="#2f6fb0"/>
+      <polygon points="152,88 131,122 111,88" fill="#3f8f4f"/>
+      <polygon points="0,176 -26,130 26,130" fill="#d9a521"/>
+      <polygon points="-152,88 -111,88 -131,122" fill="#2b2620"/>
+      <polygon points="-152,-88 -131,-122 -111,-88" fill="#7d5bb5"/>
+    </g>
+    <!-- 六角蜂窝网格（中心区示意） -->
+    <g fill="none" stroke="#8f7fae" stroke-width="2.4" opacity="0.85">
+      <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11"/>
+      <polygon points="38,0 57,11 57,33 38,44 19,33 19,11" />
+      <polygon points="-38,0 -19,11 -19,33 -38,44 -57,33 -57,11" transform="translate(0 -22)"/>
+      <polygon points="0,22 19,33 19,55 0,66 -19,55 -19,33"/>
+      <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" transform="translate(0 -44)"/>
+      <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" transform="translate(38 -22)"/>
+      <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" transform="translate(-38 -22)"/>
+      <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" transform="translate(38 22)"/>
+      <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" transform="translate(-38 22)"/>
+      <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" transform="translate(0 44)"/>
+    </g>
+    <!-- 棋子（红蓝对峙示意） -->
+    <g stroke="rgba(0,0,0,0.45)" stroke-width="2">
+      <circle cx="0" cy="-152" r="13" fill="#c43e2f"/>
+      <circle cx="-16" cy="-124" r="13" fill="#c43e2f"/>
+      <circle cx="16" cy="-124" r="13" fill="#c43e2f"/>
+      <circle cx="-32" cy="-96" r="13" fill="#c43e2f"/>
+      <circle cx="0" cy="-96" r="13" fill="#c43e2f"/>
+      <circle cx="32" cy="-96" r="13" fill="#c43e2f"/>
+      <circle cx="0" cy="152" r="13" fill="#2f6fb0"/>
+      <circle cx="-16" cy="124" r="13" fill="#2f6fb0"/>
+      <circle cx="16" cy="124" r="13" fill="#2f6fb0"/>
+      <circle cx="0" cy="96" r="13" fill="#2f6fb0"/>
+      <circle cx="76" cy="44" r="13" fill="#3f8f4f"/>
+      <circle cx="-76" cy="-44" r="13" fill="#7d5bb5"/>
+    </g>
+    <!-- 连跳路径示意 -->
+    <polyline points="-32,-40 0,-18 32,4" fill="none" stroke="#2ec4b6" stroke-width="4" stroke-dasharray="8 6" stroke-linecap="round" opacity="0.9"/>
+    <circle cx="32" cy="4" r="6" fill="#2ec4b6"/>
+    <circle cx="-32" cy="-40" r="6" fill="#d9a521"/>
+  </g>
+
+  <!-- 标题 -->
+  <text x="400" y="497" text-anchor="middle" font-family="'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="26" fill="#e8ddfa" font-weight="600">中国跳棋 · 六角星 · 连跳竞速</text>
+</svg>
