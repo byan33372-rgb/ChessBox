@@ -66,7 +66,7 @@ export const CHECKLIST: CheckGroup[] = [
       { label: '2/3/4/6 人房间与轮转、超员观战', status: 'pass', evidence: 'integration checkers-rooms 11 项（SERVER-001~012）' },
       { label: '连跳完整路径服务端校验与广播', status: 'pass', evidence: 'integration [e3,e5,g5] 连跳用例 + 持久化恢复 path 断言' },
       { label: '上一手起点/终点标记与连跳轨迹显示', status: 'pass', evidence: 'e2e ck-mark-from/to + polyline + LastMoveBar 断言（upgrade.spec）' },
-      { label: '导出棋谱文本 / 自定义 JSON', status: 'unverified', evidence: '下载保存对话框自动化受限；导出函数为纯函数（buildCheckersText/Json）已随构建验证，浏览器下载链路沿用国象/中象同款实现' },
+      { label: '导出棋谱文本 / 自定义 JSON', status: 'pass', evidence: 'e2e 真实下载断言：文件名/文本内容/JSON format+moves（upgrade.spec HISTORY-009）+unit exporters 2 项' },
       { label: '刷新页面后能恢复当前对局状态', status: 'pass', evidence: 'integration 持久化恢复用例（DATA-001~004）' },
       { label: '页面在不同屏幕尺寸下均能正常显示', status: 'pass', evidence: 'e2e 三棋 375×667 无横向溢出 + RWD 既有矩阵' },
     ],

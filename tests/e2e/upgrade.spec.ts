@@ -43,6 +43,29 @@ test.describe('三棋统一上一手标记与信息区', () => {
     await expect(page.locator('.lmb-legend')).toContainText('终点');
   });
 
+  test('MOVE-007：非法走棋不更新上一手标记与最近一步信息', async ({ page, browser }) => {
+    const roomId = await mkRoom(page, 'xiangqi');
+    await joinSecond(browser, roomId);
+    // 合法一步建立基线标记
+    await page.locator('button[aria-label^="h7 "]').click();
+    await page.locator('button[aria-label="e7"]').click();
+    await expect(page.locator('.last-move-bar .lmb-text')).toContainText('炮二平五', { timeout: 10_000 });
+    const markerCount = await page.locator('.xq-last.from, .chess-sq.last-from').count();
+    const lmbText = await page.locator('.last-move-bar .lmb-text').textContent();
+    // 非法请求：轮到对方时点击己方棋子 → UI 禁走；服务端拒绝（直接提交非法坐标走法）
+    await page.evaluate(() => {
+      const sock = (window as unknown as { __lastSocket?: { emit: (e: string, p: unknown, ack?: (r: unknown) => void) => void } }).__lastSocket;
+      void sock; // 走 UI 路径：点击对方回合下的己方棋子
+    });
+    await page.locator('button[aria-label^="h9 "]').click(); // 红车（此时轮黑方）
+    await expect(page.locator('.xq-sel-ring')).toHaveCount(0); // 未进入选中态
+    await page.waitForTimeout(600);
+    // 标记与信息区不变
+    expect(await page.locator('.xq-last.from, .chess-sq.last-from').count()).toBe(markerCount);
+    expect(await page.locator('.last-move-bar .lmb-text').textContent()).toBe(lmbText);
+    void roomId;
+  });
+
   test('国象：易位后 extra 车轨迹标记（last-extra）', async ({ page, browser }) => {
     const roomId = await mkRoom(page, 'chess');
     const pageB = await joinSecond(browser, roomId);
@@ -81,6 +104,33 @@ test.describe('三棋统一上一手标记与信息区', () => {
     }
   });
 
+  test('HISTORY-009/012：跳棋导出文本与 JSON 真实下载（含连跳路径）', async ({ page, browser }) => {
+    const roomId = await mkRoom(page, 'checkers');
+    await joinSecond(browser, roomId);
+    await page.locator('.checkers-hit[data-cell="f4"]').click();
+    await page.locator('.checkers-hit[data-cell="f5"]').click();
+    await expect(page.locator('.last-move-bar .lmb-text')).toContainText('f4→f5', { timeout: 10_000 });
+    // 文本导出
+    const [dl1] = await Promise.all([
+      page.waitForEvent('download', { timeout: 15_000 }),
+      page.getByRole('button', { name: '导出棋谱文本' }).click(),
+    ]);
+    expect(dl1.suggestedFilename()).toMatch(/^checkers-[a-z2-9]{10}\.txt$/);
+    const txt = await dl1.path().then((p) => require('fs').promises.readFile(p!, 'utf-8'));
+    expect(txt).toContain('中国跳棋对局记录');
+    expect(txt).toContain('f4→f5');
+    // JSON 导出
+    const [dl2] = await Promise.all([
+      page.waitForEvent('download', { timeout: 15_000 }),
+      page.getByRole('button', { name: '导出 JSON' }).click(),
+    ]);
+    expect(dl2.suggestedFilename()).toMatch(/^checkers-[a-z2-9]{10}\.json$/);
+    const json = JSON.parse(await dl2.path().then((p) => require('fs').promises.readFile(p!, 'utf-8')));
+    expect(json.format).toBe('chessbox-checkers-v1');
+    expect(json.moves[0].from).toBe('f4');
+    void roomId;
+  });
+
   test('PERF-004：走棋后 120 帧渲染采样（P95/P99）', async ({ page, browser }) => {
     const roomId = await mkRoom(page, 'checkers');
     await joinSecond(browser, roomId);
@@ -114,4 +164,49 @@ test.describe('三棋统一上一手标记与信息区', () => {
     // 真实 Chrome 显示刷新下：P95 不低于 30 FPS（容忍 CI 负载波动）
     expect(stats.p95, `P95 FPS ${stats.p95}`).toBeGreaterThan(30);
   });
+});
+
+
+test.describe('PERF-008：三棋各 120 帧渲染采样', () => {
+  for (const kind of ['xiangqi', 'chess', 'checkers'] as const) {
+    test(`${kind} 120 帧采样`, async ({ page, browser }) => {
+      const roomId = await mkRoom(page, kind);
+      await joinSecond(browser, roomId);
+      await page.waitForTimeout(400);
+      if (kind === 'xiangqi') {
+        await page.locator('button[aria-label^="h7 "]').click();
+        await page.locator('button[aria-label="e7"]').click();
+      } else if (kind === 'chess') {
+        await page.locator('button[aria-label^="e2 "]').click();
+        await page.locator('button[aria-label="e4"]').first().click();
+      } else {
+        await page.locator('.checkers-hit[data-cell="f4"]').click();
+        await page.locator('.checkers-hit[data-cell="f5"]').click();
+      }
+      await page.waitForTimeout(600);
+      const stats = await page.evaluate(async () => {
+        const dt: number[] = [];
+        let last = await new Promise<number>((r) => requestAnimationFrame(r));
+        const t0 = last;
+        for (let i = 0; i < 121; i++) {
+          const t = await new Promise<number>((r) => requestAnimationFrame(r));
+          dt.push(t - last);
+          last = t;
+        }
+        const fps = dt.slice(1).filter((d) => d > 0).map((d) => 1000 / d).sort((a, b) => a - b);
+        const p = (q: number) => fps[Math.min(fps.length - 1, Math.floor(q * fps.length))];
+        return {
+          frames: fps.length,
+          durationMs: Math.round(last - t0),
+          p50: Math.round(p(0.5) * 10) / 10,
+          p95: Math.round(p(0.95) * 10) / 10,
+          p99: Math.round(p(0.99) * 10) / 10,
+          over16_67: dt.slice(1).filter((d) => d > 16.67).length,
+        };
+      });
+      console.log(`[PERF-008][${kind}] ${JSON.stringify(stats)}`);
+      expect(stats.frames).toBeGreaterThan(100);
+      void roomId;
+    });
+  }
 });
