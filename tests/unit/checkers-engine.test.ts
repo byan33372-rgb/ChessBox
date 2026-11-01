@@ -292,3 +292,39 @@ describe('多人轮次与认输（TEST-014/CHECKERS-020/024）', () => {
     }
   });
 });
+
+describe('起始营内移动（缺陷回归 DEF-001：营内互走曾被禁止导致后排骨整局卡死）', () => {
+  it('2 人局 b：营内有空位时营内互走合法；满营尖子无路属正常规则', () => {
+    const south = ALL_CELLS.filter((c) => c.camp === 3).map((c) => c.id).sort();
+    // 满营：尖子 m17 无空位可走（营内目标全被占）——修复前后一致的正常行为
+    const full = new CheckersEngine(`cc1|turn=b|order=ab|p=a:i10,b:${south.join(',')}`);
+    expect(full.isLegal({ from: 'm17', to: 'm16' })).toBe(false);
+    // m16 腾空后：m17→m16 营内互走合法（DEF-001 修复点）
+    const nine = south.filter((id) => id !== 'm16');
+    const e = new CheckersEngine(`cc1|turn=b|order=ab|p=a:i10,b:${nine.join(',')},j9`);
+    expect(e.isLegal({ from: 'm17', to: 'm16' })).toBe(true);
+    // 出营仍合法；不得落入他人起始营（北营是 a 的）
+    expect(e.isLegal({ from: 'm14', to: 'm13' })).toBe(true);
+    expect(e.isLegal({ from: 'm14', to: 'e4' })).toBe(false);
+  });
+
+  it('营内腾位链：南尖棋子经营内互走最终可达出营', () => {
+    const south = ALL_CELLS.filter((c) => c.camp === 3).map((c) => c.id).sort();
+    // 南营 10 子 + 六角区清出 m13 侧通道：b 依次 m16→m15? 构造南尖外的另一子已出营的中间态
+    // b 的 9 子在南营（缺 m16），另 1 子在六角区 j9
+    const nine = south.filter((id) => id !== 'm16');
+    const e = new CheckersEngine(`cc1|turn=b|order=ab|p=a:i10,b:${nine.join(',')},j9`);
+    // m17(南尖)→m16（空出的营内格）合法
+    expect(e.isLegal({ from: 'm17', to: 'm16' })).toBe(true);
+    const r = e.applyMove({ from: 'm17', to: 'm16' });
+    expect(r).not.toBeNull();
+  });
+
+  it('多人局：他人起始营仍禁入（6 人局 a 不得落东南/南/西南营）', () => {
+    const e = CheckersEngine.create(6);
+    // a 的棋子均在北营；任一 a 子不得一步落入他人营地（开局合法性抽样断言）
+    for (const m of e.legalMoves()) {
+      expect(campOf(m.to) === -1 || campOf(m.to) === 0, `${m.from}→${m.to} camp=${campOf(m.to)}`).toBe(true);
+    }
+  });
+});

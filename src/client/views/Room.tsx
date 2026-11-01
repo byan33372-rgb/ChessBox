@@ -189,7 +189,7 @@ export function Room({ roomId, onExit }: RoomProps) {
     const start = SEAT_CAMP_MAPS[n]?.[seat];
     return start != null ? targetCamp(start) : -1;
   }, [isCheckers, state?.seatCount, seat]);
-  /** 我的棋子的目标营地（旁观时看当前轮次者，仅用于 UI 提示） */
+  /** 我的棋子的目标营地与起始营地（旁观时看当前轮次者，仅用于 UI 提示） */
   const viewTargetCamp = useMemo(() => {
     if (!isCheckers || !state) return -1;
     const n = state.seatCount as 2 | 3 | 4 | 6;
@@ -197,6 +197,18 @@ export function Room({ roomId, onExit }: RoomProps) {
     const start = SEAT_CAMP_MAPS[n]?.[who];
     return start != null ? targetCamp(start) : -1;
   }, [isCheckers, state?.seatCount, state?.turn, seat]);
+  const viewOwnCamp = useMemo(() => {
+    if (!isCheckers || !state) return -1;
+    const n = state.seatCount as 2 | 3 | 4 | 6;
+    const who = seat && seat !== 'spectator' ? seat : state.turn;
+    return SEAT_CAMP_MAPS[n]?.[who] ?? -1;
+  }, [isCheckers, state?.seatCount, state?.turn, seat]);
+  /** 我（或旁观视角座位）的起始营地 */
+  const ckOwnCamp = useMemo(() => {
+    if (!isCheckers || !state || !seat || seat === 'spectator') return -1;
+    const n = state.seatCount as 2 | 3 | 4 | 6;
+    return SEAT_CAMP_MAPS[n]?.[seat] ?? -1;
+  }, [isCheckers, state?.seatCount, seat]);
 
   /** 同步引用：点击处理器即时读取，避免快速连点命中过期闭包（丢步偶发缺陷修复） */
   const engineRef = useRef(engine);
@@ -215,17 +227,17 @@ export function Room({ roomId, onExit }: RoomProps) {
     if (isCheckers && ckSim) {
       const base = chain ?? [selected];
       if (base.length === 1) {
-        for (const t of stepTargetsFrom(ckSim, base[0], viewTargetCamp)) map.set(t, false);
+        for (const t of stepTargetsFrom(ckSim, base[0], viewTargetCamp, viewOwnCamp)) map.set(t, false);
       }
       // 连跳延伸目标：排除链内已用格（防循环，与 checkersClick 同源）
-      for (const t of nextChainTargets(ckSim, base, viewTargetCamp)) map.set(t, false);
+      for (const t of nextChainTargets(ckSim, base, viewTargetCamp, viewOwnCamp)) map.set(t, false);
       return map;
     }
     for (const m of engine.legalMoves()) {
       if (m.from === selected) map.set(m.to, m.capture);
     }
     return map;
-  }, [engine, selected, isCheckers, ckSim, viewTargetCamp, chain, state?.turn]);
+  }, [engine, selected, isCheckers, ckSim, viewTargetCamp, viewOwnCamp, chain, state?.turn]);
 
   const isLive = viewPly === null;
   const canMove =
@@ -249,7 +261,7 @@ export function Room({ roomId, onExit }: RoomProps) {
     }
     // —— 跳棋分支：连跳逐段选点（与沙盒同一交互函数） ——
     if (state.kind === 'checkers' && ckSim && seat) { // canMove 已排除观战
-      const result = checkersClick(ckSim, seat, ckTargetCamp, sel, chainRef.current, sq);
+      const result = checkersClick(ckSim, seat, ckTargetCamp, ckOwnCamp, sel, chainRef.current, sq);
       if (result.type === 'select') {
         selectedRef.current = result.cell;
         setSelected(result.cell);

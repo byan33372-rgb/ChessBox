@@ -201,11 +201,12 @@ export class CheckersEngine implements GameEngine {
     return new Set(ALL_CELLS.filter((c) => c.camp === t).map((c) => c.id));
   }
 
-  /** 营地约束（CHECKERS-022）：不得进入他人营地；已在己方目标营地内则不得离开 */
+  /** 营地约束（CHECKERS-022）：不得进入他人营地；己方起始营与目标营允许；已在目标营地内则不得离开 */
   private campViolation(seat: CheckersSeat, cell: string, movingFrom: string): boolean {
     const camp = campOf(cell);
     const myTarget = this.targets.get(seat)!;
-    if (camp >= 0 && camp !== myTarget) return true; // 他人营地禁入
+    const myCamp = this.camps.get(seat)!;
+    if (camp >= 0 && camp !== myTarget && camp !== myCamp) return true; // 他人营地禁入（起始营内互走合法）
     const fromCamp = campOf(movingFrom);
     if (fromCamp === myTarget && camp !== myTarget) return true; // 已在目标营地不得离开
     return false;

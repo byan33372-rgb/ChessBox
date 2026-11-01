@@ -37,25 +37,25 @@ const DIRS: Array<[number, number]> = [
   [-1, -1],
 ];
 
-/** 营地约束：他人营地禁入；已在目标营地不得离开 */
-export function campBlocked(cell: string, movingFrom: string, targetCamp: number): boolean {
+/** 营地约束：他人营地禁入（己方起始营与目标营允许）；已在目标营地不得离开 */
+export function campBlocked(cell: string, movingFrom: string, targetCamp: number, ownCamp: number): boolean {
   const camp = campOf(cell);
-  if (camp >= 0 && camp !== targetCamp) return true;
+  if (camp >= 0 && camp !== targetCamp && camp !== ownCamp) return true;
   if (campOf(movingFrom) === targetCamp && camp !== targetCamp) return true;
   return false;
 }
 
 /** 普通移动目标（相邻空位） */
-export function stepTargetsFrom(sim: CheckersSim, from: string, targetCamp: number): string[] {
+export function stepTargetsFrom(sim: CheckersSim, from: string, targetCamp: number, ownCamp: number): string[] {
   const out: string[] = [];
   for (const n of neighborsOf(from)) {
-    if (!sim.has(n) && !campBlocked(n, from, targetCamp)) out.push(n);
+    if (!sim.has(n) && !campBlocked(n, from, targetCamp, ownCamp)) out.push(n);
   }
   return out;
 }
 
 /** 单段跳跃目标（越过紧邻棋子、落点为空） */
-export function jumpTargetsFrom(sim: CheckersSim, from: string, targetCamp: number): string[] {
+export function jumpTargetsFrom(sim: CheckersSim, from: string, targetCamp: number, ownCamp: number): string[] {
   const fc = cellRC(from);
   if (!fc) return [];
   const [fr, fcol] = fc;
@@ -70,7 +70,7 @@ export function jumpTargetsFrom(sim: CheckersSim, from: string, targetCamp: numb
     });
     if (!mid || !sim.has(mid)) continue;
     const land = jumpLanding(from, dr, dc);
-    if (land && !sim.has(land) && !campBlocked(land, from, targetCamp)) out.push(land);
+    if (land && !sim.has(land) && !campBlocked(land, from, targetCamp, ownCamp)) out.push(land);
   }
   return out;
 }
@@ -88,10 +88,10 @@ export function simAfterChain(sim: CheckersSim, chain: string[], seat: CheckersC
  * 连跳链尾的后续跳跃目标（SEC-006 前端同款防循环）：
  * 排除链内已用格（重复落点会被服务端整条拒绝，UI 不得提供）。
  */
-export function nextChainTargets(sim: CheckersSim, chain: string[], targetCamp: number): string[] {
+export function nextChainTargets(sim: CheckersSim, chain: string[], targetCamp: number, ownCamp: number): string[] {
   const simTail = simAfterChain(sim, chain, /* seat 占位：跳跃判定不依赖 */ 'a');
   const tail = chain[chain.length - 1];
-  return jumpTargetsFrom(simTail, tail, targetCamp).filter((t) => !chain.includes(t));
+  return jumpTargetsFrom(simTail, tail, targetCamp, ownCamp).filter((t) => !chain.includes(t));
 }
 
 export type CheckersClickResult =
@@ -111,6 +111,7 @@ export function checkersClick(
   sim: CheckersSim,
   seat: CheckersCellSeat,
   targetCamp: number,
+  ownCamp: number,
   selected: string | null,
   chain: string[] | null,
   sq: string,
@@ -121,12 +122,12 @@ export function checkersClick(
     const simBase = simAfterChain(sim, base, seat);
     const firstSeg = base.length === 1;
     // 普通移动：仅当尚未起跳
-    if (firstSeg && stepTargetsFrom(simBase, last, targetCamp).includes(sq)) {
+    if (firstSeg && stepTargetsFrom(simBase, last, targetCamp, ownCamp).includes(sq)) {
       return { type: 'commit', from: base[0], to: sq };
     }
-    if (jumpTargetsFrom(simBase, last, targetCamp).includes(sq)) {
+    if (jumpTargetsFrom(simBase, last, targetCamp, ownCamp).includes(sq)) {
       const nextChain = [...base, sq];
-      const more = nextChainTargets(sim, nextChain, targetCamp);
+      const more = nextChainTargets(sim, nextChain, targetCamp, ownCamp);
       if (more.length === 0) {
         return nextChain.length > 2
           ? { type: 'commit', from: nextChain[0], to: sq, path: nextChain }

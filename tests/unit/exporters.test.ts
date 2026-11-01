@@ -196,3 +196,77 @@ describe('导出 · 中文棋谱与 JSON', () => {
     expect(json.startFen).toContain('RNBAKABNR');
   });
 });
+
+// ==================== 跳棋导出（HISTORY-009） ====================
+import { CheckersEngine } from '../../src/games/checkers/engine';
+import { buildCheckersJson, buildCheckersText } from '../../src/client/export/exporters';
+
+function checkersState(): { state: RoomState; engine: CheckersEngine } {
+  const e = new CheckersEngine();
+  const moves: PublicMove[] = [];
+  const seq: Array<{ from: string; to: string; path?: string[] }> = [
+    { from: 'f4', to: 'f5' },
+    { from: 'm14', to: 'm13' },
+    { from: 'e3', to: 'g5', path: ['e3', 'e5', 'g5'] },
+  ];
+  for (const m of seq) {
+    const r = e.applyMove(m);
+    if (!r) throw new Error(`构造跳棋走法失败 ${JSON.stringify(m)}`);
+    moves.push({
+      ply: moves.length + 1,
+      side: moves.length % 2 === 0 ? 'a' : 'b',
+      from: m.from,
+      to: m.to,
+      notation: r.notation,
+      fenBefore: r.fenBefore,
+      fenAfter: r.fenAfter,
+      captured: null,
+      path: r.path,
+      check: false,
+      ts: Date.now(),
+    });
+  }
+  const state: RoomState = {
+    roomId: 'ckroom0001',
+    kind: 'checkers',
+    revision: moves.length + 1,
+    phase: 'playing',
+    fen: e.fen(),
+    turn: e.turn(),
+    inCheck: false,
+    checkedKing: null,
+    lastMove: moves.at(-1) ?? null,
+    moves,
+    seats: { a: { name: '跳棋甲', connected: true }, b: { name: '跳棋乙', connected: true } },
+    seatOrder: ['a', 'b'],
+    seatCount: 2,
+    spectators: 0,
+    outcome: null,
+    offers: { draw: null, undo: null, restart: null },
+  };
+  return { state, engine: e };
+}
+
+describe('跳棋棋谱导出（HISTORY-009）', () => {
+  it('文本导出：含玩家、结果与连跳完整路径记谱', () => {
+    const { state } = checkersState();
+    const txt = buildCheckersText(state);
+    expect(txt).toContain('中国跳棋对局记录');
+    expect(txt).toContain('A（红方）：跳棋甲');
+    expect(txt).toContain('B（蓝方）：跳棋乙');
+    expect(txt).toContain('3. 红方  e3→e5→g5（连跳×2）');
+    expect(txt).toContain('对局进行中');
+  });
+
+  it('JSON 导出：格式版本、seatOrder、完整跳跃路径与终局结果', () => {
+    const { state } = checkersState();
+    const json = buildCheckersJson(state, state.moves[0].fenBefore);
+    expect(json.format).toBe('chessbox-checkers-v1');
+    expect(json.seatOrder).toEqual(['a', 'b']);
+    expect(json.startFen).toContain('cc1|');
+    expect(json.moves).toHaveLength(3);
+    expect(json.moves[2].path).toEqual(['e3', 'e5', 'g5']);
+    expect(json.moves[2].notation).toContain('连跳');
+    expect(json.result).toContain('对局进行中');
+  });
+});

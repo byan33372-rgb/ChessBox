@@ -62,6 +62,11 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
     const start = SEAT_CAMP_MAPS[n][seat];
     return start != null ? targetCamp(start) : -1;
   }, [isCheckers, fen]);
+  const ckOwnCamp = useMemo(() => {
+    if (!isCheckers) return -1;
+    const n = (engine as CheckersEngine).seatCount() as 2 | 3 | 4 | 6;
+    return SEAT_CAMP_MAPS[n][engine.turn()] ?? -1;
+  }, [isCheckers, fen]);
 
   const targets = useMemo(() => {
     const map = new Map<string, boolean>();
@@ -69,16 +74,16 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
     if (isCheckers && ckSim) {
       const base = chainRef.current ?? [selected];
       if (base.length === 1) {
-        for (const t of stepTargetsFrom(ckSim, base[0], ckTargetCamp)) map.set(t, false);
+        for (const t of stepTargetsFrom(ckSim, base[0], ckTargetCamp, ckOwnCamp)) map.set(t, false);
       }
-      for (const t of nextChainTargets(ckSim, base, ckTargetCamp)) map.set(t, false);
+      for (const t of nextChainTargets(ckSim, base, ckTargetCamp, ckOwnCamp)) map.set(t, false);
       return map;
     }
     for (const m of engine.legalMoves()) {
       if (m.from === selected) map.set(m.to, m.capture);
     }
     return map;
-  }, [engine, selected, isCheckers, ckSim, ckTargetCamp, chain]);
+  }, [engine, selected, isCheckers, ckSim, ckTargetCamp, ckOwnCamp, chain]);
 
   const handleSquareClick = (sq: string) => {
     const eng = engineRef.current;
@@ -89,7 +94,7 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
     }
     // —— 跳棋分支：连跳逐段选点 ——
     if (isCheckers && ckSim) {
-      const result = checkersClick(ckSim, eng.turn(), ckTargetCamp, sel, chainRef.current, sq);
+      const result = checkersClick(ckSim, eng.turn(), ckTargetCamp, ckOwnCamp, sel, chainRef.current, sq);
       if (result.type === 'select') {
         selectedRef.current = result.cell;
         setSelected(result.cell);

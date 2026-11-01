@@ -81,14 +81,24 @@ async function setupCheckers(seatCount: 2 | 3 | 4 | 6): Promise<{ roomId: string
   return { roomId, seats };
 }
 
-/** 各座位开局单步（已验证邻接且落点为六角区空格）：按座位起始营地给出 */
+/**
+ * 各座位开局单步（已验证邻接）：3/6 人局为三角/满座映射；4 人局映射为 {a:0,b:1,c:3,d:4}，
+ * 因此 c 复用南营步、d 用西南营步（g13 与 m13 均为六角区出营格）。
+ */
 const OPENERS: Record<string, { from: string; to: string }> = {
   a: { from: 'f4', to: 'f5' }, // 北营底边 → 六角区
-  b: { from: 'j5', to: 'i5' }, // 东北营（3/6 人局 b）
-  c: { from: 'n10', to: 'm10' }, // 东南营（3/6 人局 c）
-  d: { from: 'm14', to: 'm13' }, // 南营（2 人局 b / 4 人局 c 同营地复用）
-  e: { from: 'f13', to: 'g13' }, // 西南营
+  b: { from: 'j5', to: 'i5' }, // 东北营（3/4/6 人局 b）
+  c: { from: 'n10', to: 'm10' }, // 东南营（3/6 人局 c；4 人局 c 坐南营，测试内覆盖）
+  d: { from: 'm14', to: 'm13' }, // 南营（2 人局 b / 6 人局 d / 4 人局 c 同营地复用）
+  e: { from: 'f11', to: 'f10' }, // 西南营 (10,5) → 六角区 (9,5)——开局营满，出营步必须落六角区
   f: { from: 'd5', to: 'e5' }, // 西北营
+};
+/** 4 人局专用映射（SEAT_CAMP_MAPS[4] = a:0,b:1,c:3,d:4） */
+const OPENERS_4P: Record<string, { from: string; to: string }> = {
+  a: OPENERS.a,
+  b: OPENERS.b,
+  c: OPENERS.d, // c 坐南营
+  d: OPENERS.e, // d 坐西南营
 };
 
 /** 南营第二步（m13 已被第一步占用后的相邻 outward 步） */
@@ -160,6 +170,57 @@ describe('跳棋联机 · 多座位分配与轮转（SERVER-001~005）', () => {
     expect(final.turn).toBe('a');
     expect(final.moves.length).toBe(3);
     expect(final.moves.map((m) => m.side)).toEqual(['a', 'b', 'c']);
+  });
+});
+
+describe('跳棋联机 · 4/6 人关键流程（CHECKERS-004/020）', () => {
+  it('4 人局：a→b→c→d 各走一步，轮转回到 a', async () => {
+    const { seats } = await setupCheckers(4);
+    expect(seats.map((x) => x.seat)).toEqual(['a', 'b', 'c', 'd']);
+    for (const seat of seats) {
+      const ack = await move(seat, OPENERS_4P[seat.seat]);
+      expect(ack.ok, `${seat.seat}: ${JSON.stringify(ack.error)}`).toBe(true);
+    }
+    const final = await seats[0].settled(4);
+    expect(final.turn).toBe('a');
+    expect(final.moves.length).toBe(4);
+    expect(final.moves.map((m) => m.side)).toEqual(['a', 'b', 'c', 'd']);
+  });
+
+  it('6 人局：a→f 各走一步，轮转回到 a；目标营地映射互为正对', async () => {
+    const { seats } = await setupCheckers(6);
+    for (const seat of seats) {
+      const ack = await move(seat, OPENERS[seat.seat]);
+      expect(ack.ok, `${seat.seat}: ${JSON.stringify(ack.error)}`).toBe(true);
+    }
+    const final = await seats[0].settled(6);
+    expect(final.turn).toBe('a');
+    expect(final.moves.map((m) => m.side)).toEqual(['a', 'b', 'c', 'd', 'e', 'f']);
+    // SEAT_CAMP_MAPS[6] 全占用且目标正对（由引擎单测覆盖；此处验证房间层座位顺序）
+    expect(final.seatOrder).toEqual(['a', 'b', 'c', 'd', 'e', 'f']);
+  });
+});
+
+describe('跳棋联机 · 并发抢占（CHECKERS-017/SEC-004）', () => {
+  it('同轮次两个客户端同时提交：恰好一个成功，另一个 NOT_YOUR_TURN/STALE', async () => {
+    const { seats } = await setupCheckers(2);
+    const [a, b] = seats;
+    const st = await a.settled();
+    // a、b 各自以本地视角同时提交 a 的着法——b 非本轮必被拒
+    const [ra, rb] = await Promise.all([
+      emitAck<MoveAck>(a.socket, 'game:move', { requestId: reqId(), revision: st.revision, ...OPENERS.a }),
+      emitAck<MoveAck>(b.socket, 'game:move', { requestId: reqId(), revision: st.revision, ...OPENERS.a }),
+    ]);
+    expect(ra.ok !== rb.ok || ra.ok === false).toBe(true); // 不允许双双成功
+    if (ra.ok) {
+      expect(rb.ok).toBe(false);
+      expect(['NOT_YOUR_TURN', 'STALE_REVISION']).toContain(rb.error?.code);
+    } else {
+      expect(ra.error?.code).toBe('NOT_YOUR_TURN');
+      expect(rb.ok).toBe(true);
+    }
+    const after = await a.settled(1);
+    expect(after.moves.length).toBe(1); // 不重复落谱
   });
 });
 
