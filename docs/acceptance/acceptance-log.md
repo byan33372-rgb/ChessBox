@@ -224,3 +224,15 @@
 ## 阶段 12/13：Gate 与最终报告
 
 见 `docs/acceptance/final-acceptance-report.md`（Gate A–O、15 项交付内容、命令与已知问题）。
+---
+
+# 发布前全面验收轮（2026-11-01 09:12 ~ ）
+
+- 基线：ef5d162 干净工作区；tsc×2/ vitest 134+54 / e2e 13 / build / npm audit 全部 exit 0（baseline.md）。
+- 缺陷：DEF-001（P1）跳棋起始营内互走被误禁→后排骨整局卡死；引擎+UI 同源修复（2c7607d）；营内腾位回归 3 项 + 4/6 人实际对局集成 + 全量复绿。
+- 补测：跳棋 UI 纯函数 9、导出 2、旧库兼容 2（unit +16）；4/6 人对局 2 + 并发抢占 1（integration +3）；MOVE-007 + 三棋 PERF-008×3 + 跳棋导出真实下载（e2e +5）。
+- 脚本回归：layout22（修正三卡断言）/viewport18/rwd12/anim15/ux9/chk8（修正 24 项断言）/net15×2/sec9 全 PASS；Edge 引擎双端同步冒烟 PASS。
+- 性能：三棋各 120 帧 0 超预算；CPU4x P95=12.2ms；输入延迟中位 0.8ms；回环 ack 中位 12.3ms；30 分钟浸泡 0 错误。
+- 数据：DATA-003 旧库兼容单测；DATA-004 三件套备份恢复演练（41 房间）。
+- 交付：final-acceptance-report / test-matrix / defects / performance-report / security-review / release-checklist + 6 张截图 + baseline.md。
+- NOT_TESTED/BLOCKED：120Hz 物理屏、Firefox/WebKit、公网部署（无授权）。

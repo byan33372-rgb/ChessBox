@@ -1,0 +1,15 @@
+{
+  "cycles": 1334,
+  "movesOk": 5781,
+  "movesRejected": 1335,
+  "reconnects": 1334,
+  "errors": 0,
+  "ackLatencyMs": {
+    "p50": 1,
+    "p95": 3,
+    "p99": 4,
+    "max": 10,
+    "samples": 7116
+  },
+  "durationMinutes": 30
+}

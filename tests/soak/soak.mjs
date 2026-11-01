@@ -78,8 +78,8 @@ while (Date.now() < deadline) {
       const mv = moves[i];
       const body =
         kind === 'checkers'
-          ? { requestId: `sk-${seq}-${i}`, revision: cur?.revision ?? 1, from: mv.from, to: mv.to, path: mv.path }
-          : { requestId: `sk-${seq}-${i}`, revision: cur?.revision ?? 1, from: mv[0], to: mv[1] };
+          ? { requestId: `sk-${seq}-${i}-abcd1234`, revision: cur?.revision ?? 1, from: mv.from, to: mv.to, path: mv.path }
+          : { requestId: `sk-${seq}-${i}-abcd1234`, revision: cur?.revision ?? 1, from: mv[0], to: mv[1] };
       const r = await emit(sock, 'game:move', body);
       if (r.ok) stats.movesOk++;
       else if (r.error?.code === 'ILLEGAL_MOVE' || r.error?.code === 'STALE_REVISION' || r.error?.code === 'NOT_YOUR_TURN') stats.movesRejected++;
@@ -89,7 +89,7 @@ while (Date.now() < deadline) {
     }
 
     // 非法坐标（应拒）
-    const bad = await emit(A, 'game:move', { requestId: `sk-bad-${seq}`, revision: statesA.at(-1)?.revision ?? 1, from: 'zz', to: 'yy' });
+    const bad = await emit(A, 'game:move', { requestId: `sk-bad-${seq}-abcd1234`, revision: statesA.at(-1)?.revision ?? 1, from: 'zz', to: 'yy' });
     if (bad.ok || bad.error?.code !== 'INVALID_INPUT') throw new Error('bad move accepted?!');
 
     // 复盘读取（服务端权威状态包含完整棋谱）
