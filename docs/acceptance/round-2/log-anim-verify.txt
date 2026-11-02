@@ -1,0 +1,17 @@
+PASS ANIM-V1 中象普通走棋：飞行层出现并自动清理 — fly=true cap=false moves=1 窗口≈183ms
+PASS ANIM-V2 中象落位精确（e7=红炮） — count=1
+PASS ANIM-V3 中象对手步（对方端同播动画） — fly=true cap=false moves=2 窗口≈73ms
+PASS ANIM-V4 复盘导航不产生走棋动画 — fly=false
+PASS ANIM-V5 国象普通走棋（A 方） — fly=true cap=false moves=1 窗口≈122ms
+PASS ANIM-V6 国象对手步（B 方） — fly=true cap=false moves=2 窗口≈95ms
+PASS ANIM-V7 国象吃子：captured 离场层 — fly=true cap=true moves=3 窗口≈79ms
+PASS ANIM-V8 吃子后双方局面一致（d5=白兵） — d5白兵=1 吃子行=1
+PASS ANIM-V9 吃子层确实出现 — cap=true
+PASS ANIM-V10 王车易位落位（g1=王 f1=车） — K=1 R=1
+PASS ANIM-V11 中象走棋（重连前置） — fly=true cap=false moves=1 窗口≈68ms
+PASS ANIM-V12 对手步 — fly=true cap=false moves=2 窗口≈63ms
+PASS ANIM-V13 重连恢复：无动画重播、棋谱完整 — fly=false moves=2
+PASS ANIM-V14 动效开关切换（开→关） — label=动效 关
+PASS ANIM-V15 关闭动效：无飞行层且走棋正常 — fly=false e4=1
+
+== 动画验证: 15/15 PASS ==

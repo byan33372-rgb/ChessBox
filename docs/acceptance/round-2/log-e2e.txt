@@ -1,0 +1,27 @@
+
+Running 18 tests using 1 worker
+
+  ok  1 tests\e2e\app.spec.ts:37:7 › 桌面端双人中国象棋对局 › 创建 → 邀请 → 对弈 → 同步 → 复盘 → 重连 (1.4s)
+  ok  2 tests\e2e\app.spec.ts:100:7 › 桌面端双人中国象棋对局 › 非法走棋请求不改变局面 (749ms)
+  ok  3 tests\e2e\app.spec.ts:123:7 › 国际象棋端到端 › e4 e5 Nf3 双端同步，SAN 正确 (942ms)
+  ok  4 tests\e2e\app.spec.ts:152:7 › 国际象棋端到端 › 升变对话框：选择后完成升变 (1.3s)
+  ok  5 tests\e2e\app.spec.ts:191:7 › 移动端窄屏 › 375×667 视口可完成走棋，棋盘可操作 (802ms)
+  ok  6 tests\e2e\app.spec.ts:223:7 › 导出功能 › 国际象棋导出 PGN 下载，内容含走法与结果 (998ms)
+  ok  7 tests\e2e\app.spec.ts:257:7 › 导出功能 › 中国象棋导出中文棋谱与 JSON (943ms)
+  ok  8 tests\e2e\app.spec.ts:315:7 › 中国跳棋端到端 › 2 人对弈：单步→标记/最近一步/最近5步→连跳逐段→复盘 (1.1s)
+  ok  9 tests\e2e\app.spec.ts:365:7 › 中国跳棋端到端 › 首页第三入口与人数选择；3 人房座位条与等待文案 (651ms)
+  ok 10 tests\e2e\upgrade.spec.ts:30:7 › 三棋统一上一手标记与信息区 › 中象：起/终标记 + LastMoveBar + 最近5步面板 (708ms)
+  ok 11 tests\e2e\upgrade.spec.ts:46:7 › 三棋统一上一手标记与信息区 › MOVE-007：非法走棋不更新上一手标记与最近一步信息 (1.4s)
+  ok 12 tests\e2e\upgrade.spec.ts:69:7 › 三棋统一上一手标记与信息区 › 国象：易位后 extra 车轨迹标记（last-extra） (2.7s)
+  ok 13 tests\e2e\upgrade.spec.ts:95:7 › 三棋统一上一手标记与信息区 › 三棋 375×667 无横向溢出 (2.1s)
+  ok 14 tests\e2e\upgrade.spec.ts:107:7 › 三棋统一上一手标记与信息区 › HISTORY-009/012：跳棋导出文本与 JSON 真实下载（含连跳路径） (828ms)
+[PERF-004] {"frames":119,"durationMs":727,"p50":163.9,"p95":166.7,"p99":169.5,"min":161.3}
+  ok 15 tests\e2e\upgrade.spec.ts:134:7 › 三棋统一上一手标记与信息区 › PERF-004：走棋后 120 帧渲染采样（P95/P99） (1.9s)
+[PERF-008][xiangqi] {"frames":120,"durationMs":733,"p50":163.9,"p95":169.5,"p99":169.5,"over16_67":0}
+  ok 16 tests\e2e\upgrade.spec.ts:172:9 › PERF-008：三棋各 120 帧渲染采样 › xiangqi 120 帧采样 (2.5s)
+[PERF-008][chess] {"frames":120,"durationMs":733,"p50":163.9,"p95":169.5,"p99":169.5,"over16_67":0}
+  ok 17 tests\e2e\upgrade.spec.ts:172:9 › PERF-008：三棋各 120 帧渲染采样 › chess 120 帧采样 (2.5s)
+[PERF-008][checkers] {"frames":120,"durationMs":734,"p50":163.9,"p95":169.5,"p99":169.5,"over16_67":0}
+  ok 18 tests\e2e\upgrade.spec.ts:172:9 › PERF-008：三棋各 120 帧渲染采样 › checkers 120 帧采样 (2.5s)
+
+  18 passed (30.2s)

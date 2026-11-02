@@ -17,145 +17,145 @@
   "refreshHz": 167,
   "refreshDetail": {
     "modeIntervalMs": 6,
-    "modeCount": 730,
-    "idleSamples": 743,
-    "idleFps": 148.2
+    "modeCount": 724,
+    "idleSamples": 729,
+    "idleFps": 158.9
   },
   "scenarios": {
     "A_idle": {
-      "frameSamples": 743,
-      "windowMs": 5013,
-      "avgIntervalMs": 6.75,
-      "avgFps": 148.2,
+      "frameSamples": 729,
+      "windowMs": 4587,
+      "avgIntervalMs": 6.29,
+      "avgFps": 158.9,
       "medianFrameMs": 6.1,
       "p95FrameMs": 6.2,
-      "p99FrameMs": 12,
-      "maxFrameMs": 351.5,
-      "longFrames": 3,
-      "over16_67ms": 4,
-      "over16_67Ratio": "0.54%",
-      "over8_33ms": 10,
-      "over8_33Ratio": "1.35%",
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 175.8,
+      "longFrames": 1,
+      "over16_67ms": 1,
+      "over16_67Ratio": "0.14%",
+      "over8_33ms": 1,
+      "over8_33Ratio": "0.14%",
       "note": "首页静止 5s 空闲采样"
     },
     "B_xq_normal": {
-      "frameSamples": 8415,
-      "windowMs": 56338,
-      "avgIntervalMs": 6.69,
-      "avgFps": 149.4,
+      "frameSamples": 8492,
+      "windowMs": 56029,
+      "avgIntervalMs": 6.6,
+      "avgFps": 151.6,
       "medianFrameMs": 6.1,
       "p95FrameMs": 6.2,
-      "p99FrameMs": 12.1,
-      "maxFrameMs": 169.8,
+      "p99FrameMs": 6.3,
+      "maxFrameMs": 163.7,
       "longFrames": 30,
-      "over16_67ms": 48,
-      "over16_67Ratio": "0.57%",
-      "over8_33ms": 152,
-      "over8_33Ratio": "1.81%",
+      "over16_67ms": 30,
+      "over16_67Ratio": "0.35%",
+      "over8_33ms": 75,
+      "over8_33Ratio": "0.88%",
       "animationRuns": 240,
       "failedMoves": 0,
       "clickToSettleMs": {
         "samples": 240,
-        "medianMs": 197.3,
-        "p95Ms": 203.7,
-        "maxMs": 301.9
+        "medianMs": 196.2,
+        "p95Ms": 198.4,
+        "maxMs": 252.8
       },
       "animDurationMs": {
         "samples": 240,
-        "medianMs": 196.1,
-        "p95Ms": 202.5,
-        "maxMs": 297.9
+        "medianMs": 195.2,
+        "p95Ms": 197.4,
+        "maxMs": 251.4
       },
       "dpr": 1,
       "tag": "B"
     },
     "C_chess_normal": {
-      "frameSamples": 8535,
-      "windowMs": 56690,
-      "avgIntervalMs": 6.64,
-      "avgFps": 150.6,
+      "frameSamples": 8553,
+      "windowMs": 56344,
+      "avgIntervalMs": 6.59,
+      "avgFps": 151.8,
       "medianFrameMs": 6.1,
       "p95FrameMs": 6.2,
-      "p99FrameMs": 12.1,
-      "maxFrameMs": 169.8,
-      "longFrames": 30,
-      "over16_67ms": 36,
-      "over16_67Ratio": "0.42%",
-      "over8_33ms": 122,
-      "over8_33Ratio": "1.43%",
+      "p99FrameMs": 6.3,
+      "maxFrameMs": 163.7,
+      "longFrames": 29,
+      "over16_67ms": 31,
+      "over16_67Ratio": "0.36%",
+      "over8_33ms": 67,
+      "over8_33Ratio": "0.78%",
       "animationRuns": 240,
       "failedMoves": 0,
       "clickToSettleMs": {
         "samples": 240,
         "medianMs": 197.1,
-        "p95Ms": 203.6,
-        "maxMs": 247.4
+        "p95Ms": 198.4,
+        "maxMs": 214.6
       },
       "animDurationMs": {
         "samples": 240,
-        "medianMs": 194.7,
-        "p95Ms": 200.9,
-        "maxMs": 244.9
+        "medianMs": 195.2,
+        "p95Ms": 196.5,
+        "maxMs": 207.1
       },
       "dpr": 1,
       "tag": "C"
     },
     "R_chess_dpr2": {
-      "frameSamples": 1423,
-      "windowMs": 9340,
-      "avgIntervalMs": 6.56,
-      "avgFps": 152.4,
+      "frameSamples": 1431,
+      "windowMs": 9334,
+      "avgIntervalMs": 6.52,
+      "avgFps": 153.3,
       "medianFrameMs": 6.1,
       "p95FrameMs": 6.2,
-      "p99FrameMs": 12.1,
-      "maxFrameMs": 157.7,
+      "p99FrameMs": 6.2,
+      "maxFrameMs": 163.63,
       "longFrames": 4,
-      "over16_67ms": 7,
-      "over16_67Ratio": "0.49%",
-      "over8_33ms": 21,
-      "over8_33Ratio": "1.48%",
+      "over16_67ms": 4,
+      "over16_67Ratio": "0.28%",
+      "over8_33ms": 14,
+      "over8_33Ratio": "0.98%",
       "animationRuns": 40,
       "failedMoves": 0,
       "clickToSettleMs": {
         "samples": 40,
-        "medianMs": 197.4,
-        "p95Ms": 209.1,
-        "maxMs": 220.2
+        "medianMs": 197.2,
+        "p95Ms": 201.1,
+        "maxMs": 204
       },
       "animDurationMs": {
         "samples": 40,
-        "medianMs": 195,
-        "p95Ms": 207.2,
-        "maxMs": 218
+        "medianMs": 194.8,
+        "p95Ms": 196.3,
+        "maxMs": 201.6
       },
       "dpr": 2,
       "tag": "R"
     },
     "H_xq_cannon_capture": {
-      "frameSamples": 36,
-      "windowMs": 236,
-      "avgIntervalMs": 6.57,
-      "avgFps": 152.3,
+      "frameSamples": 37,
+      "windowMs": 242,
+      "avgIntervalMs": 6.55,
+      "avgFps": 152.7,
       "medianFrameMs": 6.1,
       "p95FrameMs": 12.1,
-      "p99FrameMs": 12.1,
-      "maxFrameMs": 12.1,
+      "p99FrameMs": 12.2,
+      "maxFrameMs": 12.2,
       "longFrames": 0,
       "over16_67ms": 0,
       "over16_67Ratio": "0%",
       "over8_33ms": 3,
-      "over8_33Ratio": "8.33%",
+      "over8_33Ratio": "8.11%",
       "clickToSettleMs": {
         "samples": 1,
-        "medianMs": 233.3,
-        "p95Ms": 233.3,
-        "maxMs": 233.3
+        "medianMs": 234,
+        "p95Ms": 234,
+        "maxMs": 234
       },
       "animDurationMs": {
         "samples": 1,
-        "medianMs": 207.7,
-        "p95Ms": 207.7,
-        "maxMs": 207.7
+        "medianMs": 207,
+        "p95Ms": 207,
+        "maxMs": 207
       },
       "integrity": {
         "b0": "b0 红炮",
@@ -166,10 +166,10 @@
       "frameSamples": 122,
       "windowMs": 745,
       "avgIntervalMs": 6.11,
-      "avgFps": 163.6,
+      "avgFps": 163.7,
       "medianFrameMs": 6.1,
       "p95FrameMs": 6.2,
-      "p99FrameMs": 6.2,
+      "p99FrameMs": 6.3,
       "maxFrameMs": 12.1,
       "longFrames": 0,
       "over16_67ms": 0,
@@ -178,9 +178,9 @@
       "over8_33Ratio": "0.82%",
       "clickToSettleMs": {
         "samples": 1,
-        "medianMs": 230.6,
-        "p95Ms": 230.6,
-        "maxMs": 230.6
+        "medianMs": 236.5,
+        "p95Ms": 236.5,
+        "maxMs": 236.5
       },
       "animDurationMs": {
         "samples": 1,
@@ -202,8 +202,8 @@
       }
     },
     "I_flip": {
-      "frameSamples": 78,
-      "windowMs": 473,
+      "frameSamples": 77,
+      "windowMs": 467,
       "avgIntervalMs": 6.06,
       "avgFps": 165,
       "medianFrameMs": 6.1,
@@ -218,54 +218,54 @@
       "a9Top": -275
     },
     "D_chess_capture": {
-      "frameSamples": 38,
-      "windowMs": 261,
-      "avgIntervalMs": 6.86,
-      "avgFps": 145.8,
+      "frameSamples": 36,
+      "windowMs": 249,
+      "avgIntervalMs": 6.9,
+      "avgFps": 144.9,
       "medianFrameMs": 6.1,
-      "p95FrameMs": 12.1,
-      "p99FrameMs": 30.3,
-      "maxFrameMs": 30.3,
+      "p95FrameMs": 18.2,
+      "p99FrameMs": 24.2,
+      "maxFrameMs": 24.2,
       "longFrames": 0,
-      "over16_67ms": 1,
-      "over16_67Ratio": "2.63%",
+      "over16_67ms": 2,
+      "over16_67Ratio": "5.56%",
       "over8_33ms": 2,
-      "over8_33Ratio": "5.26%",
+      "over8_33Ratio": "5.56%",
       "clickToSettleMs": {
         "samples": 1,
-        "medianMs": 240.9,
-        "p95Ms": 240.9,
-        "maxMs": 240.9
+        "medianMs": 249.1,
+        "p95Ms": 249.1,
+        "maxMs": 249.1
       },
       "animDurationMs": {
         "samples": 1,
-        "medianMs": 230.8,
-        "p95Ms": 230.8,
-        "maxMs": 230.8
+        "medianMs": 234.2,
+        "p95Ms": 234.2,
+        "maxMs": 234.2
       }
     },
     "K_peer_sync": {
-      "frameSamples": 34,
-      "windowMs": 218,
-      "avgIntervalMs": 6.41,
-      "avgFps": 155.9,
+      "frameSamples": 36,
+      "windowMs": 236,
+      "avgIntervalMs": 6.57,
+      "avgFps": 152.3,
       "medianFrameMs": 6.1,
-      "p95FrameMs": 6.2,
+      "p95FrameMs": 12.3,
       "p99FrameMs": 18.2,
       "maxFrameMs": 18.2,
       "longFrames": 0,
       "over16_67ms": 1,
-      "over16_67Ratio": "2.94%",
-      "over8_33ms": 1,
-      "over8_33Ratio": "2.94%",
+      "over16_67Ratio": "2.78%",
+      "over8_33ms": 2,
+      "over8_33Ratio": "5.56%",
       "clickToSettleMs": null,
       "animDurationMs": {
         "samples": 1,
-        "medianMs": 205.7,
-        "p95Ms": 205.7,
-        "maxMs": 205.7
+        "medianMs": 219.2,
+        "p95Ms": 219.2,
+        "maxMs": 219.2
       },
-      "peerVisualMs": 10,
+      "peerVisualMs": 14,
       "integrity": {
         "A": {
           "e5": "e5 黑马",
@@ -278,9 +278,9 @@
     },
     "E_castle": {
       "frameSamples": 36,
-      "windowMs": 229,
-      "avgIntervalMs": 6.36,
-      "avgFps": 157.3,
+      "windowMs": 230,
+      "avgIntervalMs": 6.39,
+      "avgFps": 156.4,
       "medianFrameMs": 6.1,
       "p95FrameMs": 12,
       "p99FrameMs": 12.2,
@@ -292,15 +292,15 @@
       "over8_33Ratio": "5.56%",
       "clickToSettleMs": {
         "samples": 1,
-        "medianMs": 208.6,
-        "p95Ms": 208.6,
-        "maxMs": 208.6
+        "medianMs": 208.7,
+        "p95Ms": 208.7,
+        "maxMs": 208.7
       },
       "animDurationMs": {
         "samples": 2,
-        "medianMs": 201.1,
-        "p95Ms": 201.1,
-        "maxMs": 201.1
+        "medianMs": 199.9,
+        "p95Ms": 199.9,
+        "maxMs": 199.9
       },
       "integrity": {
         "king": 1,
@@ -308,30 +308,30 @@
       }
     },
     "F_en_passant": {
-      "frameSamples": 38,
-      "windowMs": 249,
-      "avgIntervalMs": 6.54,
-      "avgFps": 152.9,
+      "frameSamples": 37,
+      "windowMs": 242,
+      "avgIntervalMs": 6.55,
+      "avgFps": 152.6,
       "medianFrameMs": 6.1,
       "p95FrameMs": 12.2,
       "p99FrameMs": 18.2,
       "maxFrameMs": 18.2,
       "longFrames": 0,
       "over16_67ms": 1,
-      "over16_67Ratio": "2.63%",
+      "over16_67Ratio": "2.7%",
       "over8_33ms": 2,
-      "over8_33Ratio": "5.26%",
+      "over8_33Ratio": "5.41%",
       "clickToSettleMs": {
         "samples": 1,
-        "medianMs": 231.4,
-        "p95Ms": 231.4,
-        "maxMs": 231.4
+        "medianMs": 228.8,
+        "p95Ms": 228.8,
+        "maxMs": 228.8
       },
       "animDurationMs": {
         "samples": 1,
-        "medianMs": 221.1,
-        "p95Ms": 221.1,
-        "maxMs": 221.1
+        "medianMs": 218.4,
+        "p95Ms": 218.4,
+        "maxMs": 218.4
       },
       "integrity": {
         "d6": 1,
@@ -339,10 +339,10 @@
       }
     },
     "G_promotion": {
-      "frameSamples": 40,
-      "windowMs": 249,
-      "avgIntervalMs": 6.21,
-      "avgFps": 161,
+      "frameSamples": 39,
+      "windowMs": 242,
+      "avgIntervalMs": 6.22,
+      "avgFps": 160.9,
       "medianFrameMs": 6.1,
       "p95FrameMs": 6.2,
       "p99FrameMs": 12.1,
@@ -351,18 +351,18 @@
       "over16_67ms": 0,
       "over16_67Ratio": "0%",
       "over8_33ms": 1,
-      "over8_33Ratio": "2.5%",
+      "over8_33Ratio": "2.56%",
       "clickToSettleMs": {
         "samples": 1,
-        "medianMs": 233.6,
-        "p95Ms": 233.6,
-        "maxMs": 233.6
+        "medianMs": 239.4,
+        "p95Ms": 239.4,
+        "maxMs": 239.4
       },
       "animDurationMs": {
         "samples": 1,
-        "medianMs": 201.1,
-        "p95Ms": 201.1,
-        "maxMs": 201.1
+        "medianMs": 202.2,
+        "p95Ms": 202.2,
+        "maxMs": 202.2
       },
       "integrity": {
         "b8queen": 1
@@ -370,18 +370,18 @@
     },
     "L_replay_nav": {
       "frameSamples": 191,
-      "windowMs": 1170,
-      "avgIntervalMs": 6.13,
-      "avgFps": 163.3,
+      "windowMs": 1176,
+      "avgIntervalMs": 6.16,
+      "avgFps": 162.4,
       "medianFrameMs": 6.1,
       "p95FrameMs": 6.2,
-      "p99FrameMs": 6.2,
+      "p99FrameMs": 12,
       "maxFrameMs": 18.2,
       "longFrames": 0,
       "over16_67ms": 1,
       "over16_67Ratio": "0.52%",
-      "over8_33ms": 1,
-      "over8_33Ratio": "0.52%",
+      "over8_33ms": 2,
+      "over8_33Ratio": "1.05%",
       "integrity": {
         "fly": 0,
         "pieces": 32,
@@ -389,19 +389,19 @@
       }
     },
     "M_resize": {
-      "frameSamples": 149,
-      "windowMs": 909,
-      "avgIntervalMs": 6.1,
-      "avgFps": 163.9,
+      "frameSamples": 146,
+      "windowMs": 897,
+      "avgIntervalMs": 6.14,
+      "avgFps": 162.8,
       "medianFrameMs": 6.1,
       "p95FrameMs": 6.2,
-      "p99FrameMs": 6.2,
-      "maxFrameMs": 12.1,
+      "p99FrameMs": 6.3,
+      "maxFrameMs": 18.2,
       "longFrames": 0,
-      "over16_67ms": 0,
-      "over16_67Ratio": "0%",
+      "over16_67ms": 1,
+      "over16_67Ratio": "0.68%",
       "over8_33ms": 1,
-      "over8_33Ratio": "0.67%"
+      "over8_33Ratio": "0.68%"
     },
     "N_background": {
       "fly": 0,
@@ -413,59 +413,59 @@
   },
   "inputLatency": {
     "samples": 60,
-    "medianMs": 0.8,
-    "p95Ms": 1.5,
-    "maxMs": 2.3
+    "medianMs": 0.6,
+    "p95Ms": 1.6,
+    "maxMs": 2.2
   },
   "netLatency": {
     "moves": 12,
     "clickToOwnMoveList": {
       "samples": 12,
-      "medianMs": 12.3,
-      "p95Ms": 42.5,
-      "maxMs": 42.5
+      "medianMs": 12.8,
+      "p95Ms": 15.2,
+      "maxMs": 15.2
     },
     "clickToPeerMoveList": {
       "samples": 12,
-      "medianMs": 15,
-      "p95Ms": 44,
-      "maxMs": 44
+      "medianMs": 16,
+      "p95Ms": 28,
+      "maxMs": 28
     },
     "note": "本机回环（127.0.0.1）：ack=提交点击→本端棋谱出现（socket 往返+渲染）；peer=提交点击→对方端棋谱出现（+广播）。不含公网延迟。"
   },
   "cpuThrottle": {
     "rate": 4,
-    "frameSamples": 1559,
-    "windowMs": 11765,
-    "avgIntervalMs": 7.55,
-    "avgFps": 132.5,
+    "frameSamples": 1546,
+    "windowMs": 12086,
+    "avgIntervalMs": 7.82,
+    "avgFps": 127.9,
     "medianFrameMs": 6.1,
-    "p95FrameMs": 12.2,
+    "p95FrameMs": 18.1,
     "p99FrameMs": 24.3,
-    "maxFrameMs": 254.5,
+    "maxFrameMs": 260.6,
     "longFrames": 6,
-    "over16_67ms": 61,
-    "over16_67Ratio": "3.91%",
-    "over8_33ms": 146,
-    "over8_33Ratio": "9.36%",
+    "over16_67ms": 83,
+    "over16_67Ratio": "5.37%",
+    "over8_33ms": 165,
+    "over8_33Ratio": "10.67%",
     "animationRuns": 40,
     "clickToSettleMs": {
       "samples": 40,
-      "medianMs": 222.8,
-      "p95Ms": 240.1,
-      "maxMs": 269.1
+      "medianMs": 229.6,
+      "p95Ms": 240.7,
+      "maxMs": 267.7
     },
     "animDurationMs": {
       "samples": 40,
-      "medianMs": 198,
-      "p95Ms": 213.9,
-      "maxMs": 229.4
+      "medianMs": 201,
+      "p95Ms": 209.2,
+      "maxMs": 227.3
     }
   },
   "reducedMotion": {
     "applied": true,
     "flySeenImmediately": 0,
-    "moveListLatencyMs": 16.8,
+    "moveListLatencyMs": 17,
     "finalState": {
       "e7": 1,
       "fly": 0,

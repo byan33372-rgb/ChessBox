@@ -1,0 +1,4 @@
+
+> dual-chess-online@1.0.0 typecheck
+> tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.server.json --noEmit
+

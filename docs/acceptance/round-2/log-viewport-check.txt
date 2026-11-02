@@ -1,0 +1,24 @@
+(node:2580) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/%E8%BD%AF%E4%BB%B6/chessbox-%E8%B1%A1%E6%A3%8B/src/games/chess/adapter.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\D:\projects\chessbox\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS  笔记本 1024×768 无横向溢出  (overflow=0px)
+PASS  笔记本 1024×768 棋盘可见且适配  (w=530)
+PASS  笔记本 1024×768 无控制台错误
+PASS  平板竖 768×1024 无横向溢出  (overflow=0px)
+PASS  平板竖 768×1024 棋盘可见且适配  (w=542)
+PASS  平板竖 768×1024 无控制台错误
+PASS  手机横 667×375 无横向溢出  (overflow=0px)
+PASS  手机横 667×375 棋盘可见且适配  (w=282)
+PASS  手机横 667×375 无控制台错误
+PASS  手机小屏 320×600 无横向溢出  (overflow=0px)
+PASS  手机小屏 320×600 棋盘可见且适配  (w=282)
+PASS  手机小屏 320×600 无控制台错误
+PASS  30 步后双方棋谱一致  (count=30)
+PASS  窄屏 30 步无横向溢出  (overflow=0px)
+PASS  长昵称卡片不溢出  (w=29)
+PASS  键盘 Tab 可遍历可聚焦控件  (focusables=12)
+PASS  复盘横幅出现
+PASS  复盘位置显示 29/30  (29 / 30)
+---
+RESULT: 全部通过

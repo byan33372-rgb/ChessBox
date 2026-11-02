@@ -1,0 +1,7 @@
+shot: 01-home-three-games
+shot: 02-xiangqi-lastmove-markers
+shot: 03-chess-lastmove-markers
+shot: 04-checkers-chain-path
+shot: 05-replay-ply2
+shot: 06-mobile-375-checkers
+done
