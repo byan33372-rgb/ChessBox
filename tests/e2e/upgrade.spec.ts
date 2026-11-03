@@ -93,7 +93,7 @@ test.describe('三棋统一上一手标记与信息区', () => {
   });
 
   test('三棋 375×667 无横向溢出', async ({ page }) => {
-    for (const kind of ['xiangqi', 'chess', 'checkers'] as const) {
+    for (const kind of ['xiangqi', 'chess', 'checkers', 'go', 'gomoku'] as const) {
       await page.setViewportSize({ width: 375, height: 667 });
       await mkRoom(page, kind);
       await page.waitForTimeout(500);
@@ -168,7 +168,7 @@ test.describe('三棋统一上一手标记与信息区', () => {
 
 
 test.describe('PERF-008：三棋各 120 帧渲染采样', () => {
-  for (const kind of ['xiangqi', 'chess', 'checkers'] as const) {
+  for (const kind of ['xiangqi', 'chess', 'checkers', 'go', 'gomoku'] as const) {
     test(`${kind} 120 帧采样`, async ({ page, browser }) => {
       const roomId = await mkRoom(page, kind);
       await joinSecond(browser, roomId);
@@ -179,9 +179,13 @@ test.describe('PERF-008：三棋各 120 帧渲染采样', () => {
       } else if (kind === 'chess') {
         await page.locator('button[aria-label^="e2 "]').click();
         await page.locator('button[aria-label="e4"]').first().click();
-      } else {
+      } else if (kind === 'checkers') {
         await page.locator('.checkers-hit[data-cell="f4"]').click();
         await page.locator('.checkers-hit[data-cell="f5"]').click();
+      } else if (kind === 'go') {
+        await page.evaluate(`document.querySelector('.go-hit[data-pt="e5"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
+      } else {
+        await page.evaluate(`document.querySelector('.gk-board [data-pt="h8"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
       }
       await page.waitForTimeout(600);
       const stats = await page.evaluate(async () => {

@@ -25,6 +25,12 @@ const OPENERS = {
     { from: 'f4', to: 'f5' }, { from: 'm14', to: 'm13' },
     { from: 'e3', to: 'g5', path: ['e3', 'e5', 'g5'] }, { from: 'k14', to: 'k13' },
   ],
+  go: [
+    { from: 'd4' }, { from: 'q16' }, { from: 'pass' }, { from: 'e5' },
+  ],
+  gomoku: [
+    { from: 'h8' }, { from: 'i9' }, { from: 'h7' }, { from: 'j9' },
+  ],
 };
 
 let seq = 0;
@@ -53,14 +59,14 @@ function log(row) {
   appendFileSync(out, JSON.stringify(row) + '\n');
 }
 
-const KINDS = ['xiangqi', 'chess', 'checkers'];
+const KINDS = ['xiangqi', 'chess', 'checkers', 'go', 'gomoku'];
 let kindIdx = 0;
 
 while (Date.now() < deadline) {
   const kind = KINDS[kindIdx++ % 3];
   try {
     const A = connect();
-    const created = await emit(A, 'room:create', { kind, name: `soakA${seq}`, ...(kind === 'checkers' ? { seatCount: 2 } : {}) });
+    const created = await emit(A, 'room:create', { kind, name: `soakA${seq}`, ...(kind === 'checkers' ? { seatCount: 2 } : {}), ...(kind === 'go' ? { boardSize: 9 } : {}) });
     if (!created.ok) throw new Error('create failed');
     const seat = created.seat;
     const statesA = collect(A);
@@ -79,7 +85,9 @@ while (Date.now() < deadline) {
       const body =
         kind === 'checkers'
           ? { requestId: `sk-${seq}-${i}-abcd1234`, revision: cur?.revision ?? 1, from: mv.from, to: mv.to, path: mv.path }
-          : { requestId: `sk-${seq}-${i}-abcd1234`, revision: cur?.revision ?? 1, from: mv[0], to: mv[1] };
+          : kind === 'go' || kind === 'gomoku'
+            ? { requestId: `sk-${seq}-${i}-abcd1234`, revision: cur?.revision ?? 1, from: mv.from, to: mv.from }
+            : { requestId: `sk-${seq}-${i}-abcd1234`, revision: cur?.revision ?? 1, from: mv[0], to: mv[1] };
       const r = await emit(sock, 'game:move', body);
       if (r.ok) stats.movesOk++;
       else if (r.error?.code === 'ILLEGAL_MOVE' || r.error?.code === 'STALE_REVISION' || r.error?.code === 'NOT_YOUR_TURN') stats.movesRejected++;
