@@ -5,7 +5,7 @@ async function mkRoom(page: Page, kind: string, opts?: { boardSize?: number }): 
   await page.goto('/');
   await page.locator(`.create-card.${kind}`).waitFor({ state: 'visible' });
   if (opts?.boardSize) {
-    await page.locator(`.create-card.go .seat-count-btn`).filter({ hasText: `${opts.boardSize}路` }).click();
+    await page.locator(`.create-card.go .seat-count-btn`).filter({ hasText: new RegExp(`^${opts.boardSize}路$`) }).click();
   }
   await page.locator(`.create-card.${kind} .gc-create-btn`).click();
   await expect(page).toHaveURL(/\/r\/[a-z2-9]{10}/, { timeout: 15_000 });
@@ -46,21 +46,27 @@ test.describe('五棋升级验收', () => {
     // 黑 e5 白 e4 黑 e6 白 e3（白 e3 后黑 e6 一块剩 e7/e8? 简化：验证落子与标记）
     await clickPt(page, 'e5');
     await expect(pageB.locator('.go-last')).toBeVisible({ timeout: 10_000 });
-    await clickPt(pageB, 'e4');
-    await clickPt(page, 'e6');
-    await clickPt(pageB, 'e3');
-    await clickPt(page, 'e7');
-    await clickPt(pageB, 'e2');
+    for (const [p1, p2] of [['e4', 'e6'], ['e3', 'e7'], ['e2', 'd5']] as const) {
+      await clickPt(pageB, p1);
+      await page.waitForTimeout(250);
+      await clickPt(page, p2);
+      await pageB.waitForTimeout(250);
+    }
     // 黑 f5? 简单提子构造难——改为验证双端棋子同步与最近一步
-    await expect(page.locator('.last-move-bar .lmb-text')).toContainText('e2', { timeout: 10_000 });
-    await expect(pageB.locator('.last-move-bar .lmb-text')).toContainText('e2');
-    // 停一手 → 数子阶段状态行
-    await page.locator('button:has-text("停一手")').click();
-    await pageB.locator('button:has-text("停一手")').click();
+    await expect(page.locator('.last-move-bar .lmb-text')).toContainText('d5', { timeout: 10_000 });
+    await expect(pageB.locator('.last-move-bar .lmb-text')).toContainText('d5');
+    // 停一手 → 数子阶段状态行（六手后轮次在 B：B 先停、A 后停；等对端广播避免 revision 竞争丢步）
+    await pageB.locator('.actions-card button', { hasText: '停一手' }).click();
+    await pageB.waitForTimeout(500);
+    await page.locator('.actions-card button', { hasText: '停一手' }).click();
+    await page.waitForTimeout(500);
     await expect(page.locator('.status-line')).toContainText('数子阶段', { timeout: 10_000 });
     // 双方确认 → 终局（几乎空盘 → 白贴目胜）
-    await page.locator('button:has-text("确认数子")').click();
-    await pageB.locator('button:has-text("确认数子")').click();
+    // 双停后轮次在 B → B 先确认（轮次方）→ A 确认 → 终局
+    await pageB.locator('.actions-card button', { hasText: '确认数子' }).click();
+    await pageB.waitForTimeout(400);
+    await page.locator('.actions-card button', { hasText: '确认数子' }).click();
+    await page.waitForTimeout(500);
     await expect(page.locator('.game-over')).toContainText('白方获胜', { timeout: 10_000 });
     void roomId;
   });

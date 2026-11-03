@@ -885,7 +885,15 @@ function PlayerCard({
   const info = state.seats[side];
   const kind = state.kind;
   const sideName =
-    kind === 'xiangqi' ? (side === 'a' ? '红方' : '黑方') : kind === 'chess' ? (side === 'a' ? '白方' : '黑方') : (CHECKERS_NAMES[side] ?? side);
+    kind === 'xiangqi'
+      ? side === 'a'
+        ? '红方'
+        : '黑方'
+      : kind === 'chess' || kind === 'go' || kind === 'gomoku'
+        ? side === 'a'
+          ? '黑方'
+          : '白方'
+        : (CHECKERS_NAMES[side] ?? side);
   const captured = state.moves
     .filter((m) => m.side === side && m.captured)
     .map((m) => m.captured as string);
@@ -958,7 +966,19 @@ function StatusCard({
   const offers = state.offers;
   const amPlayer = seat !== null && seat !== 'spectator';
   const winnerName = (w: Side) =>
-    state.kind === 'xiangqi' ? (w === 'a' ? '红方' : '黑方') : state.kind === 'chess' ? (w === 'a' ? '白方' : '黑方') : (CHECKERS_NAMES[w] ?? w);
+    state.kind === 'go' || state.kind === 'gomoku'
+      ? w === 'a'
+        ? '黑方'
+        : '白方'
+      : state.kind === 'xiangqi'
+        ? w === 'a'
+          ? '红方'
+          : '黑方'
+        : state.kind === 'chess'
+          ? w === 'a'
+            ? '白方'
+            : '黑方'
+          : (CHECKERS_NAMES[w] ?? w);
   return (
     <div className="card status-card">
       {state.outcome ? (
