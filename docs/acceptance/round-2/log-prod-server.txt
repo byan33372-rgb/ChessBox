@@ -1,0 +1,185 @@
+[boot] 服务已启动: http://127.0.0.1:3001
+[boot] 数据库: C:\Users\<user>\AppData\Local\Temp\r2-prod\prod.db
+[boot] 默认仅监听本机；公网访问请运行 npm run tunnel（cloudflared Quick Tunnel）
+[io] 连接 U9G1TU0PV2t8IT_AAAAA
+[io] 断开 U9G1TU0PV2t8IT_AAAAA (client namespace disconnect)
+[io] 连接 _YBzwa5Bhp0qlvYxAAAB
+[io] 连接 9tOdIKfPJEIu2Jy0AAAC
+[io] 断开 _YBzwa5Bhp0qlvYxAAAB (transport close)
+[io] 断开 9tOdIKfPJEIu2Jy0AAAC (transport close)
+[io] 连接 jTsbzSZXcT1nujr-AAAD
+[io] 断开 jTsbzSZXcT1nujr-AAAD (client namespace disconnect)
+[io] 连接 Q-USJs9H7KKWkJmeAAAE
+[io] 连接 hv6wncsbNghStsbYAAAF
+[io] 断开 Q-USJs9H7KKWkJmeAAAE (transport close)
+[io] 断开 hv6wncsbNghStsbYAAAF (transport close)
+[io] 连接 ovKeC9tvRYT3Ar9vAAAG
+[io] 断开 ovKeC9tvRYT3Ar9vAAAG (client namespace disconnect)
+[io] 连接 DpliV8eM1w-6knjcAAAH
+[io] 连接 BpUFcvGTjQb-pPo3AAAI
+[io] 断开 BpUFcvGTjQb-pPo3AAAI (transport close)
+[io] 断开 DpliV8eM1w-6knjcAAAH (transport close)
+[io] 连接 Folh2q0g6Y8yAnBqAAAJ
+[io] 断开 Folh2q0g6Y8yAnBqAAAJ (client namespace disconnect)
+[io] 连接 rEypZdDmn16edK8OAAAK
+[io] 断开 rEypZdDmn16edK8OAAAK (transport close)
+[io] 连接 j5Av2cMhGZhnj-xHAAAL
+[io] 断开 j5Av2cMhGZhnj-xHAAAL (client namespace disconnect)
+[io] 连接 m4Ayj__cyDFaX3dXAAAM
+[io] 断开 m4Ayj__cyDFaX3dXAAAM (transport close)
+[io] 连接 aslhlfkFe4IM6OawAAAN
+[io] 断开 aslhlfkFe4IM6OawAAAN (client namespace disconnect)
+[io] 连接 kmRRyeHfFx8z9npEAAAO
+[io] 断开 kmRRyeHfFx8z9npEAAAO (transport close)
+[io] 连接 xHmVU1Wo4UtXc922AAAP
+[io] 断开 xHmVU1Wo4UtXc922AAAP (client namespace disconnect)
+[io] 连接 Ax0dJn7W7SEzoSXIAAAQ
+[io] 断开 Ax0dJn7W7SEzoSXIAAAQ (transport close)
+[io] 连接 2cD4RwUT_OTNPYGTAAAR
+[io] 断开 2cD4RwUT_OTNPYGTAAAR (client namespace disconnect)
+[io] 连接 HdjRzqzRMe6EsoNFAAAS
+[io] 连接 wp40i95NBHYgY5BZAAAT
+[io] 断开 HdjRzqzRMe6EsoNFAAAS (transport close)
+[io] 断开 wp40i95NBHYgY5BZAAAT (transport close)
+[io] 连接 v3eyId2wSWwg03k6AAAU
+[io] 断开 v3eyId2wSWwg03k6AAAU (client namespace disconnect)
+[io] 连接 RxK3xy8tXtCk-9VwAAAV
+[io] 连接 diPezA11j1tmKWUuAAAW
+[io] 断开 RxK3xy8tXtCk-9VwAAAV (transport close)
+[io] 断开 diPezA11j1tmKWUuAAAW (transport close)
+[io] 连接 JNkIAwkGy4pe2cSiAAAX
+[io] 断开 JNkIAwkGy4pe2cSiAAAX (client namespace disconnect)
+[io] 连接 zQGKNn-vpp6IbK6pAAAY
+[io] 连接 Ekh3dFQI_G8YGa9wAAAZ
+[io] 断开 zQGKNn-vpp6IbK6pAAAY (transport close)
+[io] 断开 Ekh3dFQI_G8YGa9wAAAZ (transport close)
+[io] 连接 Hs2ZMmR3zBSI5sGNAAAa
+[io] 断开 Hs2ZMmR3zBSI5sGNAAAa (client namespace disconnect)
+[io] 连接 XeAfTqxgZh9idO1uAAAb
+[io] 连接 J6Pta-l9NuMBfF-OAAAc
+[io] 断开 XeAfTqxgZh9idO1uAAAb (transport close)
+[io] 断开 J6Pta-l9NuMBfF-OAAAc (transport close)
+[io] 连接 20Il6Dc2qScrl6WiAAAd
+[io] 断开 20Il6Dc2qScrl6WiAAAd (client namespace disconnect)
+[io] 连接 tuUbEEWnEAL0NlSAAAAe
+[io] 连接 za5wwTC9M011vaRxAAAf
+[io] 断开 tuUbEEWnEAL0NlSAAAAe (transport close)
+[io] 断开 za5wwTC9M011vaRxAAAf (transport close)
+[io] 连接 GosUed5VU05yE80vAAAg
+[io] 断开 GosUed5VU05yE80vAAAg (client namespace disconnect)
+[io] 连接 KhKMLY7KkH9Vwk5OAAAh
+[io] 连接 ZXRbttATLTgAJKjJAAAi
+[io] 断开 KhKMLY7KkH9Vwk5OAAAh (transport close)
+[io] 断开 ZXRbttATLTgAJKjJAAAi (transport close)
+[io] 连接 ZK9NOApqUPZ4Fs3xAAAj
+[io] 断开 ZK9NOApqUPZ4Fs3xAAAj (client namespace disconnect)
+[io] 连接 Iow1pXPj2H2miu5vAAAk
+[io] 连接 hcGijM_kKrNxVuGKAAAl
+[io] 断开 Iow1pXPj2H2miu5vAAAk (transport close)
+[io] 连接 2J_KqrzW_BSFq-kJAAAm
+[io] 断开 2J_KqrzW_BSFq-kJAAAm (transport close)
+[io] 断开 hcGijM_kKrNxVuGKAAAl (transport close)
+[io] 连接 xjggaWShBrzGbX0BAAAn
+[io] 断开 xjggaWShBrzGbX0BAAAn (client namespace disconnect)
+[io] 连接 _lG6I_8lcBDxf1MWAAAo
+[io] 连接 GXQHe-XIGReLhAT_AAAp
+[io] 断开 _lG6I_8lcBDxf1MWAAAo (transport close)
+[io] 断开 GXQHe-XIGReLhAT_AAAp (transport close)
+[io] 连接 ickpITEBMKgodH0FAAAq
+[io] 断开 ickpITEBMKgodH0FAAAq (client namespace disconnect)
+[io] 连接 Rxr_gcZpnU1y9F8vAAAr
+[io] 连接 nXNfhikaRW3fD99MAAAs
+[io] 断开 Rxr_gcZpnU1y9F8vAAAr (transport close)
+[io] 断开 nXNfhikaRW3fD99MAAAs (transport close)
+[io] 连接 33a9xAtyq-0g3AbxAAAt
+[io] 断开 33a9xAtyq-0g3AbxAAAt (client namespace disconnect)
+[io] 连接 O9nrZ4_wOUbabNCIAAAu
+[io] 连接 KwQl-bDk0nqcH92kAAAv
+[io] 断开 KwQl-bDk0nqcH92kAAAv (transport close)
+[io] 连接 fnDaQ0ydkMpyvPHtAAAw
+[io] 断开 fnDaQ0ydkMpyvPHtAAAw (transport close)
+[io] 连接 QARC1wjIbynpeBJYAAAx
+[io] 断开 QARC1wjIbynpeBJYAAAx (transport close)
+[io] 断开 O9nrZ4_wOUbabNCIAAAu (transport close)
+[io] 连接 sN_pEmTauejCMR36AAAy
+[io] 断开 sN_pEmTauejCMR36AAAy (client namespace disconnect)
+[io] 连接 bLHyDgZwBW8k36WAAAAz
+[io] 连接 451Mj8Q5eqZQInzJAAA0
+[io] 断开 451Mj8Q5eqZQInzJAAA0 (transport close)
+[io] 连接 lk2160eMhp6Qg3m6AAA1
+[io] 断开 lk2160eMhp6Qg3m6AAA1 (transport close)
+[io] 连接 AVwEcfSfvAsYLDJEAAA2
+[io] 断开 AVwEcfSfvAsYLDJEAAA2 (transport close)
+[io] 断开 bLHyDgZwBW8k36WAAAAz (transport close)
+[io] 连接 5OKyI_kHMSICuf5pAAA3
+[io] 断开 5OKyI_kHMSICuf5pAAA3 (client namespace disconnect)
+[io] 连接 HR3qr72pOAfAgI9pAAA4
+[io] 连接 k92sfwCDo3DYbB54AAA5
+[io] 断开 HR3qr72pOAfAgI9pAAA4 (transport close)
+[io] 断开 k92sfwCDo3DYbB54AAA5 (transport close)
+[io] 连接 YOkGqD_ZqNawq4OBAAA6
+[io] 断开 YOkGqD_ZqNawq4OBAAA6 (client namespace disconnect)
+[io] 连接 0jmtO7cmUNt5T2D6AAA7
+[io] 连接 zVPIao6esGAPxzZdAAA8
+[io] 断开 0jmtO7cmUNt5T2D6AAA7 (transport close)
+[io] 断开 zVPIao6esGAPxzZdAAA8 (transport close)
+[io] 连接 3Ce_vbJvuzFUtoSAAAA9
+[io] 断开 3Ce_vbJvuzFUtoSAAAA9 (client namespace disconnect)
+[io] 连接 XZAcfs3qLOG9QhdeAAA-
+[io] 连接 DNzdOKIp1BqCQ6A_AAA_
+[io] 断开 XZAcfs3qLOG9QhdeAAA- (transport close)
+[io] 断开 DNzdOKIp1BqCQ6A_AAA_ (transport close)
+[io] 连接 juppZ2Skeq2kapB0AABA
+[io] 断开 juppZ2Skeq2kapB0AABA (client namespace disconnect)
+[io] 连接 ndOTgAdFEwKSt5erAABB
+[io] 连接 RlAW280pv65dimJAAABC
+[io] 断开 ndOTgAdFEwKSt5erAABB (transport close)
+[io] 断开 RlAW280pv65dimJAAABC (transport close)
+[io] 连接 ZjcBOIb_8TMXtzFmAABD
+[io] 断开 ZjcBOIb_8TMXtzFmAABD (client namespace disconnect)
+[io] 连接 S7QlbAYRTRP5csBOAABE
+[io] 连接 xLkLYxPK8lv4MHH1AABF
+[io] 断开 S7QlbAYRTRP5csBOAABE (transport close)
+[io] 断开 xLkLYxPK8lv4MHH1AABF (transport close)
+[io] 连接 aCPu0VjKZ-LutKaIAABG
+[io] 断开 aCPu0VjKZ-LutKaIAABG (client namespace disconnect)
+[io] 连接 3KGctRuMcTXJ1m5eAABH
+[io] 连接 2ALwtokHeLS5thchAABI
+[io] 断开 3KGctRuMcTXJ1m5eAABH (transport close)
+[io] 断开 2ALwtokHeLS5thchAABI (transport close)
+[io] 连接 u7s8KPp9Q2H_fAWnAABJ
+[io] 断开 u7s8KPp9Q2H_fAWnAABJ (client namespace disconnect)
+[io] 连接 puxt6F-Ez1V76OsZAABK
+[io] 连接 V-fW7Gb9sjfypRHgAABL
+[io] 断开 puxt6F-Ez1V76OsZAABK (transport close)
+[io] 断开 V-fW7Gb9sjfypRHgAABL (transport close)
+[io] 连接 dWozYRoMJpxyQsbGAABM
+[io] 断开 dWozYRoMJpxyQsbGAABM (client namespace disconnect)
+[io] 连接 EwOdHMO0rmmjjpqIAABN
+[io] 连接 Iv3nRmYwzD9LthplAABO
+[io] 断开 EwOdHMO0rmmjjpqIAABN (transport close)
+[io] 断开 Iv3nRmYwzD9LthplAABO (transport close)
+[io] 连接 3oFNuSjyQFlwRTuuAABP
+[io] 断开 3oFNuSjyQFlwRTuuAABP (client namespace disconnect)
+[io] 连接 0zwT1WQv-Ff9bZ-dAABQ
+[io] 连接 3N7y1jcTiSAXe7XWAABR
+[io] 断开 0zwT1WQv-Ff9bZ-dAABQ (transport close)
+[io] 断开 3N7y1jcTiSAXe7XWAABR (transport close)
+[io] 连接 2kCBNqK-HQxfv2DuAABS
+[io] 断开 2kCBNqK-HQxfv2DuAABS (client namespace disconnect)
+[io] 连接 iyvYoNq3Vibs7iLjAABT
+[io] 连接 T4IKr8m819lWmG9MAABU
+[io] 断开 iyvYoNq3Vibs7iLjAABT (transport close)
+[io] 连接 qo0lbHFIuaushELsAABV
+[io] 断开 qo0lbHFIuaushELsAABV (client namespace disconnect)
+[io] 连接 4S0PljpdibTBMe14AABW
+[io] 断开 T4IKr8m819lWmG9MAABU (transport close)
+[io] 连接 acWlpBbftmW3AUrQAABX
+[io] 断开 4S0PljpdibTBMe14AABW (transport close)
+[io] 连接 l2Nj1xQKhdKkYAY6AABY
+[io] 断开 l2Nj1xQKhdKkYAY6AABY (client namespace disconnect)
+[io] 连接 4NsYyUXp9ICKBUw8AABZ
+[io] 断开 acWlpBbftmW3AUrQAABX (transport close)
+[io] 连接 X9s2q6z1S88kEo1sAABa
+[io] 断开 X9s2q6z1S88kEo1sAABa (transport close)
+[io] 断开 4NsYyUXp9ICKBUw8AABZ (transport close)

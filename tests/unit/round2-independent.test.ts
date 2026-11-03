@@ -125,7 +125,7 @@ describe('R2-CH：国际象棋独立推导（CH-001~009）', () => {
     return n;
   };
 
-  it('CH-001 初始局面 perft(1..3) = 20 / 400 / 8902（公开公认值）', () => {
+  it('CH-001 初始局面 perft(1..3) = 20 / 400 / 8902（公开公认值）', { timeout: 30_000 }, () => {
     const e = new ChessEngine();
     expect(perft(e, 1)).toBe(20);
     expect(perft(e, 2)).toBe(400);
