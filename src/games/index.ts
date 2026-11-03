@@ -3,6 +3,8 @@ import type { GameEngine, GameKind, Side } from './types';
 import { ChessEngine } from './chess/adapter';
 import { XiangqiEngine } from './xiangqi/engine';
 import { CheckersEngine } from './checkers/engine';
+import { GoEngine, GO_KOMI } from './go/engine';
+import { GomokuEngine, GOMOKU_SIZE } from './gomoku/engine';
 import { SUPPORTED_SEAT_COUNTS } from './checkers/board';
 import { START_FEN as XIANGQI_START_FEN } from './xiangqi/engine';
 
@@ -12,6 +14,8 @@ export type { XColor, XBoard } from './xiangqi/engine';
 export { chineseNotation, pieceLabel } from './xiangqi/notation';
 export { CHESS_START_FEN } from './chess/adapter';
 export { CheckersEngine, CHECKERS_COLORS, CHECKERS_NAMES, CHECKERS_PIECE_COUNT } from './checkers/engine';
+export { GoEngine, GO_KOMI, starPoints as goStarPoints, buildSgf } from './go/engine';
+export { GomokuEngine, GOMOKU_SIZE } from './gomoku/engine';
 export {
   ALL_CELLS,
   CELL_IDS,
@@ -31,6 +35,11 @@ export function seatCountOf(kind: GameKind): number[] {
   return kind === 'checkers' ? [...SUPPORTED_SEAT_COUNTS] : [2];
 }
 
+/** 落子型游戏（from=to=交叉点，无移动轨迹） */
+export function isPlacementKind(kind: GameKind): boolean {
+  return kind === 'go' || kind === 'gomoku';
+}
+
 export function isGameKind(v: unknown): v is GameKind {
   return v === 'xiangqi' || v === 'chess' || v === 'checkers';
 }
@@ -39,16 +48,20 @@ export function isSide(v: unknown): v is Side {
   return typeof v === 'string' && /^[a-f]$/.test(v);
 }
 
-export function startFenOf(kind: GameKind, seatCount?: number): string {
+export function startFenOf(kind: GameKind, seatCount?: number, boardSize?: number): string {
   if (kind === 'xiangqi') return XIANGQI_START_FEN;
   if (kind === 'chess') return new ChessEngine().fen();
+  if (kind === 'go') return GoEngine.create((boardSize ?? 19) as never).fen();
+  if (kind === 'gomoku') return new GomokuEngine().fen();
   const n = (seatCount ?? 2) as 2 | 3 | 4 | 6;
   return CheckersEngine.create(n).fen();
 }
 
-export function createEngine(kind: GameKind, fen?: string): GameEngine {
+export function createEngine(kind: GameKind, fen?: string, boardSize?: number): GameEngine {
   if (kind === 'xiangqi') return new XiangqiEngine(fen ?? XIANGQI_START_FEN);
   if (kind === 'checkers') return new CheckersEngine(fen);
+  if (kind === 'go') return fen ? new GoEngine(fen) : GoEngine.create((boardSize ?? 19) as never);
+  if (kind === 'gomoku') return new GomokuEngine(fen);
   return new ChessEngine(fen);
 }
 
@@ -70,7 +83,9 @@ export function replayEngine(
     engine = new CheckersEngine(first?.fenBefore);
     if (!first?.fenBefore) engine = createCheckersEngine((seatCount ?? 2) as 2 | 3 | 4 | 6);
   } else {
-    engine = createEngine(kind);
+    // go/gomoku 等从首着 fenBefore 恢复规格与局面历史（superko 集合随重放重建）
+    const first = moves[0] as unknown as { fenBefore?: string } | undefined;
+    engine = createEngine(kind, first?.fenBefore);
   }
   for (const m of moves) {
     const applied = engine.applyMove(m);

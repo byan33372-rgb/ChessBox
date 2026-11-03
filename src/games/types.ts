@@ -11,7 +11,7 @@
  * - 所有走法均先经引擎校验；服务端为唯一权威。
  */
 
-export type GameKind = 'xiangqi' | 'chess' | 'checkers';
+export type GameKind = 'xiangqi' | 'chess' | 'checkers' | 'go' | 'gomoku';
 export type Side = 'a' | 'b' | 'c' | 'd' | 'e' | 'f';
 
 export interface MoveInput {

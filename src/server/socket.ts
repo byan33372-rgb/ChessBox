@@ -10,15 +10,17 @@ import { ROOM_ID_PATTERN, SESSION_TOKEN_PATTERN } from '../shared/protocol';
 import { RateLimiter } from './ratelimit';
 import { RoomManager, type Room, type SessionInfo } from './rooms';
 
-/** 全棋种兼容坐标：中象 a0-i9、国象 a1-h8、跳棋 a1-q17（两位行号） */
-const CELL_RE = /^[a-q][0-9]{1,2}$/;
+/** 全棋种兼容坐标：中象 a0-i9、国象 a1-h8、跳棋 a1-q17、围棋 a1-s19/指令、五子棋 a1-o15 */
+const CELL_RE = /^(?:[a-t][0-9]{1,2}|pass|mark:[a-t][0-9]{1,2}|score-confirm|score-resume)$/;
 
 const Schemas = {
   create: z.object({
-    kind: z.enum(['xiangqi', 'chess', 'checkers']),
+    kind: z.enum(['xiangqi', 'chess', 'checkers', 'go', 'gomoku']),
     name: z.string().trim().min(1).max(12).optional(),
     // 仅跳棋多人生效；其他棋种忽略
     seatCount: z.union([z.literal(2), z.literal(3), z.literal(4), z.literal(6)]).optional(),
+    // 仅围棋生效：9/13/19 路（GO-003）
+    boardSize: z.union([z.literal(9), z.literal(13), z.literal(19)]).optional(),
   }),
   join: z.object({
     roomId: z.string().regex(ROOM_ID_PATTERN),
@@ -100,7 +102,7 @@ export function setupSocket(io: AppServer, rooms: RoomManager): void {
       if (!createLimit.allow(socket.id)) return fail(ack, 'RATE_LIMITED', '操作过于频繁，请稍后再试');
       const parsed = Schemas.create.safeParse(payload);
       if (!parsed.success) return fail(ack, 'INVALID_INPUT', '参数不合法');
-      const { room, session } = rooms.createRoom(parsed.data.kind, parsed.data.name, parsed.data.seatCount);
+      const { room, session } = rooms.createRoom(parsed.data.kind, parsed.data.name, parsed.data.seatCount, parsed.data.boardSize);
       socket.data.roomId = room.id;
       socket.data.session = session;
       socket.join(room.id);

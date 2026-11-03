@@ -162,14 +162,14 @@ export class RoomManager {
     return next;
   }
 
-  createRoom(kind: GameKind, rawName?: string, seatCount?: number): { room: Room; session: SessionInfo } {
+  createRoom(kind: GameKind, rawName?: string, seatCount?: number, boardSize?: number): { room: Room; session: SessionInfo } {
     let id = newRoomId();
     while (this.rooms.has(id)) id = newRoomId();
     // 跳棋按座位数创建（2/3/4/6）；其余棋种固定双人
     const engine =
       kind === 'checkers' && seatCount != null && (SUPPORTED_SEAT_COUNTS as readonly number[]).includes(seatCount)
         ? createCheckersEngine(seatCount as 2 | 3 | 4 | 6)
-        : createEngine(kind);
+        : createEngine(kind, undefined, boardSize);
     const room: Room = {
       id,
       kind,
