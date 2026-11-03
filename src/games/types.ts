@@ -16,6 +16,7 @@ export type Side = 'a' | 'b' | 'c' | 'd' | 'e' | 'f';
 
 export interface MoveInput {
   from: string;
+  /** 落子型游戏（围棋/五子棋）约定 to = from（落点/指令）；移动型为终点 */
   to: string;
   /** 国际象棋升变：q/r/b/n */
   promotion?: string;

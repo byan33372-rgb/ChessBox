@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { Home } from './views/Home';
-import { Room } from './views/Room';
+
+// 路由级代码分割（LIGHT-003）：首屏仅加载首页，进入房间才加载房间包（含各棋类引擎/棋盘）
+const Room = lazy(() => import('./views/Room').then((m) => ({ default: m.Room })));
 
 function roomIdFromPath(): string | null {
   const m = /^\/r\/([a-z2-9]{10})$/.exec(window.location.pathname);
@@ -27,7 +29,20 @@ export function App() {
   }, []);
 
   if (roomId) {
-    return <Room roomId={roomId} onExit={goHome} />;
+    return (
+      <Suspense
+        fallback={
+          <div className="room room-center">
+            <div className="loading">
+              <div className="spinner" aria-hidden="true" />
+              <p>正在加载棋局…</p>
+            </div>
+          </div>
+        }
+      >
+        <Room roomId={roomId} onExit={goHome} />
+      </Suspense>
+    );
   }
   return <Home onEnter={enterRoom} />;
 }

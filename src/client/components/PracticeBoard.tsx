@@ -4,13 +4,15 @@
  * 与在线对局的区别在界面上明示（"试玩"徽标 + 结束后可重置），不冒充在线房间。
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { createEngine, startFenOf, CheckersEngine, SEAT_CAMP_MAPS } from '../../games';
+import { createEngine, startFenOf, CheckersEngine, SEAT_CAMP_MAPS, GoEngine, GomokuEngine } from '../../games';
 import { targetCamp } from '../../games/checkers/board';
 import { CHECKERS_NAMES } from '../../games/checkers/engine';
 import type { GameEngine } from '../../games/types';
 import { XiangqiBoard } from './XiangqiBoard';
 import { ChessBoard } from './ChessBoard';
 import { CheckersBoard } from './CheckersBoard';
+import { GoBoard } from './GoBoard';
+import { GomokuBoard } from './GomokuBoard';
 import { buildBoardAnim } from './boardAnim';
 import type { BoardAnim } from './boardAnim';
 import { useAnimPref } from './animPref';
@@ -37,6 +39,10 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
   const [selected, setSelected] = useState<string | null>(null);
   const selectedRef = useRef<string | null>(null);
   selectedRef.current = selected;
+
+  // 落子型上一手（go/gomoku 沙盒标记）
+  const [lastPt, setLastPt] = useState<string | null>(null);
+  const [winLine, setWinLine] = useState<string[]>([]);
 
   // 跳棋连跳链（沙盒与房间同一交互规则）
   const [chain, setChain] = useState<string[] | null>(null);
@@ -90,6 +96,25 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
     const sel = selectedRef.current;
     if (!eng || eng.outcome()) {
       setSelected(null);
+      return;
+    }
+    // —— 围棋/五子棋沙盒：落子型（无需选中；围棋数子阶段点击棋子=标记死子） ——
+    if (eng instanceof GoEngine || eng instanceof GomokuEngine) {
+      if (eng instanceof GoEngine && eng.phaseOf() === 'scoring') {
+        if (eng.pieceAt(sq)) {
+          eng.applyMove({ from: `mark:${sq}`, to: `mark:${sq}` });
+          bump();
+        }
+        return;
+      }
+      if (!eng.pieceAt(sq)) {
+        const applied = eng.applyMove({ from: sq, to: sq });
+        if (applied) {
+          setLastPt(sq);
+          setWinLine(applied.extra?.map((x) => x.from) ?? []);
+          bump();
+        }
+      }
       return;
     }
     // —— 跳棋分支：连跳逐段选点 ——
@@ -155,14 +180,18 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
     }
   };
 
+  const isPlace = kind === 'go' || kind === 'gomoku';
+  const goEngine = engine instanceof GoEngine ? engine : null;
   const turnLabel =
     kind === 'checkers'
       ? `${CHECKERS_NAMES[engine.turn()] ?? engine.turn()}行棋`
-      : engine.turn() === 'a'
-        ? kind === 'xiangqi'
-          ? '红方行棋'
-          : '白方行棋'
-        : '黑方行棋';
+      : isPlace
+        ? `${engine.turn() === 'a' ? '黑方' : '白方'}行棋`
+        : engine.turn() === 'a'
+          ? kind === 'xiangqi'
+            ? '红方行棋'
+            : '白方行棋'
+          : '黑方行棋';
 
   const board =
     kind === 'xiangqi' ? (
@@ -184,6 +213,24 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
         targets={targets}
         lastMove={null}
         onSquareClick={handleSquareClick}
+      />
+    ) : kind === 'go' ? (
+      <GoBoard
+        size={((engine as GoEngine).size) as 9 | 13 | 19}
+        fen={fen}
+        lastMove={lastPt}
+        deadStones={(engine as GoEngine).deadStones()}
+        scoringMode={(engine as GoEngine).phaseOf() === 'scoring'}
+        onPointClick={handleSquareClick}
+        interactive={!outcome}
+      />
+    ) : kind === 'gomoku' ? (
+      <GomokuBoard
+        fen={fen}
+        lastMove={lastPt}
+        winLine={winLine}
+        onPointClick={handleSquareClick}
+        interactive={!outcome}
       />
     ) : (
       <ChessBoard
@@ -207,6 +254,35 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
         ) : (
           <span className="practice-turn">{turnLabel}（试玩）</span>
         )}
+        {goEngine && goEngine.phaseOf() === 'playing' && (
+          <button
+            type="button"
+            className="btn small ghost"
+            onClick={() => {
+              const applied = goEngine.applyMove({ from: 'pass', to: 'pass' });
+              if (applied) {
+                setLastPt('pass');
+                bump();
+              }
+            }}
+          >
+            停一手
+          </button>
+        )}
+        {goEngine && goEngine.phaseOf() === 'scoring' && (
+          <button
+            type="button"
+            className="btn small ghost"
+            onClick={() => {
+              goEngine.applyMove({ from: 'score-confirm', to: 'score-confirm' });
+              goEngine.applyMove({ from: 'score-confirm', to: 'score-confirm' });
+              bump();
+            }}
+            title="试玩沙盒默认双方立即确认数子"
+          >
+            确认数子
+          </button>
+        )}
         <button
           type="button"
           className="btn small ghost practice-reset"
@@ -214,6 +290,8 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
             setResetKey((k) => k + 1);
             setSelected(null);
             setChain(null);
+            setLastPt(null);
+            setWinLine([]);
             bump();
           }}
         >

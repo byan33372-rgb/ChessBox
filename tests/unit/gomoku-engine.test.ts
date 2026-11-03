@@ -32,7 +32,7 @@ describe('五子棋 · 基础（GOMOKU-002/004/005）', () => {
     const e = mk();
     play(e, ['h8']);
     expect(e.isLegal({ from: 'h8' })).toBe(false);
-    expect(e.applyMove({ from: 'h8' })).toBeNull();
+    expect(e.applyMove({ from: 'h8', to: 'h8' })).toBeNull();
   });
 
   it('越界/非法坐标被拒（GOMOKU-002）', () => {
@@ -111,7 +111,7 @@ describe('五子棋 · 五连判定（GOMOKU-006~009）', () => {
     play(e, ['a1', 'a15', 'b1', 'b15', 'c1', 'c15', 'd1', 'd15', 'e1']);
     expect(e.outcome()).not.toBeNull();
     expect(e.isLegal({ from: 'f1' })).toBe(false);
-    expect(e.applyMove({ from: 'f1' })).toBeNull();
+    expect(e.applyMove({ from: 'f1', to: 'f1' })).toBeNull();
     expect(e.legalMoves().length).toBe(0);
   });
 });
@@ -138,7 +138,7 @@ describe('五子棋 · 和棋与恢复（GOMOKU-010/013/014）', () => {
     expect(e.outcome()).toBeNull(); // 布局确无五连
     const side = turn === 'a' ? 'a' : 'b';
     void side;
-    const r = e.applyMove({ from: 'o15' });
+    const r = e.applyMove({ from: 'o15', to: 'o15' });
     expect(r).not.toBeNull();
     expect(r?.outcome?.type).toBe('stalemate');
     expect(r?.outcome?.winner).toBeNull();
@@ -165,7 +165,7 @@ describe('五子棋 · 和棋与恢复（GOMOKU-010/013/014）', () => {
   it('AppliedMove.extra 携带五连方向线（EVENT-004）', () => {
     const e = mk();
     play(e, ['a1', 'a15', 'b1', 'b15', 'c1', 'c15', 'd1', 'd15']);
-    const r = e.applyMove({ from: 'e1' });
+    const r = e.applyMove({ from: 'e1', to: 'e1' });
     expect(r?.extra?.map((x) => x.from).sort()).toEqual(['a1', 'b1', 'c1', 'd1', 'e1']);
     expect(r?.extra?.[0].piece).toBe('B');
   });

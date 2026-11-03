@@ -305,10 +305,10 @@ export function useRoom(roomId: string | null): RoomSession {
 }
 
 /** 创建房间（首页使用）：独立短连接；seatCount 仅跳棋多人生效 */
-export async function createRoomViaSocket(kind: GameKind, name?: string, seatCount?: number): Promise<CreateAck> {
+export async function createRoomViaSocket(kind: GameKind, name?: string, seatCount?: number, boardSize?: number): Promise<CreateAck> {
   const socket = io({ transports: ['websocket', 'polling'] });
   try {
-    const ack = await emitWithAck<CreateAck>(socket, 'room:create', { kind, name, seatCount });
+    const ack = await emitWithAck<CreateAck>(socket, 'room:create', { kind, name, seatCount, boardSize });
     if (ack.ok && ack.roomId && ack.token) {
       storeToken(ack.roomId, ack.token);
     }

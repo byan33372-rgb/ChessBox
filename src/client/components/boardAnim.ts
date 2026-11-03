@@ -86,7 +86,7 @@ export function buildBoardAnim(
   from: string,
   to: string,
 ): BoardAnim | null {
-  if (kind === 'checkers') return null; // 跳棋飞行动画走 CheckersBoard 的 flight 层，不走 FEN 行解析
+  if (kind !== 'xiangqi' && kind !== 'chess') return null; // 跳棋/围棋/五子棋无 FLIP 位移动画（落子型无起点位移）
   const prev = fenPieceMap(kind, fenBefore);
   const next = fenPieceMap(kind, fenAfter);
   const moverCode = prev.get(from);

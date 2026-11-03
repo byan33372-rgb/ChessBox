@@ -1,11 +1,13 @@
-import { useState } from 'react';
 import { createRoomViaSocket, getSavedName, saveName } from '../net/roomClient';
 import type { GameKind } from '../../games/types';
-import { PracticeBoard } from '../components/PracticeBoard';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+const PracticeBoard = lazy(() => import('../components/PracticeBoard').then((m) => ({ default: m.PracticeBoard })));
 import { CHECKLIST, CHECKLIST_NOTE } from '../checklist';
 import xqArt from '../assets/xiangqi-theme.svg';
 import chessArt from '../assets/chess-theme.svg';
 import checkersArt from '../assets/checkers-theme.svg';
+import goArt from '../assets/go-theme.svg';
+import gomokuArt from '../assets/gomoku-theme.svg';
 
 export interface HomeProps {
   onEnter(roomId: string): void;
@@ -30,6 +32,20 @@ const PROMPTS: Record<
     art: chessArt,
     alt: '国际象棋主题：标准棋盘与经典造型棋子（深墨绿胡桃木，象牙白棋子）',
   },
+  go: {
+    title: '围棋图片提示词',
+    text: '请设计一张精美的围棋对弈界面图，保持与整体相同的深色风格。要点：标准围棋交叉点棋盘（9/13/19 路），木质暖色棋盘、黑白棋子、星位与天元正确；界面左侧为棋盘，右侧为房间信息、提子数、棋谱记录、SGF 导出与聊天区域；显示贴目 7.5（中国规则）与停一手/数子阶段提示。',
+    reqs: ['交叉点布局', '星位天元', '提子计数', '停一手', '数子与贴目 7.5', 'SGF 导出', '房间信息', '响应式设计'],
+    art: goArt,
+    alt: '围棋主题：木质交叉点棋盘与黑白棋子（中国规则，贴目 7.5）',
+  },
+  gomoku: {
+    title: '五子棋图片提示词',
+    text: '请设计一张精美的五子棋对弈界面图，保持与整体相同的深色风格。要点：15×15 标准棋盘、黑白棋子、上一手落点标记、五连获胜线高亮；界面左侧为棋盘，右侧为房间信息、棋谱记录、导出与聊天区域。',
+    reqs: ['15×15 棋盘', '黑白棋子', '上一手标记', '五连高亮', '棋谱记录', '导出', '房间信息', '响应式设计'],
+    art: gomokuArt,
+    alt: '五子棋主题：15×15 棋盘与黑白棋子（自由规则，先成五连者胜）',
+  },
   checkers: {
     title: '中国跳棋图片提示词',
     text: '请设计一张精美的中国跳棋对弈界面图，保持与整体相同的深色风格。要点：六角星形棋盘（六个彩色营地 + 中心六角蜂窝网格），红蓝绿黄黑紫彩色玻璃质感棋子；界面左侧为棋盘，右侧为房间信息、棋谱记录（含连跳完整路径）、导出按钮和聊天区域；显示房间号、当前回合与多人座位状态；采用深紫夜色与多彩营地的主题风格，界面简洁、清晰、易读；适配桌面端与移动端。',
@@ -43,9 +59,44 @@ const CARDS: Array<{ kind: GameKind; icon: string; title: string; sub: string }>
   { kind: 'xiangqi', icon: '帥', title: '中国象棋', sub: '车马炮 · 九宫格 · 将帅照面' },
   { kind: 'chess', icon: '♞', title: '国际象棋', sub: '王车易位 · 吃过路兵 · 升变' },
   { kind: 'checkers', icon: '⬡', title: '中国跳棋', sub: '六角星盘 · 连跳竞速 · 2~6 人' },
+  { kind: 'go', icon: '碁', title: '围棋', sub: '交叉点博弈 · 9/13/19 路 · 贴目 7.5' },
+  { kind: 'gomoku', icon: '五', title: '五子棋', sub: '15 路 · 自由规则 · 先成五连者胜' },
 ];
 
 const CHECKER_SEAT_COUNTS = [2, 3, 4, 6] as const;
+const GO_SIZES = [9, 13, 19] as const;
+
+/** 进入视口才加载沙盒（LIGHT-004：首页不一次性加载全部引擎/棋盘） */
+function LazyPractice({ kind }: { kind: GameKind }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || show) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setShow(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: '120px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [show]);
+  return (
+    <div ref={ref} style={{ minHeight: 180 }}>
+      {show ? (
+        <Suspense fallback={<div className="practice-loading">棋盘加载中…</div>}>
+          <PracticeBoard kind={kind} />
+        </Suspense>
+      ) : (
+        <div className="practice-loading" aria-hidden="true">滚动到此处加载试玩棋盘</div>
+      )}
+    </div>
+  );
+}
 
 export function Home({ onEnter }: HomeProps) {
   const [name, setName] = useState(getSavedName());
@@ -53,13 +104,19 @@ export function Home({ onEnter }: HomeProps) {
   const [creating, setCreating] = useState<GameKind | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [checkerSeats, setCheckerSeats] = useState<2 | 3 | 4 | 6>(2);
+  const [goSize, setGoSize] = useState<9 | 13 | 19>(19);
 
   const handleCreate = async (kind: GameKind) => {
     setError(null);
     setCreating(kind);
     saveName(name.trim());
     try {
-      const ack = await createRoomViaSocket(kind, name.trim() || undefined, kind === 'checkers' ? checkerSeats : undefined);
+      const ack = await createRoomViaSocket(
+        kind,
+        name.trim() || undefined,
+        kind === 'checkers' ? checkerSeats : undefined,
+        kind === 'go' ? goSize : undefined,
+      );
       if (ack.ok && ack.roomId) {
         onEnter(ack.roomId);
       } else {
@@ -89,8 +146,8 @@ export function Home({ onEnter }: HomeProps) {
         <div className="brand">
           <span className="brand-mark">弈</span>
           <div>
-            <h1>三人棋坊</h1>
-            <p className="brand-sub">中国象棋 · 国际象棋 · 中国跳棋 · 打开链接即玩</p>
+            <h1>五棋坊</h1>
+            <p className="brand-sub">中国象棋 · 国际象棋 · 中国跳棋 · 围棋 · 五子棋 · 打开链接即玩</p>
           </div>
         </div>
       </header>
@@ -113,7 +170,7 @@ export function Home({ onEnter }: HomeProps) {
                 </header>
                 {/* 真实引擎沙盒：可交互试玩；点击棋盘不会误创建房间 */}
                 <div className="gc-preview practice" onClick={(e) => e.stopPropagation()}>
-                  <PracticeBoard kind={kind} />
+                  <LazyPractice kind={kind} />
                 </div>
                 <footer className="gc-foot">
                   {kind === 'checkers' && (
@@ -130,6 +187,23 @@ export function Home({ onEnter }: HomeProps) {
                           {n}人
                         </button>
                       ))}
+                    </div>
+                  )}
+                  {kind === 'go' && (
+                    <div className="seat-count-row" role="radiogroup" aria-label="围棋棋盘路数">
+                      {GO_SIZES.map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          role="radio"
+                          aria-checked={goSize === n}
+                          className={`seat-count-btn ${goSize === n ? 'on' : ''}`}
+                          onClick={() => setGoSize(n)}
+                        >
+                          {n}路
+                        </button>
+                      ))}
+                      <span className="go-komi-note">中国规则 · 贴目 7.5</span>
                     </div>
                   )}
                   <span className="card-desc">本地规则沙盒 · 点击棋子试走 · 创建房间后与朋友联机对弈</span>
@@ -185,7 +259,7 @@ export function Home({ onEnter }: HomeProps) {
 
         {/* —— 下半：图片提示词 + 功能确认（人工维护的真实记录） —— */}
         <section className="prompt-docs">
-          {(['xiangqi', 'chess', 'checkers'] as const).map((kind) => {
+          {(['xiangqi', 'chess', 'checkers', 'go', 'gomoku'] as const).map((kind) => {
             const p = PROMPTS[kind];
             const group = CHECKLIST.find((g) => g.kind === kind)!;
             return (

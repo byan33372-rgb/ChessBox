@@ -18,7 +18,7 @@ export interface CheckItem {
 }
 
 export interface CheckGroup {
-  kind: 'xiangqi' | 'chess' | 'checkers';
+  kind: 'xiangqi' | 'chess' | 'checkers' | 'go' | 'gomoku';
   title: string;
   items: CheckItem[];
 }
@@ -69,6 +69,28 @@ export const CHECKLIST: CheckGroup[] = [
       { label: '导出棋谱文本 / 自定义 JSON', status: 'pass', evidence: 'e2e 真实下载断言：文件名/文本内容/JSON format+moves（upgrade.spec HISTORY-009）+unit exporters 2 项' },
       { label: '刷新页面后能恢复当前对局状态', status: 'pass', evidence: 'integration 持久化恢复用例（DATA-001~004）' },
       { label: '页面在不同屏幕尺寸下均能正常显示', status: 'pass', evidence: 'e2e 三棋 375×667 无横向溢出 + RWD 既有矩阵' },
+    ],
+  },
+  {
+    kind: 'go',
+    title: '功能确认（围棋）',
+    items: [
+      { label: '9/13/19 路棋盘、星位天元、坐标正确', status: 'pass', evidence: 'unit go-engine 21 项（GO-002/005/026）' },
+      { label: '气/提子/多块同提/禁自杀/全局同形', status: 'pass', evidence: 'unit go-engine（GO-008~013）+ 劫回提被禁实证' },
+      { label: '停一手/数子/死子确认/恢复对弈/贴目 7.5', status: 'pass', evidence: 'unit go-engine（GO-014~019）' },
+      { label: 'SGF 导出与联机对局', status: 'unverified', evidence: '待五棋升级阶段J双客户端回归：CHK-GO-001' },
+      { label: '移动端视口与触控精度', status: 'unverified', evidence: '待五棋升级阶段G/J回归：CHK-GO-002' },
+    ],
+  },
+  {
+    kind: 'gomoku',
+    title: '功能确认（五子棋）',
+    items: [
+      { label: '15×15 棋盘、四向五连与长连、满盘和棋', status: 'pass', evidence: 'unit gomoku-engine 17 项（GOMOKU-002~010）' },
+      { label: '终局锁定/重复落子/轮次拒绝', status: 'pass', evidence: 'unit gomoku-engine（GOMOKU-011/012）' },
+      { label: '胜利线显示与棋谱导出', status: 'pass', evidence: 'unit extra 断言 + buildGomokuText/Json' },
+      { label: '联机对局与断线恢复', status: 'unverified', evidence: '待五棋升级阶段J双客户端回归：CHK-GK-001' },
+      { label: '移动端视口与触控精度', status: 'unverified', evidence: '待五棋升级阶段G/J回归：CHK-GK-002' },
     ],
   },
 ];

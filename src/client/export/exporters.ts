@@ -7,6 +7,7 @@
 import { Chess } from 'chess.js';
 import type { GameOutcome, Side } from '../../games/types';
 import { CHECKERS_NAMES } from '../../games/checkers/engine';
+import { buildSgf, type GoSize } from '../../games/go/engine';
 import type { PublicMove, RoomState } from '../../shared/protocol';
 
 function resultString(outcome: GameOutcome | null): string {
@@ -178,6 +179,67 @@ export function buildCheckersJson(state: RoomState, startFen: string): CheckersJ
       ts: m.ts,
     })),
   };
+}
+
+function goSizeOf(state: RoomState): GoSize {
+  const m = /^go(9|13|19)\|/.exec(state.fen);
+  return (m ? Number(m[1]) : 19) as GoSize;
+}
+
+function outcomeText(state: RoomState): string {
+  if (!state.outcome) return '';
+  return state.outcome.winner === null ? '和棋' : `${state.outcome.winner === 'a' ? '黑方' : '白方'}胜`;
+}
+
+/** 围棋 SGF 导出（GO-022：仅支持子集，note 由 buildSgf 附带） */
+export function buildGoSgf(state: RoomState): string {
+  return buildSgf(
+    goSizeOf(state),
+    state.moves.map((m) => ({ side: m.side, from: m.from })),
+    { a: state.seats.a?.name, b: state.seats.b?.name },
+    outcomeText(state),
+  );
+}
+
+/** 五子棋文本导出（GOMOKU-015：明确版本的自定义格式） */
+export interface GomokuJson {
+  format: 'chessbox-gomoku-v1';
+  note: string;
+  roomId: string;
+  board: number;
+  result: string;
+  startFen: string;
+  moves: Array<{ ply: number; side: Side; point: string; winLine?: string[]; ts: number }>;
+}
+
+export function buildGomokuJson(state: RoomState, startFen: string): GomokuJson {
+  return {
+    format: 'chessbox-gomoku-v1',
+    note: '自由五子棋（无禁手）；point 为落点；winLine 为获胜连线（仅终局手）',
+    roomId: state.roomId,
+    board: 15,
+    result: outcomeText(state) || '对局进行中',
+    startFen,
+    moves: state.moves.map((m) => ({
+      ply: m.ply,
+      side: m.side,
+      point: m.from,
+      winLine: m.extra?.map((x) => x.from),
+      ts: m.ts,
+    })),
+  };
+}
+
+export function buildGomokuText(state: RoomState): string {
+  const lines: string[] = [];
+  lines.push('五子棋对局记录（自由规则，15×15）');
+  lines.push(`黑方：${state.seats.a?.name ?? '等待加入'}    白方：${state.seats.b?.name ?? '等待加入'}`);
+  lines.push(`结果：${outcomeText(state) || '对局进行中'}`);
+  lines.push('');
+  for (const m of state.moves) {
+    lines.push(`${m.ply}. ${m.side === 'a' ? '黑' : '白'}  ${m.notation}${m.extra ? `  （五连：${m.extra.map((x) => x.from).join(' ')}）` : ''}`);
+  }
+  return lines.join('\n');
 }
 
 export function downloadText(filename: string, text: string): void {

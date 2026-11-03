@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRoom } from '../net/roomClient';
-import { createEngine, START_FEN as XQ_START_FEN, CheckersEngine, SEAT_CAMP_MAPS, CHECKERS_NAMES } from '../../games';
+import {
+  createEngine,
+  START_FEN as XQ_START_FEN,
+  CheckersEngine,
+  SEAT_CAMP_MAPS,
+  CHECKERS_NAMES,
+  GoEngine,
+  GomokuEngine,
+  GO_KOMI,
+} from '../../games';
 import { CHESS_START_FEN } from '../../games';
 import { targetCamp } from '../../games/checkers/board';
 import { pieceLabel } from '../../games/xiangqi/notation';
@@ -9,6 +18,8 @@ import type { RoomState } from '../../shared/protocol';
 import { ChessBoard } from '../components/ChessBoard';
 import { XiangqiBoard } from '../components/XiangqiBoard';
 import { CheckersBoard } from '../components/CheckersBoard';
+import { GoBoard } from '../components/GoBoard';
+import { GomokuBoard } from '../components/GomokuBoard';
 import type { CheckersFlight } from '../components/CheckersBoard';
 import { buildBoardAnim } from '../components/boardAnim';
 import type { BoardAnim } from '../components/boardAnim';
@@ -25,6 +36,9 @@ import { ChatPanel } from '../components/ChatPanel';
 import {
   buildCheckersJson,
   buildCheckersText,
+  buildGoSgf,
+  buildGomokuJson,
+  buildGomokuText,
   buildPgn,
   buildXiangqiJson,
   buildXiangqiText,
@@ -189,6 +203,13 @@ export function Room({ roomId, onExit }: RoomProps) {
     const start = SEAT_CAMP_MAPS[n]?.[seat];
     return start != null ? targetCamp(start) : -1;
   }, [isCheckers, state?.seatCount, seat]);
+  // —— 围棋派生信息（数子/提子/死子 UI） ——
+  const goEngine = state?.kind === 'go' && engine instanceof GoEngine ? engine : null;
+  const goPhase = goEngine?.phaseOf() ?? 'playing';
+  const goSize = (goEngine?.size ?? 19) as 9 | 13 | 19;
+  const goDead = goEngine?.deadStones() ?? [];
+  const goMyConfirm = goEngine ? goEngine.confirmedOf().includes(seat === 'spectator' ? 'a' : (seat as Side)) : false;
+
   /** 我的棋子的目标营地与起始营地（旁观时看当前轮次者，仅用于 UI 提示） */
   const viewTargetCamp = useMemo(() => {
     if (!isCheckers || !state) return -1;
@@ -257,6 +278,25 @@ export function Room({ roomId, onExit }: RoomProps) {
       selectedRef.current = null;
       setSelected(null);
       setChain(null);
+      return;
+    }
+    // —— 落子型分支（围棋/五子棋）：点击空点直接落子；围棋数子阶段点击棋子=标记死子 ——
+    if (state.kind === 'go' && goEngine) {
+      if (goPhase === 'scoring') {
+        if (eng.pieceAt(sq) && !goMyConfirm) {
+          void actions.move({ from: `mark:${sq}`, to: `mark:${sq}` });
+        }
+        return;
+      }
+      if (!eng.pieceAt(sq)) {
+        void actions.move({ from: sq, to: sq });
+      }
+      return;
+    }
+    if (state.kind === 'gomoku') {
+      if (!eng.pieceAt(sq)) {
+        void actions.move({ from: sq, to: sq });
+      }
       return;
     }
     // —— 跳棋分支：连跳逐段选点（与沙盒同一交互函数） ——
@@ -381,7 +421,27 @@ export function Room({ roomId, onExit }: RoomProps) {
   }
 
   const sideName = (s: Side) =>
-    state.kind === 'xiangqi' ? (s === 'a' ? '红方' : '黑方') : state.kind === 'chess' ? (s === 'a' ? '白方' : '黑方') : (CHECKERS_NAMES[s] ?? s);
+    state.kind === 'xiangqi'
+      ? s === 'a'
+        ? '红方'
+        : '黑方'
+      : state.kind === 'chess' || state.kind === 'go' || state.kind === 'gomoku'
+        ? s === 'a'
+          ? '黑方'
+          : '白方'
+        : (CHECKERS_NAMES[s] ?? s);
+  const kindName =
+    state.kind === 'xiangqi'
+      ? '中国象棋'
+      : state.kind === 'chess'
+        ? '国际象棋'
+        : state.kind === 'checkers'
+          ? '中国跳棋'
+          : state.kind === 'go'
+            ? '围棋'
+            : '五子棋';
+  const kindIcon =
+    state.kind === 'xiangqi' ? '帥' : state.kind === 'checkers' ? '⬡' : state.kind === 'go' ? '碁' : state.kind === 'gomoku' ? '五' : '♞';
 
   const board =
     state.kind === 'xiangqi' ? (
@@ -410,6 +470,24 @@ export function Room({ roomId, onExit }: RoomProps) {
         onSquareClick={handleSquareClick}
         flight={display.viewing ? null : ckFlight}
       />
+    ) : state.kind === 'go' ? (
+      <GoBoard
+        size={goSize}
+        fen={display.fen}
+        lastMove={display.lastMove?.from ?? null}
+        deadStones={goDead}
+        scoringMode={goPhase === 'scoring' && isLive}
+        onPointClick={handleSquareClick}
+        interactive={isLive}
+      />
+    ) : state.kind === 'gomoku' ? (
+      <GomokuBoard
+        fen={display.fen}
+        lastMove={display.lastMove?.from ?? null}
+        winLine={state.outcome && display.lastMove?.extra ? display.lastMove.extra.map((x) => x.from) : []}
+        onPointClick={handleSquareClick}
+        interactive={isLive}
+      />
     ) : (
       <ChessBoard
         fen={display.fen}
@@ -429,6 +507,7 @@ export function Room({ roomId, onExit }: RoomProps) {
 
   const mySideLabel = seat === 'spectator' ? '观战' : sideName(seat as Side);
   const turnLabel = state.turn === seat ? '轮到你走棋' : `轮到${sideName(state.turn)}走棋`;
+  void GO_KOMI;
 
   return (
     <div className={`room theme-${state.kind}`}>
@@ -437,12 +516,11 @@ export function Room({ roomId, onExit }: RoomProps) {
           ←
         </button>
         <span className="room-kind-ico" aria-hidden="true">
-          {state.kind === 'xiangqi' ? '帥' : state.kind === 'checkers' ? '⬡' : '♞'}
+          {kindIcon}
         </span>
         <div className="room-title">
-          <span className={`kind-badge ${state.kind}`}>
-            {state.kind === 'xiangqi' ? '中国象棋' : state.kind === 'checkers' ? '中国跳棋' : '国际象棋'}
-          </span>
+          <span className={`kind-badge ${state.kind}`}>{kindName}</span>
+          {state.kind === 'go' && <span className="go-komi-badge" title="中国规则：区域计分，贴目白方 7.5 目">中国规则 · 贴目 7.5</span>}
           <span className="room-code" title="房间号">
             {roomId}
           </span>
@@ -541,9 +619,11 @@ export function Room({ roomId, onExit }: RoomProps) {
             <span className="replay-pos">
               {display.ply} / {state.moves.length}
             </span>
-            <button type="button" className="btn small ghost" onClick={() => setFlipped((f) => !f)}>
-              翻转棋盘
-            </button>
+            {state.kind !== 'go' && state.kind !== 'gomoku' && (
+              <button type="button" className="btn small ghost" onClick={() => setFlipped((f) => !f)}>
+                翻转棋盘
+              </button>
+            )}
             <button
               type="button"
               className="btn small ghost"
@@ -561,6 +641,7 @@ export function Room({ roomId, onExit }: RoomProps) {
             state={state}
             seat={seat}
             turnLabel={turnLabel}
+            goScoring={goPhase === 'scoring'}
             mySideLabel={mySideLabel}
             actions={actions}
             onRestartOffer={() => void actions.restartOffer()}
@@ -570,6 +651,38 @@ export function Room({ roomId, onExit }: RoomProps) {
 
           {seat !== 'spectator' && state.phase === 'playing' && (
             <div className="card actions-card">
+              {state.kind === 'go' && goPhase === 'playing' && (
+                <button
+                  type="button"
+                  className="btn wide"
+                  onClick={() => void actions.move({ from: 'pass', to: 'pass' })}
+                >
+                  停一手
+                </button>
+              )}
+              {state.kind === 'go' && goPhase === 'scoring' && (
+                <div className="go-scoring-actions">
+                  <p className="hint">数子阶段：点击对方死子标记/取消，然后双方确认（贴目 7.5）。</p>
+                  <div className="btn-grid">
+                    <button
+                      type="button"
+                      className="btn primary"
+                      disabled={goMyConfirm}
+                      onClick={() => void actions.move({ from: 'score-confirm', to: 'score-confirm' })}
+                    >
+                      {goMyConfirm ? '已确认，等对方' : '确认数子'}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={() => void actions.move({ from: 'score-resume', to: 'score-resume' })}
+                    >
+                      意见不一，继续对弈
+                    </button>
+                  </div>
+                </div>
+              )}
+              {!(state.kind === 'go' && goPhase === 'scoring') && (
               <div className="btn-grid">
                 <button type="button" className="btn" onClick={() => void actions.drawOffer()}>
                   提和
@@ -584,6 +697,7 @@ export function Room({ roomId, onExit }: RoomProps) {
                   认输
                 </button>
               </div>
+              )}
               <button type="button" className="btn wide primary" onClick={doCopyInvite}>
                 复制邀请链接
               </button>
@@ -635,6 +749,40 @@ export function Room({ roomId, onExit }: RoomProps) {
                 >
                   导出 PGN
                 </button>
+              ) : state.kind === 'go' ? (
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    downloadText(`go-${roomId}.sgf`, buildGoSgf(state));
+                    toast('SGF 棋谱已导出', 'success');
+                  }}
+                >
+                  导出 SGF
+                </button>
+              ) : state.kind === 'gomoku' ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      downloadText(`gomoku-${roomId}.txt`, buildGomokuText(state));
+                      toast('五子棋棋谱已导出', 'success');
+                    }}
+                  >
+                    导出棋谱文本
+                  </button>
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      downloadJson(`gomoku-${roomId}.json`, buildGomokuJson(state, initialFen));
+                      toast('JSON 棋谱已导出', 'success');
+                    }}
+                  >
+                    导出 JSON
+                  </button>
+                </>
               ) : state.kind === 'checkers' ? (
                 <>
                   <button
@@ -795,10 +943,12 @@ function StatusCard({
   onRestartOffer,
   inviteUrl,
   onCopyInvite,
+  goScoring,
 }: {
   state: RoomState;
   seat: Side | 'spectator' | null;
   turnLabel: string;
+  goScoring: boolean;
   mySideLabel: string;
   actions: ReturnType<typeof useRoom>['actions'];
   onRestartOffer(): void;
@@ -834,6 +984,8 @@ function StatusCard({
             </button>
           </div>
         </>
+      ) : state.kind === 'go' && goScoring && !state.outcome ? (
+        <p className="status-line">数子阶段：标记死子后双方确认（贴目 {GO_KOMI}）</p>
       ) : (
         <p className={`status-line ${state.inCheck ? 'check' : ''}`}>{state.inCheck ? '将军！' : ''}{turnLabel}</p>
       )}
@@ -906,10 +1058,10 @@ function LastMoveBar({
       ? lastMove.side === 'a'
         ? '红方'
         : '黑方'
-      : kind === 'chess'
+      : kind === 'chess' || kind === 'go' || kind === 'gomoku'
         ? lastMove.side === 'a'
-          ? '白方'
-          : '黑方'
+          ? '黑方'
+          : '白方'
         : (CHECKERS_NAMES[lastMove.side] ?? lastMove.side);
   // notation 已含「连跳×N」时不重复追加
   const trail =
