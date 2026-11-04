@@ -2528,3 +2528,45 @@ body { min-height: 100dvh; }
 @media (prefers-reduced-motion: reduce) {
   .player-card.pickable, .checkers-seat.pickable { animation: none; }
 }
+
+/* 右侧选择阵营面板 */
+.seat-panel h3 { margin-bottom: 8px; }
+.seat-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.seat-panel-grid.six {
+  grid-template-columns: repeat(3, 1fr);
+}
+.seat-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--btn-bg);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.seat-choice:hover:not(:disabled) { background: var(--btn-hover); }
+.seat-choice:disabled { cursor: default; opacity: 0.72; }
+.seat-choice.taken:not(.mine) { opacity: 0.55; }
+.seat-choice.mine {
+  border-color: var(--seat-color, var(--accent));
+  box-shadow: 0 0 0 1px var(--seat-color, var(--accent));
+  background: var(--active-bg);
+}
+.seat-choice-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+.seat-choice-label { font-size: 13px; font-weight: 600; }
+.seat-choice-sub { font-size: 11px; color: var(--muted); }
+.seat-side-a { border-left: 3px solid var(--gold, #c9973f); }
+.seat-side-b { border-left: 3px solid var(--muted); }

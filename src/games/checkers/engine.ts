@@ -18,6 +18,10 @@
 import type { AppliedMove, GameEngine, GameOutcome, LegalMove, MoveInput, Side } from '../types';
 import { ALL_CELLS, SEAT_CAMP_MAPS, SUPPORTED_SEAT_COUNTS, campOf, cellRC, isValidCell, jumpLanding, neighborsOf, targetCamp } from './board';
 
+/** 自由模式：阵营字母固定对应六营（a=北0 红、b=东北1 蓝、c=东南2 绿、d=南3 黄、e=西南4 黑、f=西北5 紫） */
+export const FREE_SEAT_CAMPS: Record<CheckersSeat, number> = { a: 0, b: 1, c: 2, d: 3, e: 4, f: 5 };
+export const CAMP_SEAT_NAMES: Record<number, string> = { 0: '红方', 1: '蓝方', 2: '绿方', 3: '黄方', 4: '黑方', 5: '紫方' };
+
 export type CheckersSeat = 'a' | 'b' | 'c' | 'd' | 'e' | 'f';
 
 export const CHECKERS_PIECE_COUNT = 10;
@@ -41,17 +45,19 @@ export const CHECKERS_NAMES: Record<string, string> = {
   f: '紫方',
 };
 
-function parseState(fen: string): { turn: CheckersSeat; order: CheckersSeat[]; pieces: Map<string, CheckersSeat>; seatCount: number } | null {
+function parseState(fen: string): { turn: CheckersSeat; order: CheckersSeat[]; pieces: Map<string, CheckersSeat>; seatCount: number; free: boolean } | null {
   const parts = fen.split('|');
   if (parts[0] !== 'cc1') return null;
   let turn: CheckersSeat = 'a';
   let order: CheckersSeat[] = ['a', 'b'];
+  let free = false;
   const pieces = new Map<string, CheckersSeat>();
   for (let i = 1; i < parts.length; i++) {
     const kv = parts[i].split('=');
     if (kv.length !== 2) continue;
     const [k, v] = kv;
     if (k === 'turn' && /^[a-f]$/.test(v)) turn = v as CheckersSeat;
+    else if (k === 'free') free = v === '1';
     else if (k === 'order' && /^[a-f]{1,6}$/.test(v)) order = v.split('') as CheckersSeat[];
     else if (k === 'p') {
       // 鲁棒解析：座位段以 ';' 或 ',' 分隔均可（'a:i10;b:j10' 或 'a:i10,b:j10'）
@@ -66,10 +72,10 @@ function parseState(fen: string): { turn: CheckersSeat; order: CheckersSeat[]; p
       }
     }
   }
-  return { turn, order, pieces, seatCount: order.length };
+  return { turn, order, pieces, seatCount: order.length, free };
 }
 
-function serialize(turn: CheckersSeat, order: CheckersSeat[], pieces: Map<string, CheckersSeat>): string {
+function serialize(turn: CheckersSeat, order: CheckersSeat[], pieces: Map<string, CheckersSeat>, free = false): string {
   const bySeat = new Map<CheckersSeat, string[]>();
   for (const [cell, seat] of pieces) {
     const arr = bySeat.get(seat) ?? [];
@@ -79,7 +85,7 @@ function serialize(turn: CheckersSeat, order: CheckersSeat[], pieces: Map<string
   const p = order
     .map((s) => `${s}:${(bySeat.get(s) ?? []).sort().join(',')}`)
     .join(';');
-  return `cc1|turn=${turn}|order=${order.join('')}|p=${p}`;
+  return `cc1|turn=${turn}|order=${order.join('')}${free ? '|free=1' : ''}|p=${p}`;
 }
 
 export interface CheckersEngineOptions {
@@ -96,6 +102,8 @@ export class CheckersEngine implements GameEngine {
   private targets: Map<CheckersSeat, number>; // seat → 目标营地
   private plies = 0;
   private _outcome: GameOutcome | null = null;
+  /** 自由模式：阵营字母固定映射六营，座位在等待阶段动态入座（addSeat） */
+  private freeMode = false;
   /** 已退出的座位（认输）：轮转时跳过 */
   private resigned = new Set<CheckersSeat>();
 
@@ -107,10 +115,17 @@ export class CheckersEngine implements GameEngine {
       this.turnSeat = st.turn;
       this.order = st.order;
       this.pieces = st.pieces;
-      const map = SEAT_CAMP_MAPS[st.order.length];
-      if (!map) throw new Error(`不支持的人数: ${st.order.length}`);
-      this.camps = new Map(st.order.map((s) => [s, map[s]]));
-      this.targets = new Map(st.order.map((s) => [s, targetCamp(map[s])]));
+      this.freeMode = st.free;
+      if (st.free) {
+        // 自由模式：字母固定六营映射（兼容任意人数子集）
+        this.camps = new Map(st.order.map((s) => [s, FREE_SEAT_CAMPS[s]]));
+        this.targets = new Map(st.order.map((s) => [s, targetCamp(FREE_SEAT_CAMPS[s])]));
+      } else {
+        const map = SEAT_CAMP_MAPS[st.order.length];
+        if (!map) throw new Error(`不支持的人数: ${st.order.length}`);
+        this.camps = new Map(st.order.map((s) => [s, map[s]]));
+        this.targets = new Map(st.order.map((s) => [s, targetCamp(map[s])]));
+      }
       // 加载即胜检测（CHECKERS-023）：某座位全部棋子已在目标营地
       for (const seat of this.order) {
         const tSet = new Set(ALL_CELLS.filter((c) => c.camp === this.targets.get(seat)).map((c) => c.id));
@@ -140,6 +155,40 @@ export class CheckersEngine implements GameEngine {
     }
   }
 
+  /** 自由房间：空引擎，等待阶段由玩家选择营位后 addSeat */
+  static createFree(): CheckersEngine {
+    const e = new CheckersEngine('cc1|turn=a|order=|free=1|p=' as never);
+    e.order = [];
+    e.camps = new Map();
+    e.targets = new Map();
+    e.pieces = new Map();
+    e.freeMode = true;
+    return e;
+  }
+
+  isFree(): boolean {
+    return this.freeMode;
+  }
+
+  /** 自由模式入座：在对应营地铺 10 子；先入座者成为先手（字母序最小者开局时轮转自然对齐） */
+  addSeat(seat: CheckersSeat): void {
+    if (!this.freeMode) throw new Error('非自由模式');
+    if (this.order.includes(seat)) return;
+    if (this.plies > 0) throw new Error('对局已开始，不能加入座位');
+    const camp = FREE_SEAT_CAMPS[seat];
+    for (const cell of ALL_CELLS) {
+      if (cell.camp === camp && this.pieces.has(cell.id)) throw new Error('营地冲突');
+    }
+    for (const cell of ALL_CELLS) {
+      if (cell.camp === camp) this.pieces.set(cell.id, seat);
+    }
+    this.camps.set(seat, camp);
+    this.targets.set(seat, targetCamp(camp));
+    // 维持字母序（轮转顺序与阵营面板一致）
+    this.order = [...this.order, seat].sort();
+    if (this.order.length === 1) this.turnSeat = seat;
+  }
+
   static create(seatCount: 2 | 3 | 4 | 6, firstSeat: CheckersSeat = 'a'): CheckersEngine {
     const seats = 'abcdef'.slice(0, seatCount).split('') as CheckersSeat[];
     // 让 firstSeat 排在轮转首位
@@ -149,7 +198,7 @@ export class CheckersEngine implements GameEngine {
   }
 
   fen(): string {
-    return serialize(this.turnSeat, this.order, this.pieces);
+    return serialize(this.turnSeat, this.order, this.pieces, this.freeMode);
   }
 
   turn(): Side {

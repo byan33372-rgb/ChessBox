@@ -67,12 +67,19 @@ while (Date.now() < deadline) {
   try {
     const A = connect();
     const created = await emit(A, 'room:create', { kind, name: `soakA${seq}`, ...(kind === 'checkers' ? { seatCount: 2 } : {}), ...(kind === 'go' ? { boardSize: 9 } : {}) });
+    if (kind === 'checkers') {
+      // 自由选座：创建者/加入者先观战，各自 take-seat 后才开局
+      const st = await new Promise((r) => A.on('room:state', (p) => !r.state && r(p.state)));
+      void st;
+      await emit(A, 'room:take-seat', { seat: 'a' });
+    }
     if (!created.ok) throw new Error('create failed');
     const seat = created.seat;
     const statesA = collect(A);
     const B = connect();
     const joined = await emit(B, 'room:join', { roomId: created.roomId, name: `soakB${seq}` });
     if (!joined.ok) throw new Error('join failed');
+    if (kind === 'checkers') await emit(B, 'room:take-seat', { seat: 'b' });
     const statesB = collect(B);
     await sleep(300);
 

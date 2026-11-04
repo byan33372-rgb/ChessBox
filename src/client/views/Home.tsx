@@ -176,7 +176,7 @@ export function Home({ onEnter }: HomeProps) {
                 </div>
                 <footer className="gc-foot">
                   {kind === 'checkers' && (
-                    <div className="seat-count-row" role="radiogroup" aria-label="跳棋人数">
+                    <div className="seat-count-row" role="radiogroup" aria-label="跳棋人数上限">
                       {CHECKER_SEAT_COUNTS.map((n) => (
                         <button
                           key={n}
@@ -209,7 +209,9 @@ export function Home({ onEnter }: HomeProps) {
                     </div>
                   )}
                   <span className="card-desc">
-                    {kind === 'checkers' ? '六色营地沙盒（6 人演示）· 建房后房内选座对阵' : '本地规则沙盒 · 点击棋子试走 · 创建房间后与朋友联机对弈'}
+                    {kind === 'checkers'
+                    ? '六色营地沙盒（6 人演示）· 建房后在右侧面板自由选择六色阵营'
+                    : '本地规则沙盒 · 点击棋子试走 · 建房后在右侧面板选择阵营'}
                   </span>
                   <button
                     type="button"

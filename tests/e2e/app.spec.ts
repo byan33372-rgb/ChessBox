@@ -311,6 +311,12 @@ async function clickCell(page: Page, cell: string): Promise<void> {
   await page.locator(`.checkers-hit[data-cell="${cell}"]`).click();
 }
 
+/** 跳棋自由选座：在右侧「选择阵营」面板点选阵营（红=北 a，蓝=东北 b…） */
+async function pickSeat(page: Page, seatName: string): Promise<void> {
+  await page.locator('.seat-panel .seat-choice', { hasText: seatName }).first().click();
+  await expect(page.locator(`.seat-panel .seat-choice.mine`)).toContainText(seatName, { timeout: 10_000 });
+}
+
 test.describe('中国跳棋端到端', () => {
   test('2 人对弈：单步→标记/最近一步/最近5步→连跳逐段→复盘', async ({ browser }) => {
     const ctxA = await browser.newContext();
@@ -320,8 +326,11 @@ test.describe('中国跳棋端到端', () => {
 
     const roomId = await createCheckersRoom(pageA, 2);
     await expect(pageA.locator('.waiting-overlay')).toBeVisible();
+    await pickSeat(pageA, '红方'); // 房主选北营红方
     await joinRoom(pageB, roomId);
+    await pickSeat(pageB, '蓝方'); // 加入者选东北营蓝方
     await expect(pageB.locator('.waiting-overlay')).not.toBeVisible({ timeout: 10_000 });
+    await expect(pageA.locator('.waiting-overlay')).not.toBeVisible({ timeout: 10_000 });
 
     // a：f4→f5（普通单步）
     await clickCell(pageA, 'f4');
@@ -334,10 +343,10 @@ test.describe('中国跳棋端到端', () => {
     await expect(pageB.locator('.last-move-bar .lmb-text')).toContainText('f4→f5', { timeout: 10_000 });
     await expect(pageB.locator('.recent-item').first()).toContainText('f4→f5');
 
-    // b：m14→m13
-    await clickCell(pageB, 'm14');
-    await clickCell(pageB, 'm13');
-    await expect(pageB.locator('.last-move-bar .lmb-text')).toContainText('m14→m13', { timeout: 10_000 });
+    // b：蓝方（东北营）j5→i5
+    await clickCell(pageB, 'j5');
+    await clickCell(pageB, 'i5');
+    await expect(pageB.locator('.last-move-bar .lmb-text')).toContainText('j5→i5', { timeout: 10_000 });
 
     // a：连跳 e3 → e5 → g5（先造跳板 f5 已在盘上）——逐段选点，末段自动提交
     await clickCell(pageA, 'e3');
@@ -353,7 +362,7 @@ test.describe('中国跳棋端到端', () => {
 
     // 对手提示 toast（b 上一步后 a 收到提示；此处 a 连跳后 b 收到）
     // 复盘定位
-    await pageA.locator('.recent-item', { hasText: 'm14→m13' }).first().click();
+    await pageA.locator('.recent-item', { hasText: 'j5→i5' }).first().click();
     await expect(pageA.locator('.replay-banner')).toBeVisible();
     await expect(pageA.locator('.replay-pos')).toHaveText('2 / 3');
     await pageA.locator('.replay-banner .btn').click();
@@ -362,13 +371,16 @@ test.describe('中国跳棋端到端', () => {
     await ctxB.close();
   });
 
-  test('首页第三入口与人数选择；3 人房座位条与等待文案', async ({ page }) => {
+  test('首页第三入口与人数选择；3 人容量房六阵营面板与等待文案', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.create-card.checkers .card-title')).toHaveText('中国跳棋');
     await expect(page.locator('.create-card.checkers .chk-seat-btn')).toHaveCount(4);
     await createCheckersRoom(page, 3);
-    // 多座位条渲染 3 个座位，创建者 a 占 1 席
-    await expect(page.locator('.checkers-seats .checkers-seat')).toHaveCount(3);
+    // 六阵营面板：六个选项均可选（自由选座）
+    await expect(page.locator('.seat-panel .seat-choice')).toHaveCount(6);
+    // 选红方入座后：座位条 6 座、红方已占
+    await pickSeat(page, '红方');
+    await expect(page.locator('.checkers-seats .checkers-seat')).toHaveCount(6);
     await expect(page.locator('.checkers-seat').first()).toContainText('红方');
     await expect(page.locator('.waiting-overlay')).toContainText(/等待/);
   });

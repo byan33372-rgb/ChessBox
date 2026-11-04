@@ -206,16 +206,17 @@ describe('房间内选座（room:take-seat）', () => {
     expect(m.ok, JSON.stringify(m.error)).toBe(true);
   });
 
-  it('跳棋 4 人：观战阶段可自由挑空位（c/d 空位可选）', async () => {
+  it('跳棋 4 人：创建者/加入者均先观战，自由挑任意营位（d/c 可选）', async () => {
     const host = connect(s.url);
     const ack = await emitAck<CreateAck>(host, 'room:create', { kind: 'checkers', seatCount: 4, name: '甲' });
     expect(ack.ok).toBe(true);
+    expect(ack.seat).toBe('spectator'); // 自由选座：创建后不自动入座
     const hostMove = await emitAck<AckBase>(host, 'room:take-seat', { seat: 'd' });
     expect(hostMove.ok, JSON.stringify(hostMove.error)).toBe(true);
     expect(hostMove.seat).toBe('d');
     const guest = connect(s.url);
     const j = await emitAck<JoinAck>(guest, 'room:join', { roomId: ack.roomId!, name: '乙' });
-    expect(j.seat).toBe('a');
+    expect(j.seat).toBe('spectator');
     const toC = await emitAck<AckBase>(guest, 'room:take-seat', { seat: 'c' });
     expect(toC.ok, JSON.stringify(toC.error)).toBe(true);
     expect(toC.seat).toBe('c');

@@ -26,6 +26,22 @@ async function joinSecond(
   return page;
 }
 
+/** 跳棋自由选座：房主红方、第二人蓝方，满员开局后返回第二人页面 */
+async function seatCheckersRoom(
+  pageA: Page,
+  browser: import('@playwright/test').Browser,
+  roomId: string,
+): Promise<Page> {
+  await pageA.locator('.seat-panel .seat-choice', { hasText: '红方' }).first().click();
+  const ctx = await browser.newContext();
+  const pb = await ctx.newPage();
+  await pb.goto(`/r/${roomId}`);
+  await pb.locator('.conn-pill.ok').waitFor({ timeout: 15_000 });
+  await pb.locator('.seat-panel .seat-choice', { hasText: '蓝方' }).first().click();
+  await expect(pageA.locator('.waiting-overlay')).not.toBeVisible({ timeout: 10_000 });
+  return pb;
+}
+
 test.describe('三棋统一上一手标记与信息区', () => {
   test('中象：起/终标记 + LastMoveBar + 最近5步面板', async ({ page, browser }) => {
     const roomId = await mkRoom(page, 'xiangqi');
@@ -106,7 +122,7 @@ test.describe('三棋统一上一手标记与信息区', () => {
 
   test('HISTORY-009/012：跳棋导出文本与 JSON 真实下载（含连跳路径）', async ({ page, browser }) => {
     const roomId = await mkRoom(page, 'checkers');
-    await joinSecond(browser, roomId);
+    await seatCheckersRoom(page, browser, roomId);
     await page.locator('.checkers-hit[data-cell="f4"]').click();
     await page.locator('.checkers-hit[data-cell="f5"]').click();
     await expect(page.locator('.last-move-bar .lmb-text')).toContainText('f4→f5', { timeout: 10_000 });
@@ -133,7 +149,7 @@ test.describe('三棋统一上一手标记与信息区', () => {
 
   test('PERF-004：走棋后 120 帧渲染采样（P95/P99）', async ({ page, browser }) => {
     const roomId = await mkRoom(page, 'checkers');
-    await joinSecond(browser, roomId);
+    await seatCheckersRoom(page, browser, roomId);
     await page.waitForTimeout(500);
     // 触发一次走棋渲染后采样
     await page.locator('.checkers-hit[data-cell="f4"]').click();
@@ -171,7 +187,18 @@ test.describe('PERF-008：三棋各 120 帧渲染采样', () => {
   for (const kind of ['xiangqi', 'chess', 'checkers', 'go', 'gomoku'] as const) {
     test(`${kind} 120 帧采样`, async ({ page, browser }) => {
       const roomId = await mkRoom(page, kind);
-      await joinSecond(browser, roomId);
+      if (kind === 'checkers') {
+        // 跳棋自由选座：双方先入座（红/蓝）才会开局
+        await page.locator('.seat-panel .seat-choice', { hasText: '红方' }).first().click();
+        const ctxB2 = await browser.newContext();
+        const pb = await ctxB2.newPage();
+        await pb.goto(`/r/${roomId}`);
+        await pb.locator('.conn-pill.ok').waitFor();
+        await pb.locator('.seat-panel .seat-choice', { hasText: '蓝方' }).first().click();
+        await page.locator('.waiting-overlay').waitFor({ state: 'hidden', timeout: 10_000 });
+      } else {
+        await joinSecond(browser, roomId);
+      }
       await page.waitForTimeout(400);
       if (kind === 'xiangqi') {
         await page.locator('button[aria-label^="h7 "]').click();

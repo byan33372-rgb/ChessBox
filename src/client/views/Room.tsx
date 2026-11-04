@@ -6,6 +6,7 @@ import {
   CheckersEngine,
   SEAT_CAMP_MAPS,
   CHECKERS_NAMES,
+  CHECKERS_COLORS,
   GoEngine,
   GomokuEngine,
   GO_KOMI,
@@ -532,7 +533,7 @@ export function Room({ roomId, onExit }: RoomProps) {
 
       <div className="room-body">
         <div className="board-col">
-          {state.kind === 'checkers' && state.seatCount > 2 ? (
+          {state.kind === 'checkers' && state.seatOrder.length > 2 ? (
             <div className="checkers-seats" aria-label="多座位状态">
               {state.seatOrder.map((s) => (
                 <CheckersSeatCard
@@ -582,8 +583,16 @@ export function Room({ roomId, onExit }: RoomProps) {
             {state.phase === 'waiting' && (
               <div className="waiting-overlay">
                 <div className="card waiting-card">
-                  <h3>{state.kind === 'checkers' && state.seatCount > 2 ? `等待玩家加入（${Object.keys(state.seats).length}/${state.seatCount}）` : '等待对手加入'}</h3>
-                  <p>把邀请链接发给朋友；双方可点击空位选择阵营，就座后开始</p>
+                  <h3>
+                    {state.kind === 'checkers'
+                      ? `等待玩家入座（${Object.keys(state.seats).length}/${state.seatCount}）`
+                      : '等待对手加入'}
+                  </h3>
+                  <p>
+                    {state.kind === 'checkers'
+                      ? '把邀请链接发给朋友；在右侧「选择阵营」面板挑选六色阵营，满员自动开局'
+                      : '把邀请链接发给朋友；点击空位或右侧「选择阵营」按钮选择职业'}
+                  </p>
                   <div className="invite-row">
                     <input readOnly value={inviteUrl} aria-label="邀请链接" onFocus={(e) => e.target.select()} />
                     <button type="button" className="btn primary" onClick={doCopyInvite}>
@@ -656,6 +665,7 @@ export function Room({ roomId, onExit }: RoomProps) {
         </div>
 
         <aside className="side-col">
+          <SeatPanel state={state} seat={seat} onPick={(sx) => void actions.takeSeat(sx)} />
           <StatusCard
             state={state}
             seat={seat}
@@ -1154,6 +1164,76 @@ function LastMoveBar({
         <span className="legend-dot to" />
         终点 {lastMove.to}
       </div>
+    </div>
+  );
+}
+
+
+/** 选择阵营面板（独立于座位卡；等待阶段可自由挑空位；五棋统一） */
+function SeatPanel({
+  state,
+  seat,
+  onPick,
+}: {
+  state: RoomState;
+  seat: Side | 'spectator' | null;
+  onPick(seat: Side): void;
+}) {
+  const waiting = state.phase === 'waiting';
+  const labels2p: Record<string, { a: string; b: string }> = {
+    xiangqi: { a: '红方（先手）', b: '黑方' },
+    chess: { a: '白方（先手）', b: '黑方' },
+    go: { a: '黑方（先手）', b: '白方' },
+    gomoku: { a: '黑方（先手）', b: '白方' },
+  };
+  return (
+    <div className="card seat-panel" aria-label="选择阵营">
+      <h3>选择阵营</h3>
+      {state.kind === 'checkers' ? (
+        <div className="seat-panel-grid six">
+          {state.seatOrder.map((sx) => {
+            const info = state.seats[sx];
+            const mine = seat === sx;
+            const color = CHECKERS_COLORS[sx];
+            return (
+              <button
+                key={sx}
+                type="button"
+                className={`seat-choice ${mine ? 'mine' : ''} ${info ? 'taken' : ''}`}
+                style={{ ['--seat-color' as string]: color }}
+                disabled={!waiting || (!!info && !mine)}
+                aria-pressed={mine}
+                onClick={() => !mine && onPick(sx)}
+              >
+                <span className="seat-choice-dot" style={{ background: color }} aria-hidden="true" />
+                <span className="seat-choice-label">{CHECKERS_NAMES[sx] ?? sx}</span>
+                <span className="seat-choice-sub">{mine ? '我的阵营' : info ? info.name : '空位'}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="seat-panel-grid">
+          {(['a', 'b'] as const).map((sx) => {
+            const info = state.seats[sx];
+            const mine = seat === sx;
+            return (
+              <button
+                key={sx}
+                type="button"
+                className={`seat-choice ${mine ? 'mine' : ''} ${info ? 'taken' : ''} seat-side-${sx}`}
+                disabled={!waiting || (!!info && !mine)}
+                aria-pressed={mine}
+                onClick={() => !mine && onPick(sx)}
+              >
+                <span className="seat-choice-label">{(labels2p[state.kind] ?? { a: '先手方', b: '后手方' })[sx]}</span>
+                <span className="seat-choice-sub">{mine ? '我的阵营' : info ? info.name : '空位'}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+      <p className="hint">{waiting ? '点击空位选择/更换职业，就座满员后开局' : '对局进行中，阵营已锁定'}</p>
     </div>
   );
 }

@@ -60,6 +60,7 @@ function mkSeat(socket: ClientSocket, token: string, seat: string, states: RoomS
 /** 创建跳棋房间并拉满 N 个玩家（含创建者）；collect 先于 emit 注册避免错过广播 */
 async function setupCheckers(seatCount: 2 | 3 | 4 | 6): Promise<{ roomId: string; seats: Seat[] }> {
   const names = ['甲', '乙', '丙', '丁', '戊', '己'];
+  const letters: Array<'a' | 'b' | 'c' | 'd' | 'e' | 'f'> = ['a', 'b', 'c', 'd', 'e', 'f'];
   const seats: Seat[] = [];
   let roomId = '';
   for (let i = 0; i < seatCount; i++) {
@@ -68,12 +69,17 @@ async function setupCheckers(seatCount: 2 | 3 | 4 | 6): Promise<{ roomId: string
     if (i === 0) {
       const ack = await emitAck<CreateAck>(socket, 'room:create', { kind: 'checkers', seatCount, name: names[0] });
       expect(ack.ok, JSON.stringify(ack.error)).toBe(true);
+      expect(ack.seat).toBe('spectator'); // 跳棋自由选座：创建后先观战
       roomId = ack.roomId!;
-      seats.push(mkSeat(socket, ack.token!, ack.seat!, states));
+      const pick = await emitAck<AckBase>(socket, 'room:take-seat', { seat: letters[0] });
+      expect(pick.ok, JSON.stringify(pick.error)).toBe(true);
+      seats.push(mkSeat(socket, ack.token!, letters[0], states));
     } else {
       const ack = await emitAck<JoinAck>(socket, 'room:join', { roomId, name: names[i] });
       expect(ack.ok, JSON.stringify(ack.error)).toBe(true);
-      seats.push(mkSeat(socket, ack.token!, ack.seat!, states));
+      const pick = await emitAck<AckBase>(socket, 'room:take-seat', { seat: letters[i] });
+      expect(pick.ok, JSON.stringify(pick.error)).toBe(true);
+      seats.push(mkSeat(socket, ack.token!, letters[i], states));
     }
   }
   // 等所有成员都收到全员就位（playing）的广播，消除时序竞态
@@ -93,13 +99,9 @@ const OPENERS: Record<string, { from: string; to: string }> = {
   e: { from: 'f11', to: 'f10' }, // 西南营 (10,5) → 六角区 (9,5)——开局营满，出营步必须落六角区
   f: { from: 'd5', to: 'e5' }, // 西北营
 };
-/** 4 人局专用映射（SEAT_CAMP_MAPS[4] = a:0,b:1,c:3,d:4） */
-const OPENERS_4P: Record<string, { from: string; to: string }> = {
-  a: OPENERS.a,
-  b: OPENERS.b,
-  c: OPENERS.d, // c 坐南营
-  d: OPENERS.e, // d 坐西南营
-};
+/** 自由选座模式：阵营字母固定对应六营（a0 北/b1 东北/c2 东南/d3 南/e4 西南/f5 西北），
+ *  4 人局选 a..d 时与 OPENERS 一致，无需特化映射 */
+const OPENERS_4P = OPENERS;
 
 /** 南营第二步（m13 已被第一步占用后的相邻 outward 步） */
 const OPENER_D2: { from: string; to: string } = { from: 'l14', to: 'l13' };
@@ -128,11 +130,11 @@ describe('跳棋联机 · 多座位分配与轮转（SERVER-001~005）', () => {
     expect(seats.map((x) => x.seat)).toEqual(['a', 'b']);
     const final = seats[1].states.at(-1)!;
     expect(final.phase).toBe('playing');
-    expect(final.seatCount).toBe(2);
-    expect(final.seatOrder).toEqual(['a', 'b']);
+    expect(final.seatCount).toBe(2); // 容量
+    expect(final.seatOrder).toEqual(['a', 'b', 'c', 'd', 'e', 'f']); // 六营全开可自由选座
     expect(final.seats.a?.name).toBe('甲');
     expect(final.seats.b?.name).toBe('乙');
-    expect(final.seats.c).toBeUndefined();
+    expect(final.seats.c).toBeUndefined(); // 未入座的空位
   });
 
   it('6 人：座位 a..f 依序分配且 phase=playing', async () => {
@@ -230,7 +232,7 @@ describe('跳棋联机 · path 校验与幂等（SERVER-006~009/SEC-005/006）',
     const [a, b] = seats;
     // 先造跳板：a f4→f5（六角区），2 人局 b 坐南营 → m14→m13
     expect((await move(a, OPENERS.a)).ok).toBe(true);
-    expect((await move(b, OPENERS.d)).ok).toBe(true);
+    expect((await move(b, OPENERS.b)).ok).toBe(true); // 自由选座：b 坐东北营
     // 连跳：e3(2,4) 越过 e4(3,4) 落 e5(4,4)，再越过 f5(4,5)（a 刚走的跳板）落 g5(4,6)
     const ack = await move(a, { from: 'e3', to: 'g5', path: ['e3', 'e5', 'g5'] });
     expect(ack.ok, JSON.stringify(ack.error)).toBe(true);
@@ -338,6 +340,9 @@ describe('跳棋联机 · 持久化恢复（DATA-001~004）', () => {
       const statesB = collect(guest);
       const j = await emitAck<JoinAck>(guest, 'room:join', { roomId: ack.roomId!, name: '乙' });
       expect(j.ok).toBe(true);
+      // 自由选座：双方各自入座（a=甲、b=乙）
+      expect((await emitAck<AckBase>(host, 'room:take-seat', { seat: 'a' })).ok).toBe(true);
+      expect((await emitAck<AckBase>(guest, 'room:take-seat', { seat: 'b' })).ok).toBe(true);
       // 等双方都收到全员就位（playing）广播
       await waitFor(
         () => statesA.at(-1)?.phase === 'playing' && statesB.at(-1)?.phase === 'playing',
@@ -346,7 +351,7 @@ describe('跳棋联机 · 持久化恢复（DATA-001~004）', () => {
       const m1 = await emitMoveRetry(host, statesA.at(-1)!.revision, OPENERS.a);
       expect(m1.ok, JSON.stringify(m1.error)).toBe(true);
       await waitFor(() => (statesB.at(-1)?.moves.length ?? 0) >= 1);
-      const m2 = await emitMoveRetry(guest, statesB.at(-1)!.revision, OPENERS.d);
+      const m2 = await emitMoveRetry(guest, statesB.at(-1)!.revision, OPENERS.b);
       expect(m2.ok, JSON.stringify(m2.error)).toBe(true);
       await waitFor(() => (statesA.at(-1)?.moves.length ?? 0) >= 2);
       const mv = await emitMoveRetry(host, statesA.at(-1)!.revision, {
@@ -382,7 +387,7 @@ describe('跳棋联机 · 持久化恢复（DATA-001~004）', () => {
         expect(ra.state?.moves[2].path).toEqual(['e3', 'e5', 'g5']);
         // 轮到 b：恢复后可继续走棋
         await waitFor(() => statesB2.length > 0);
-        const next = await emitMoveRetry(reB, statesB2.at(-1)!.revision, OPENER_D2);
+        const next = await emitMoveRetry(reB, statesB2.at(-1)!.revision, { from: 'i5', to: 'h5' });
         expect(next.ok, JSON.stringify(next.error)).toBe(true);
         expect(statesB2.at(-1)!.moves.length).toBe(movesCount + 1);
       } finally {

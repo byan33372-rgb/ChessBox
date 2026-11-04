@@ -43,8 +43,10 @@ export interface Room {
   revision: number;
   moves: PublicMove[];
   outcome: GameOutcome | null;
-  /** 键 = 本房间有效座位字母；缺失 = 未占用（多座位跳棋为 a..f 中前 N 个） */
+  /** 键 = 本房间有效座位字母；缺失 = 未占用（跳棋自由房为六座 a..f 任选） */
   seats: Partial<Record<Side, SessionInfo>>;
+  /** 跳棋自由房的入座容量（2/3/4/6）：入座数达到容量即开局 */
+  capacity?: number;
   spectators: Set<string>;
   offers: OffersState;
   chat: ChatMessage[];
@@ -58,22 +60,41 @@ function err(code: AppError['code'], message: string): AppError {
   return { code, message };
 }
 
-/** 本房间的有效座位字母（跳棋按引擎座位序；其余固定 a,b） */
+/** 本房间的有效座位字母（跳棋自由房=六营全开；旧跳棋房=引擎座位序；其余固定 a,b） */
 function seatLettersOf(room: Room): Side[] {
   if (room.kind === 'checkers' && room.engine instanceof CheckersEngine) {
-    return room.engine.seatOrder();
+    return room.engine.isFree() ? (['a', 'b', 'c', 'd', 'e', 'f'] as Side[]) : room.engine.seatOrder();
   }
   return ['a', 'b'];
 }
 
-/** 全部有效座位都有玩家 → 对局可开始 */
+/** 已入座玩家数 */
+function seatedCount(room: Room): number {
+  return seatLettersOf(room).filter((x) => room.seats[x] != null).length;
+}
+
+/** 对局可开始：自由跳棋按容量；其余全部有效座位都有玩家 */
 function seatsAllFilled(room: Room): boolean {
+  if (room.kind === 'checkers' && room.engine instanceof CheckersEngine && room.engine.isFree()) {
+    return seatedCount(room) >= (room.capacity ?? 2);
+  }
   return seatLettersOf(room).every((s) => room.seats[s] != null);
+}
+
+/** 自由跳棋重建引擎：按当前已入座玩家重新铺子（重开/悔棋用） */
+function freeCheckersEngine(room: Room): CheckersEngine {
+  const e = CheckersEngine.createFree();
+  const seated = seatLettersOf(room)
+    .filter((x) => room.seats[x] != null)
+    .sort() as Array<'a' | 'b' | 'c' | 'd' | 'e' | 'f'>;
+  for (const seat of seated) e.addSeat(seat);
+  return e;
 }
 
 /** 按本房间座位数创建全新引擎（重开/悔棋重建用） */
 function freshEngine(room: Room): GameEngine {
   if (room.kind === 'checkers' && room.engine instanceof CheckersEngine) {
+    if (room.engine.isFree()) return freeCheckersEngine(room);
     return createCheckersEngine(room.engine.seatCount() as 2 | 3 | 4 | 6, room.engine.seatOrder()[0]);
   }
   // 围棋：保留原房间的棋盘规格（DEF-FG-003：此前 9/13 路重开/悔棋至空盘会变 19 路）
@@ -122,6 +143,7 @@ export class RoomManager {
           moves,
           outcome: engine.outcome() ?? p.outcome,
           seats: {},
+          capacity: p.kind === 'checkers' ? (p.seatCount ?? 2) : undefined,
           spectators: new Set(),
           offers: p.offers ?? { draw: null, undo: null, restart: null },
           chat: this.store.loadChat(p.roomId),
@@ -170,10 +192,13 @@ export class RoomManager {
     let id = newRoomId();
     while (this.rooms.has(id)) id = newRoomId();
     // 跳棋按座位数创建（2/3/4/6）；其余棋种固定双人
-    const engine =
+    const capacity =
       kind === 'checkers' && seatCount != null && (SUPPORTED_SEAT_COUNTS as readonly number[]).includes(seatCount)
-        ? createCheckersEngine(seatCount as 2 | 3 | 4 | 6)
-        : createEngine(kind, undefined, boardSize);
+        ? seatCount
+        : kind === 'checkers'
+          ? 2
+          : undefined;
+    const engine = kind === 'checkers' ? CheckersEngine.createFree() : createEngine(kind, undefined, boardSize);
     const room: Room = {
       id,
       kind,
@@ -182,6 +207,7 @@ export class RoomManager {
       moves: [],
       outcome: null,
       seats: {},
+      capacity,
       spectators: new Set(),
       offers: { draw: null, undo: null, restart: null },
       chat: [],
@@ -191,7 +217,14 @@ export class RoomManager {
       updatedAt: Date.now(),
     };
     const name = this.cleanName(rawName) ?? `${randomNick()}`;
-    // 创建者选择阵营：合法座位内取偏好，否则回退首个座位（加入者自动补空位）
+    if (room.kind === 'checkers') {
+      // 跳棋：创建者不自动入座，进房后在六阵营面板中自选（其他玩家同理）
+      const session = this.newSession(room, 'spectator', name);
+      this.rooms.set(id, room);
+      this.persist(room);
+      return { room, session };
+    }
+    // 其余棋种：合法座位内取偏好，否则回退首个座位（加入者自动补空位）
     const letters = seatLettersOf(room);
     const seat: Side = preferredSeat && letters.includes(preferredSeat) ? preferredSeat : letters[0];
     const session = this.newSession(room, seat, name);
@@ -205,9 +238,10 @@ export class RoomManager {
     const room = this.rooms.get(roomId);
     if (!room) return { ok: false, error: err('ROOM_NOT_FOUND', '房间不存在或已过期') };
     const name = this.cleanName(rawName) ?? `${randomNick()}`;
-    // 席位原子分配：按座位顺序取第一个空位 → 观战（已绑定的席位永不静默抢占）
+    // 跳棋自由房：加入者先观战，进房后自选阵营；其余棋种按顺序补空位
     const letters = seatLettersOf(room);
-    const seat: Side | 'spectator' = letters.find((s) => room.seats[s] == null) ?? 'spectator';
+    const seat: Side | 'spectator' =
+      room.kind === 'checkers' ? 'spectator' : (letters.find((s) => room.seats[s] == null) ?? 'spectator');
     const session = this.newSession(room, seat, name);
     if (seat !== 'spectator') {
       room.seats[seat] = session;
@@ -244,7 +278,22 @@ export class RoomManager {
     if (!letters.includes(seat)) return { ok: false, error: err('INVALID_INPUT', '无效座位') };
     if (this.phaseOf(room) === 'playing') return { ok: false, error: err('NOT_ALLOWED', '对局已开始，不能更换阵营') };
     if (room.seats[seat] && room.seats[seat]!.tokenHash !== session.tokenHash) {
-      return { ok: false, error: err('NOT_ALLOWED', '该座位已被占用，请选择空位') };
+      return { ok: false, error: err('NOT_ALLOWED', '该阵营已被占用，请选择空位') };
+    }
+    // 自由跳棋：容量限制 + 按营位重建引擎（换座=旧营撤子、新营铺子）
+    if (room.kind === 'checkers' && room.engine instanceof CheckersEngine && room.engine.isFree()) {
+      const cap = room.capacity ?? 2;
+      const alreadySeated = session.seat !== 'spectator';
+      if (!alreadySeated && seatedCount(room) >= cap) {
+        return { ok: false, error: err('NOT_ALLOWED', `房间已满（${cap} 人）`) };
+      }
+      const seated = seatLettersOf(room)
+        .filter((x) => room.seats[x] != null && x !== session.seat)
+        .concat(seat)
+        .sort() as Array<'a' | 'b' | 'c' | 'd' | 'e' | 'f'>;
+      const rebuilt = CheckersEngine.createFree();
+      for (const s2 of seated) rebuilt.addSeat(s2);
+      room.engine = rebuilt;
     }
     // 释放旧座位（同一会话迁移）
     if (session.seat !== 'spectator' && session.seat !== seat) {
@@ -559,7 +608,7 @@ export class RoomManager {
       moves: room.moves,
       seats,
       seatOrder: letters,
-      seatCount: letters.length,
+      seatCount: room.capacity ?? letters.length,
       spectators: room.spectators.size,
       outcome: room.outcome,
       offers: room.offers,
@@ -629,7 +678,7 @@ export class RoomManager {
       outcome: room.outcome,
       offers: room.offers,
       seats,
-      seatCount: room.kind === 'checkers' ? seatLettersOf(room).length : undefined,
+      seatCount: room.kind === 'checkers' ? (room.capacity ?? seatLettersOf(room).length) : undefined,
       createdAt: room.createdAt,
       updatedAt: room.updatedAt,
     };
