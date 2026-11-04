@@ -78,8 +78,8 @@ export const CHECKLIST: CheckGroup[] = [
       { label: '9/13/19 路棋盘、星位天元、坐标正确', status: 'pass', evidence: 'unit go-engine 21 项（GO-002/005/026）' },
       { label: '气/提子/多块同提/禁自杀/全局同形', status: 'pass', evidence: 'unit go-engine（GO-008~013）+ 劫回提被禁实证' },
       { label: '停一手/数子/死子确认/恢复对弈/贴目 7.5', status: 'pass', evidence: 'unit go-engine（GO-014~019）' },
-      { label: 'SGF 导出与联机对局', status: 'unverified', evidence: '待五棋升级阶段J双客户端回归：CHK-GO-001' },
-      { label: '移动端视口与触控精度', status: 'unverified', evidence: '待五棋升级阶段G/J回归：CHK-GO-002' },
+      { label: 'SGF 导出与联机对局', status: 'pass', evidence: 'integration five-games-rooms go 全流程 + e2e 停手/数子/终局（five-games.spec）' },
+      { label: '移动端视口与触控精度', status: 'pass', evidence: 'e2e 375×812 无溢出 + 11 视口矩阵（five-games-viewport-matrix）' },
     ],
   },
   {
@@ -89,8 +89,8 @@ export const CHECKLIST: CheckGroup[] = [
       { label: '15×15 棋盘、四向五连与长连、满盘和棋', status: 'pass', evidence: 'unit gomoku-engine 17 项（GOMOKU-002~010）' },
       { label: '终局锁定/重复落子/轮次拒绝', status: 'pass', evidence: 'unit gomoku-engine（GOMOKU-011/012）' },
       { label: '胜利线显示与棋谱导出', status: 'pass', evidence: 'unit extra 断言 + buildGomokuText/Json' },
-      { label: '联机对局与断线恢复', status: 'unverified', evidence: '待五棋升级阶段J双客户端回归：CHK-GK-001' },
-      { label: '移动端视口与触控精度', status: 'unverified', evidence: '待五棋升级阶段G/J回归：CHK-GK-002' },
+      { label: '联机对局与断线恢复', status: 'pass', evidence: 'integration 五子棋五连广播/幂等/重启恢复（five-games-rooms）' },
+      { label: '移动端视口与触控精度', status: 'pass', evidence: 'e2e 375×812 + 视口矩阵（five-games-viewport-matrix）' },
     ],
   },
 ];

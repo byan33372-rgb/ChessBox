@@ -26,7 +26,7 @@ t(5, '响应式项已随 R9 实测更新为“已通过”（title 含 RWD-01 �
 t(6, '无任何项目处于未验证/失败状态（li.unverified=0 且 li.fail=0；提示文案中的措辞除外）', await page.locator('li.unverified, li.fail').count() === 0);
 // 证据渲染于 .status-label 的 title 属性（悬停提示）；两棋种卡各一条 → 用存在性断言
 t(7, '证据编号抽查（NET-006/REC-007/UX-004/NET-014 均渲染于 title 属性）', await page.locator('.status-label[title*="NET-006"]').count() >= 1 && await page.locator('.status-label[title*="REC-007"]').count() >= 1 && await page.locator('.status-label[title*="UX-004"]').count() >= 1 && await page.locator('.status-label[title*="NET-014"]').count() >= 1);
-t(8, '列表项状态类与图标语义一致（pass=✓ ×24 / 无 unverified）', await page.locator('li.pass .status-ico', { hasText: '✓' }).count() === 24 && await page.locator('li.unverified').count() === 0);
+t(8, '列表项状态类与图标语义一致（pass=✓ ×34 / 无 unverified）', await page.locator('li.pass .status-ico', { hasText: '✓' }).count() === 34 && await page.locator('li.unverified').count() === 0);
 await page.screenshot({ path: 'shots/r8-chk-cards.png', fullPage: true });
 
 await browser.close();
