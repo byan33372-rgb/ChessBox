@@ -2499,3 +2499,7 @@ body { min-height: 100dvh; }
   }
   .checkers-seats { font-size: 12px; }
 }
+
+
+/* 创建者阵营选择 */
+.seat-side-btn { min-width: 78px; }

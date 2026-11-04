@@ -143,7 +143,7 @@ export type StateReason =
   | 'spectator';
 
 export interface ClientToServerEvents {
-  'room:create': (p: { kind: GameKind; name?: string; seatCount?: number; boardSize?: number }, ack: (r: CreateAck) => void) => void;
+  'room:create': (p: { kind: GameKind; name?: string; seatCount?: number; boardSize?: number; seat?: Side }, ack: (r: CreateAck) => void) => void;
   'room:join': (p: { roomId: string; name?: string }, ack: (r: JoinAck) => void) => void;
   'room:rejoin': (p: { roomId: string; token: string }, ack: (r: JoinAck) => void) => void;
   'room:leave': (p: Record<string, never>, ack: (r: AckBase) => void) => void;

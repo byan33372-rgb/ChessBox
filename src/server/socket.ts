@@ -21,6 +21,8 @@ const Schemas = {
     seatCount: z.union([z.literal(2), z.literal(3), z.literal(4), z.literal(6)]).optional(),
     // 仅围棋生效：9/13/19 路（GO-003）
     boardSize: z.union([z.literal(9), z.literal(13), z.literal(19)]).optional(),
+    // 创建者阵营偏好（a=先手/红/白……；非法或不适用时按首个空位回退）
+    seat: z.enum(['a', 'b', 'c', 'd', 'e', 'f']).optional(),
   }),
   join: z.object({
     roomId: z.string().regex(ROOM_ID_PATTERN),
@@ -102,7 +104,7 @@ export function setupSocket(io: AppServer, rooms: RoomManager): void {
       if (!createLimit.allow(socket.id)) return fail(ack, 'RATE_LIMITED', '操作过于频繁，请稍后再试');
       const parsed = Schemas.create.safeParse(payload);
       if (!parsed.success) return fail(ack, 'INVALID_INPUT', '参数不合法');
-      const { room, session } = rooms.createRoom(parsed.data.kind, parsed.data.name, parsed.data.seatCount, parsed.data.boardSize);
+      const { room, session } = rooms.createRoom(parsed.data.kind, parsed.data.name, parsed.data.seatCount, parsed.data.boardSize, parsed.data.seat);
       socket.data.roomId = room.id;
       socket.data.session = session;
       socket.join(room.id);

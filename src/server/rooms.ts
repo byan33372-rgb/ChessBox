@@ -166,7 +166,7 @@ export class RoomManager {
     return next;
   }
 
-  createRoom(kind: GameKind, rawName?: string, seatCount?: number, boardSize?: number): { room: Room; session: SessionInfo } {
+  createRoom(kind: GameKind, rawName?: string, seatCount?: number, boardSize?: number, preferredSeat?: Side): { room: Room; session: SessionInfo } {
     let id = newRoomId();
     while (this.rooms.has(id)) id = newRoomId();
     // 跳棋按座位数创建（2/3/4/6）；其余棋种固定双人
@@ -191,10 +191,11 @@ export class RoomManager {
       updatedAt: Date.now(),
     };
     const name = this.cleanName(rawName) ?? `${randomNick()}`;
-    // 创建者永远坐第一个座位（跳棋与双人棋均为 'a'）
-    const firstSeat: Side = seatLettersOf(room)[0];
-    const session = this.newSession(room, firstSeat, name);
-    room.seats[firstSeat] = session;
+    // 创建者选择阵营：合法座位内取偏好，否则回退首个座位（加入者自动补空位）
+    const letters = seatLettersOf(room);
+    const seat: Side = preferredSeat && letters.includes(preferredSeat) ? preferredSeat : letters[0];
+    const session = this.newSession(room, seat, name);
+    room.seats[seat] = session;
     this.rooms.set(id, room);
     this.persist(room);
     return { room, session };

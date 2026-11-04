@@ -1,0 +1,15 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ channel: 'chrome' });
+const A = await (await b.newContext()).newPage();
+await A.goto('http://127.0.0.1:3001/');
+await A.locator('.create-card.xiangqi').waitFor();
+const before = await A.locator('.create-card.xiangqi .seat-side-btn.on').textContent();
+await A.locator('.create-card.xiangqi .seat-side-btn', { hasText: '黑方后手' }).click();
+await A.waitForTimeout(200);
+const after = await A.locator('.create-card.xiangqi .seat-side-btn.on').textContent();
+await A.locator('.create-card.xiangqi .gc-create-btn').click();
+await A.waitForURL(/\/r\//);
+await A.waitForTimeout(800);
+console.log(JSON.stringify({ before: before?.trim(), after: after?.trim(), seat: (await A.locator('.my-seat').textContent())?.trim() }));
+await b.close();
+process.exit(0);

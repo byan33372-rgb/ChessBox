@@ -80,3 +80,10 @@
 - 新增发现并修复：DEF-FG-003（P2，freshEngine 丢围棋规格——9/13 路重开/悔棋至空盘变 19 路）；回归=集成「9 路房间重开后仍为 9 路」。
 - 复核确认项：superko 历史经 replay 正确重建；undoRespond 悔棋保留规格（replay 走首着 fenBefore）；pass/mark 均入棋谱且重放一致；死子交集计分符合中国规则；GomokuEngine.legalMoves() 返回空数组为已文档化的合同偏差（落子型 UI 不逐点渲染，服务端为权威）。
 - 历史说明：docs/acceptance/performance-report.md 在本任务书中被指定为同名交付文件，覆盖了全面验收轮同名文件——旧版完整保留于 git（commit 02c8548）。
+
+
+## 功能增量（2026-11-04）：阵营选择 + 站点更名
+
+- **创建者阵营选择**：首页五棋卡新增阵营按钮（中象 红/黑、国象 白/黑、跳棋 2 人 红/蓝、围棋/五子棋 黑/白；跳棋 3/4/6 人按加入顺序不显示）。协议 `room:create.seat`（Side 枚举，服务端校验合法座位并回退首座）；加入者自动补空位；非先手方在对手落子前走棋被服务端拒绝（集成与 e2e 双端断言）。房间玩家卡按「对方在上、我方在下」排布，兼容任何阵营组合。
+- **站点更名「脆饼的棋盒」**：浏览器标题、首页品牌标题、描述 meta、PGN Event 名称同步；e2e 断言标题与品牌，unit 断言 PGN Event。
+- 回归：vitest 276 / e2e 24 / layout-check 全过；截图 seat-01~03（docs/acceptance/screenshots/）。

@@ -66,6 +66,15 @@ const CARDS: Array<{ kind: GameKind; icon: string; title: string; sub: string }>
 const CHECKER_SEAT_COUNTS = [2, 3, 4, 6] as const;
 const GO_SIZES = [9, 13, 19] as const;
 
+/** 创建者阵营标签（a=先手位；b=后手位） */
+const SEAT_LABELS: Record<GameKind, { a: string; b: string }> = {
+  xiangqi: { a: '红方先手', b: '黑方后手' },
+  chess: { a: '白方先手', b: '黑方后手' },
+  checkers: { a: '红方先手', b: '蓝方后手' },
+  go: { a: '黑方先手', b: '白方后手' },
+  gomoku: { a: '黑方先手', b: '白方后手' },
+};
+
 /** 进入视口才加载沙盒（LIGHT-004：首页不一次性加载全部引擎/棋盘） */
 function LazyPractice({ kind }: { kind: GameKind }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -105,17 +114,23 @@ export function Home({ onEnter }: HomeProps) {
   const [error, setError] = useState<string | null>(null);
   const [checkerSeats, setCheckerSeats] = useState<2 | 3 | 4 | 6>(2);
   const [goSize, setGoSize] = useState<9 | 13 | 19>(19);
+  /** 各棋种创建者的阵营偏好 */
+  const [seatPref, setSeatPref] = useState<Record<string, 'a' | 'b'>>({
+    xiangqi: 'a', chess: 'a', checkers: 'a', go: 'a', gomoku: 'a',
+  });
 
   const handleCreate = async (kind: GameKind) => {
     setError(null);
     setCreating(kind);
     saveName(name.trim());
     try {
+      const seatAllowed = kind !== 'checkers' || checkerSeats === 2; // 多座位跳棋按加入顺序，无阵营选择
       const ack = await createRoomViaSocket(
         kind,
         name.trim() || undefined,
         kind === 'checkers' ? checkerSeats : undefined,
         kind === 'go' ? goSize : undefined,
+        seatAllowed ? seatPref[kind] : undefined,
       );
       if (ack.ok && ack.roomId) {
         onEnter(ack.roomId);
@@ -146,7 +161,7 @@ export function Home({ onEnter }: HomeProps) {
         <div className="brand">
           <span className="brand-mark">弈</span>
           <div>
-            <h1>五棋坊</h1>
+            <h1>脆饼的棋盒</h1>
             <p className="brand-sub">中国象棋 · 国际象棋 · 中国跳棋 · 围棋 · 五子棋 · 打开链接即玩</p>
           </div>
         </div>
@@ -181,10 +196,26 @@ export function Home({ onEnter }: HomeProps) {
                           type="button"
                           role="radio"
                           aria-checked={checkerSeats === n}
-                          className={`seat-count-btn ${checkerSeats === n ? 'on' : ''}`}
+                          className={`seat-count-btn chk-seat-btn ${checkerSeats === n ? 'on' : ''}`}
                           onClick={() => setCheckerSeats(n)}
                         >
                           {n}人
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {(kind !== 'checkers' || checkerSeats === 2) && (
+                    <div className="seat-count-row" role="radiogroup" aria-label="选择阵营">
+                      {(['a', 'b'] as const).map((sx) => (
+                        <button
+                          key={sx}
+                          type="button"
+                          role="radio"
+                          aria-checked={seatPref[kind] === sx}
+                          className={`seat-count-btn seat-side-btn ${seatPref[kind] === sx ? 'on' : ''}`}
+                          onClick={() => setSeatPref((p) => ({ ...p, [kind]: sx }))}
+                        >
+                          {SEAT_LABELS[kind][sx]}
                         </button>
                       ))}
                     </div>
@@ -197,7 +228,7 @@ export function Home({ onEnter }: HomeProps) {
                           type="button"
                           role="radio"
                           aria-checked={goSize === n}
-                          className={`seat-count-btn ${goSize === n ? 'on' : ''}`}
+                          className={`seat-count-btn go-size-btn ${goSize === n ? 'on' : ''}`}
                           onClick={() => setGoSize(n)}
                         >
                           {n}路

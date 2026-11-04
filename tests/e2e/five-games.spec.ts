@@ -31,12 +31,36 @@ const clickPt = (page: Page, pt: string) =>
   })()`);
 
 test.describe('五棋升级验收', () => {
-  test('首页五入口与围棋路数选择', async ({ page }) => {
+  test('站点名「脆饼的棋盒」与首页五入口、阵营选择', async ({ page, browser }) => {
+    await page.goto('/');
+    await expect(page).toHaveTitle('脆饼的棋盒');
+    await expect(page.locator('.brand h1')).toHaveText('脆饼的棋盒');
+    await expect(page.locator('.create-card')).toHaveCount(5);
+    // 创建者阵营选择：中象选黑方 → 我的身份黑方；对手加入为红方并先手
+    await page.locator('.create-card.xiangqi .seat-count-btn', { hasText: '黑方后手' }).click();
+    await page.locator('.create-card.xiangqi .gc-create-btn').click();
+    await expect(page).toHaveURL(/\/r\/[a-z2-9]{10}/, { timeout: 15_000 });
+    await expect(page.locator('.my-seat')).toContainText('黑方', { timeout: 15_000 });
+    const roomId = page.url().split('/r/')[1];
+    const pageB = await joinSecond(browser, roomId);
+    await expect(pageB.locator('.my-seat')).toContainText('红方');
+    await expect(pageB.locator('.status-line')).toContainText('轮到你走棋', { timeout: 10_000 });
+    // 红方（B）先走，黑方（A）在 B 未走前点击无效
+    await page.locator('button[aria-label^="h9 "]').click();
+    await expect(page.locator('.xq-sel-ring')).toHaveCount(0);
+    await pageB.locator('button[aria-label^="h7 "]').click();
+    await pageB.locator('button[aria-label="e7"]').click();
+    await expect(page.locator('.last-move-bar .lmb-text')).toContainText('炮二平五', { timeout: 10_000 });
+    await page.locator('button[aria-label^="h0 "]').click();
+    await page.locator('button[aria-label="g2"]').click();
+    await expect(page.locator('.last-move-bar .lmb-text')).toContainText('马8进7', { timeout: 10_000 });
+    // 恢复首页继续原断言
     await page.goto('/');
     await expect(page.locator('.create-card')).toHaveCount(5);
     await expect(page.locator('.create-card.go .card-title')).toHaveText('围棋');
     await expect(page.locator('.create-card.gomoku .card-title')).toHaveText('五子棋');
-    await expect(page.locator('.create-card.go .seat-count-btn')).toHaveCount(3);
+    await expect(page.locator('.create-card.go .go-size-btn')).toHaveCount(3);
+    await expect(page.locator('.create-card.go .seat-side-btn')).toHaveCount(2);
     await expect(page.locator('.create-card.go')).toContainText('贴目 7.5');
   });
 

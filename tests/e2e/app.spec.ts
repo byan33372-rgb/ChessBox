@@ -246,7 +246,7 @@ test.describe('导出功能', () => {
     const path = await download.path();
     const { readFileSync } = await import('node:fs');
     const content = readFileSync(path, 'utf8');
-    expect(content).toContain('[Event "双人对弈（本地服务）"]');
+    expect(content).toContain('[Event "脆饼的棋盒（本地服务）"]');
     expect(content).toContain('1. e4 e5');
     expect(content).toContain('2. Qh5');
     expect(content).toContain('[Result "*"]');
@@ -299,7 +299,7 @@ async function createCheckersRoom(page: Page, seatCount?: 2 | 3 | 4 | 6): Promis
   await page.goto('/');
   await page.locator('.create-card.checkers').waitFor({ state: 'visible' });
   if (seatCount) {
-    await page.locator(`.create-card.checkers .seat-count-btn:has-text("${seatCount}人")`).click();
+    await page.locator(`.create-card.checkers .chk-seat-btn:has-text("${seatCount}人")`).click();
   }
   await page.locator('.create-card.checkers .gc-create-btn').click();
   await expect(page).toHaveURL(/\/r\/[a-z2-9]{10}/, { timeout: 15_000 });
@@ -365,7 +365,7 @@ test.describe('中国跳棋端到端', () => {
   test('首页第三入口与人数选择；3 人房座位条与等待文案', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.create-card.checkers .card-title')).toHaveText('中国跳棋');
-    await expect(page.locator('.create-card.checkers .seat-count-btn')).toHaveCount(4);
+    await expect(page.locator('.create-card.checkers .chk-seat-btn')).toHaveCount(4);
     await createCheckersRoom(page, 3);
     // 多座位条渲染 3 个座位，创建者 a 占 1 席
     await expect(page.locator('.checkers-seats .checkers-seat')).toHaveCount(3);

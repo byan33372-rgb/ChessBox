@@ -158,6 +158,65 @@ describe('围棋联机（TEST-005/GO-014~019）', () => {
   });
 });
 
+describe('创建者阵营选择（seat preference）', () => {
+  it('中象创建者选黑方：座位 b、加入者 a，红方先手', async () => {
+    const sa = connect(s.url);
+    const statesA = collect(sa);
+    const ack = await emitAck<CreateAck>(sa, 'room:create', { kind: 'xiangqi', name: '甲', seat: 'b' });
+    expect(ack.ok).toBe(true);
+    expect(ack.seat).toBe('b');
+    const sb = connect(s.url);
+    const statesB = collect(sb);
+    const j = await emitAck<JoinAck>(sb, 'room:join', { roomId: ack.roomId!, name: '乙' });
+    expect(j.seat).toBe('a');
+    await waitFor(() => statesA.at(-1)?.phase === 'playing');
+    // 红方（a=乙）先手：创建者（b）此刻走棋被拒
+    const stA = statesA.at(-1)!;
+    const early = await emitAck<MoveAck>(sa, 'game:move', {
+      requestId: `seat-early-${Date.now()}`, revision: stA.revision, from: 'h7', to: 'e7',
+    });
+    expect(early.ok).toBe(false);
+    expect(early.error?.code).toBe('NOT_YOUR_TURN');
+    // 乙（a）走一步后甲（b）可走
+    const m1 = await emitAck<MoveAck>(sb, 'game:move', {
+      requestId: `seat-m1-${Date.now()}`, revision: stA.revision, from: 'h7', to: 'e7',
+    });
+    expect(m1.ok, JSON.stringify(m1.error)).toBe(true);
+    await waitFor(() => statesA.at(-1)!.moves.length >= 1);
+    const m2 = await emitAck<MoveAck>(sa, 'game:move', {
+      requestId: `seat-m2-${Date.now()}`, revision: statesA.at(-1)!.revision, from: 'h0', to: 'g2',
+    });
+    expect(m2.ok, JSON.stringify(m2.error)).toBe(true);
+    const fin = statesA.at(-1)!;
+    expect(fin.moves[0].side).toBe('a');
+    expect(fin.moves[1].side).toBe('b');
+    void statesB;
+  });
+
+  it('非法阵营回退首个座位；围棋选白方后黑方先手', async () => {
+    const sa = connect(s.url);
+    const statesA = collect(sa);
+    const bad = await emitAck<CreateAck>(sa, 'room:create', { kind: 'chess', seat: 'e' });
+    expect(bad.ok).toBe(true);
+    expect(bad.seat).toBe('a'); // 回退
+    const sg = connect(s.url);
+    const statesG = collect(sg);
+    const g = await emitAck<CreateAck>(sg, 'room:create', { kind: 'go', boardSize: 9, seat: 'b' });
+    expect(g.ok).toBe(true);
+    expect(g.seat).toBe('b');
+    const pg = connect(s.url);
+    const jg = await emitAck<JoinAck>(pg, 'room:join', { roomId: g.roomId!, name: '乙' });
+    expect(jg.seat).toBe('a');
+    await waitFor(() => statesG.at(-1)?.phase === 'playing');
+    // 先手仍是 a（黑）
+    const early = await emitAck<MoveAck>(sg, 'game:move', {
+      requestId: `go-early-${Date.now()}`, revision: statesG.at(-1)!.revision, from: 'e5', to: 'e5',
+    });
+    expect(early.ok).toBe(false);
+    expect(early.error?.code).toBe('NOT_YOUR_TURN');
+  });
+});
+
 describe('五子棋联机（TEST-005/GOMOKU-018/DATA-002）', () => {
   it('双客户端真实对弈至五连：服务端判胜、广播胜利线、终局锁盘', async () => {
     const { a, b } = await setup('gomoku');

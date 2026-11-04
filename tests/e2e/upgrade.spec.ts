@@ -5,7 +5,7 @@ async function mkRoom(page: Page, kind: 'xiangqi' | 'chess' | 'checkers', seatCo
   await page.goto('/');
   await page.locator(`.create-card.${kind}`).waitFor({ state: 'visible' });
   if (seatCount) {
-    await page.locator(`.create-card.checkers .seat-count-btn`).filter({ hasText: `${seatCount}人` }).click();
+    await page.locator(`.create-card.checkers .chk-seat-btn`).filter({ hasText: `${seatCount}人` }).click();
   }
   await page.locator(`.create-card.${kind} .gc-create-btn`).click();
   await expect(page).toHaveURL(/\/r\/[a-z2-9]{10}/, { timeout: 15_000 });

@@ -539,7 +539,7 @@ export function Room({ roomId, onExit }: RoomProps) {
               ))}
             </div>
           ) : (
-            <PlayerCard state={state} side={state.turn === 'a' ? 'b' : 'a'} seat={seat} turnLabel={turnLabel} isOpponentTop />
+            <PlayerCard state={state} side={seat === 'a' ? 'b' : 'a'} seat={seat} turnLabel={turnLabel} isOpponentTop />
           )}
           <div className="board-wrap">
             {board}
@@ -582,7 +582,7 @@ export function Room({ roomId, onExit }: RoomProps) {
             )}
           </div>
           {state.kind === 'checkers' && state.seatCount > 2 ? null : (
-            <PlayerCard state={state} side={state.turn === 'a' ? 'a' : 'b'} seat={seat} turnLabel={turnLabel} />
+            <PlayerCard state={state} side={seat === 'b' ? 'b' : 'a'} seat={seat} turnLabel={turnLabel} />
           )}
 
           <div className="replay-controls" role="toolbar" aria-label="复盘控制">

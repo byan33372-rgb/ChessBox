@@ -47,7 +47,7 @@ export function buildPgn(state: RoomState): string {
   }
   chess.header(
     'Event',
-    '双人对弈（本地服务）',
+    '脆饼的棋盒（本地服务）',
     'Site',
     getSite(),
     'Date',

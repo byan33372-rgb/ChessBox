@@ -53,7 +53,7 @@ function chessState(moves: PublicMove[], outcome: GameOutcome | null = null, nam
 describe('导出 · PGN', () => {
   it('空棋谱：只有头部元数据，无走法，Result=*', () => {
     const pgn = buildPgn(chessState([]));
-    expect(pgn).toContain('[Event "双人对弈（本地服务）"]');
+    expect(pgn).toContain('[Event "脆饼的棋盒（本地服务）"]');
     expect(pgn).toContain('[White "白先生"]');
     expect(pgn).toContain('[Black "黑女士"]');
     expect(pgn).toContain('[Result "*"]');
