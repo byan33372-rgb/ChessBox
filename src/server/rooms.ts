@@ -9,7 +9,7 @@
  */
 
 import { createEngine, createCheckersEngine, replayEngine } from '../games';
-import { CheckersEngine, SUPPORTED_SEAT_COUNTS } from '../games';
+import { CheckersEngine, GoEngine, SUPPORTED_SEAT_COUNTS } from '../games';
 import type { GameEngine, GameKind, GameOutcome, MoveInput, Side } from '../games/types';
 import type {
   AckBase,
@@ -75,6 +75,10 @@ function seatsAllFilled(room: Room): boolean {
 function freshEngine(room: Room): GameEngine {
   if (room.kind === 'checkers' && room.engine instanceof CheckersEngine) {
     return createCheckersEngine(room.engine.seatCount() as 2 | 3 | 4 | 6, room.engine.seatOrder()[0]);
+  }
+  // 围棋：保留原房间的棋盘规格（DEF-FG-003：此前 9/13 路重开/悔棋至空盘会变 19 路）
+  if (room.kind === 'go' && room.engine instanceof GoEngine) {
+    return createEngine('go', undefined, room.engine.size as number);
   }
   return createEngine(room.kind);
 }

@@ -22,7 +22,7 @@
 ## C~E. 规则/联机/轨迹测试结果
 
 - 引擎单测 38 项（go 21 + gomoku 17）全 PASS。
-- 联机集成 8 项（five-games-rooms）：9 路对弈/提子广播 extra/双停数子终局(贴目)/恢复对弈/认输/五连判胜与胜利线广播/幂等不重复落谱/服务重启恢复（go13 fen 规格保持）——全 PASS。
+- 联机集成 9 项（five-games-rooms，含复审新增 DEF-FG-003 回归）：9 路对弈/提子广播 extra/双停数子终局(贴目)/恢复对弈/认输/五连判胜与胜利线广播/幂等不重复落谱/服务重启恢复（go13 fen 规格保持）——全 PASS。
 - e2e 4 项（five-games.spec）：五入口+路数选择/围棋停手-数子-终局全流程/五子棋五连高亮+锁盘+真实下载/375px 五棋无溢出——全 PASS。
 - 上一手：落子型为落点方形角标（MOVE-006/007），服务端确认事件生成（MOVE-002），刷新恢复走权威 state（MOVE-008）——e2e 断言。
 
@@ -61,6 +61,7 @@
 | DEF-GO-002 | P1 | loadFen 未播种局面历史 → 重载后回提漏判 | 已修+回归 |
 | DEF-FG-001 | P1 | checklist 缺 go/gomoku 分组 → 首页整页崩溃 | 已修（补组） |
 | DEF-FG-002 | P2 | 终局横幅赢家名称未走统一 sideName（五子棋显示"红方"） | 已修+e2e 回归 |
+| DEF-FG-003 | P2 | freshEngine 丢围棋规格：9/13 路重开/悔棋至空盘变 19 路（复审发现） | 已修+回归（集成 9 路重开用例） |
 
 ## K/L. 构建与持久化
 
@@ -72,3 +73,10 @@
 - NOT_TESTED：120Hz 物理屏、真机触控、Firefox/WebKit、公网跨区（沿用既有结论）。
 - 运维：`npm run build && npm start`（PORT/DB_PATH 可覆盖）；备份=三件套拷贝；回滚=旧构建直启（无 schema 变更）。
 - **发布建议：建议发布**（P0=0，P1=0 未决；NOT_TESTED 项随附）。
+
+
+## 复审轮（2026-11-04，全面错漏审查）
+
+- 新增发现并修复：DEF-FG-003（P2，freshEngine 丢围棋规格——9/13 路重开/悔棋至空盘变 19 路）；回归=集成「9 路房间重开后仍为 9 路」。
+- 复核确认项：superko 历史经 replay 正确重建；undoRespond 悔棋保留规格（replay 走首着 fenBefore）；pass/mark 均入棋谱且重放一致；死子交集计分符合中国规则；GomokuEngine.legalMoves() 返回空数组为已文档化的合同偏差（落子型 UI 不逐点渲染，服务端为权威）。
+- 历史说明：docs/acceptance/performance-report.md 在本任务书中被指定为同名交付文件，覆盖了全面验收轮同名文件——旧版完整保留于 git（commit 02c8548）。

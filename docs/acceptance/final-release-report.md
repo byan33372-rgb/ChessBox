@@ -13,8 +13,8 @@
 | 类别 | 数量 | 结果 |
 |---|---|---|
 | 单元（含新 go 21/gomoku 17/独立推导 20） | **265** | 0 failed |
-| 集成（含 five-games-rooms 8 项） | **65** | 0 failed |
-| E2E（含 five-games.spec 4 项） | **22** | 0 failed |
+| 集成（含 five-games-rooms 9 项） | **66** | 0 failed |
+| E2E（含 five-games.spec 4 项） | **24** | 0 failed |
 | 专项脚本 | layout22/viewport18/rwd12/anim16/ux9/chk8/sec9/net15×2/perf15 场景 | 全 PASS |
 | 视口矩阵 | 11 视口 × 5 棋 = 55 | 0 溢出 |
 | 稳定性 | 30 分钟五棋浸泡：1325 周期/5742 步/1326 应拒/1325 重连 | 0 错误 |
@@ -47,8 +47,9 @@
 | DEF-GO-002 | P1 | loadFen 未播 superko 历史 → 重载后回提漏判 | 引擎修复+回归 |
 | DEF-FG-001 | P1 | checklist 缺 go/gomoku 分组 → 首页整页崩溃 | 补组+5 卡验证 |
 | DEF-FG-002 | P2 | 终局横幅赢家未走统一 sideName | 修复+e2e 回归 |
+| DEF-FG-003 | P2 | freshEngine 丢围棋规格：9/13 路重开/悔棋至空盘变 19 路 | 修复+回归（9 路重开用例） |
 
-P0=0；P1 未决=0；P2 未决=0。
+P0=0；P1 未决=0；P2 未决=0。（复审轮新增 DEF-FG-003 已闭环）
 
 ## 9. 构建与持久化
 

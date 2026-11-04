@@ -136,6 +136,18 @@ describe('围棋联机（TEST-005/GO-014~019）', () => {
     expect(st.outcome).toBeNull();
   });
 
+  it('9 路房间重开后仍为 9 路（DEF-FG-003 回归）', async () => {
+    const { a, b } = await setup('go', 9);
+    await move(a, 'e5');
+    await emitAck<AckBase>(a.socket, 'game:restart:offer', {});
+    await b.settled(1);
+    const done = await emitAck<AckBase>(b.socket, 'game:restart:respond', { accept: true });
+    expect(done.ok).toBe(true);
+    const st = await a.settled();
+    expect(st.fen.startsWith('go9|')).toBe(true);
+    expect(st.moves.length).toBe(0);
+  });
+
   it('认输终局（GO-016）', async () => {
     const { a, b } = await setup('go');
     await move(a, 'e5');
