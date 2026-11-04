@@ -1,0 +1,35 @@
+
+Running 24 tests using 1 worker
+
+  ok  1 tests\e2e\app.spec.ts:37:7 › 桌面端双人中国象棋对局 › 创建 → 邀请 → 对弈 → 同步 → 复盘 → 重连 (2.5s)
+  ok  2 tests\e2e\app.spec.ts:100:7 › 桌面端双人中国象棋对局 › 非法走棋请求不改变局面 (1.4s)
+  ok  3 tests\e2e\app.spec.ts:123:7 › 国际象棋端到端 › e4 e5 Nf3 双端同步，SAN 正确 (1.6s)
+  ok  4 tests\e2e\app.spec.ts:152:7 › 国际象棋端到端 › 升变对话框：选择后完成升变 (2.4s)
+  ok  5 tests\e2e\app.spec.ts:191:7 › 移动端窄屏 › 375×667 视口可完成走棋，棋盘可操作 (1.8s)
+  ok  6 tests\e2e\app.spec.ts:223:7 › 导出功能 › 国际象棋导出 PGN 下载，内容含走法与结果 (1.6s)
+  ok  7 tests\e2e\app.spec.ts:257:7 › 导出功能 › 中国象棋导出中文棋谱与 JSON (1.5s)
+  ok  8 tests\e2e\app.spec.ts:321:7 › 中国跳棋端到端 › 2 人对弈：单步→标记/最近一步/最近5步→连跳逐段→复盘 (1.8s)
+  ok  9 tests\e2e\app.spec.ts:374:7 › 中国跳棋端到端 › 首页第三入口与人数选择；3 人容量房六阵营面板与等待文案 (1.0s)
+  ok 10 tests\e2e\five-games.spec.ts:34:7 › 五棋升级验收 › 站点名「脆饼的棋盒」、首页五入口、房间内选阵营 (1.5s)
+  ok 11 tests\e2e\five-games.spec.ts:63:7 › 五棋升级验收 › 围棋 9 路双人对弈：落子→上一手角标→停一手→提子 (5.0s)
+  ok 12 tests\e2e\five-games.spec.ts:94:7 › 五棋升级验收 › 五子棋双人对弈：落子→上一手角标→五连高亮→终局锁盘→导出 (4.3s)
+  ok 13 tests\e2e\five-games.spec.ts:117:7 › 五棋升级验收 › 移动端 375×812 五棋无横向溢出（MOBILE-022 抽样） (5.5s)
+  ok 14 tests\e2e\upgrade.spec.ts:46:7 › 三棋统一上一手标记与信息区 › 中象：起/终标记 + LastMoveBar + 最近5步面板 (1.8s)
+  ok 15 tests\e2e\upgrade.spec.ts:62:7 › 三棋统一上一手标记与信息区 › MOVE-007：非法走棋不更新上一手标记与最近一步信息 (2.1s)
+  ok 16 tests\e2e\upgrade.spec.ts:85:7 › 三棋统一上一手标记与信息区 › 国象：易位后 extra 车轨迹标记（last-extra） (3.5s)
+  ok 17 tests\e2e\upgrade.spec.ts:111:7 › 三棋统一上一手标记与信息区 › 三棋 375×667 无横向溢出 (6.0s)
+  ok 18 tests\e2e\upgrade.spec.ts:123:7 › 三棋统一上一手标记与信息区 › HISTORY-009/012：跳棋导出文本与 JSON 真实下载（含连跳路径） (2.1s)
+[PERF-004] {"frames":119,"durationMs":727,"p50":163.9,"p95":166.7,"p99":169.5,"min":156.3}
+  ok 19 tests\e2e\upgrade.spec.ts:150:7 › 三棋统一上一手标记与信息区 › PERF-004：走棋后 120 帧渲染采样（P95/P99） (2.7s)
+[PERF-008][xiangqi] {"frames":120,"durationMs":734,"p50":163.9,"p95":169.5,"p99":169.5,"over16_67":0}
+  ok 20 tests\e2e\upgrade.spec.ts:188:9 › PERF-008：三棋各 120 帧渲染采样 › xiangqi 120 帧采样 (3.1s)
+[PERF-008][chess] {"frames":120,"durationMs":734,"p50":163.9,"p95":166.7,"p99":169.5,"over16_67":0}
+  ok 21 tests\e2e\upgrade.spec.ts:188:9 › PERF-008：三棋各 120 帧渲染采样 › chess 120 帧采样 (3.1s)
+[PERF-008][checkers] {"frames":120,"durationMs":733,"p50":163.9,"p95":166.7,"p99":169.5,"over16_67":0}
+  ok 22 tests\e2e\upgrade.spec.ts:188:9 › PERF-008：三棋各 120 帧渲染采样 › checkers 120 帧采样 (3.6s)
+[PERF-008][go] {"frames":120,"durationMs":733,"p50":163.9,"p95":169.5,"p99":169.5,"over16_67":0}
+  ok 23 tests\e2e\upgrade.spec.ts:188:9 › PERF-008：三棋各 120 帧渲染采样 › go 120 帧采样 (3.1s)
+[PERF-008][gomoku] {"frames":120,"durationMs":733,"p50":163.9,"p95":169.5,"p99":169.5,"over16_67":0}
+  ok 24 tests\e2e\upgrade.spec.ts:188:9 › PERF-008：三棋各 120 帧渲染采样 › gomoku 120 帧采样 (3.5s)
+
+  24 passed (1.2m)

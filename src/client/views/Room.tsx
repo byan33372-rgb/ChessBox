@@ -11,6 +11,8 @@ import {
   GomokuEngine,
   GO_KOMI,
 } from '../../games';
+void SEAT_CAMP_MAPS;
+void targetCamp;
 import { CHESS_START_FEN } from '../../games';
 import { targetCamp } from '../../games/checkers/board';
 import { pieceLabel } from '../../games/xiangqi/notation';
@@ -194,16 +196,16 @@ export function Room({ roomId, onExit }: RoomProps) {
 
   // —— 跳棋：sim / 目标营地 / 连跳感知 targets ——
   const isCheckers = state?.kind === 'checkers' && engine instanceof CheckersEngine;
+  const goEngineLike = isCheckers ? (engine as import('../../games/checkers/engine').CheckersEngine) : null;
   const ckSim = useMemo(
     () => (isCheckers && display ? parseCheckersFenPieces(display.fen) : null),
     [isCheckers, display?.fen],
   ) as CheckersSim | null;
+  // 自由选座模式：营地映射以引擎（权威）为准，不再使用 SEAT_CAMP_MAPS（DEF-CK-002）
   const ckTargetCamp = useMemo(() => {
-    if (!isCheckers || !state || !seat || seat === 'spectator') return -1;
-    const n = state.seatCount as 2 | 3 | 4 | 6;
-    const start = SEAT_CAMP_MAPS[n]?.[seat];
-    return start != null ? targetCamp(start) : -1;
-  }, [isCheckers, state?.seatCount, seat]);
+    if (!isCheckers || !seat || seat === 'spectator') return -1;
+    return goEngineLike?.targetOfSeat(seat as never) ?? -1;
+  }, [isCheckers, seat, goEngineLike]);
   // —— 围棋派生信息（数子/提子/死子 UI） ——
   const goEngine = state?.kind === 'go' && engine instanceof GoEngine ? engine : null;
   const goPhase = goEngine?.phaseOf() ?? 'playing';
@@ -211,26 +213,21 @@ export function Room({ roomId, onExit }: RoomProps) {
   const goDead = goEngine?.deadStones() ?? [];
   const goMyConfirm = goEngine ? goEngine.confirmedOf().includes(seat === 'spectator' ? 'a' : (seat as Side)) : false;
 
-  /** 我的棋子的目标营地与起始营地（旁观时看当前轮次者，仅用于 UI 提示） */
+  /** 旁观视角：以当前轮次者的营地为准（引擎权威） */
   const viewTargetCamp = useMemo(() => {
-    if (!isCheckers || !state) return -1;
-    const n = state.seatCount as 2 | 3 | 4 | 6;
-    const who = seat && seat !== 'spectator' ? seat : state.turn;
-    const start = SEAT_CAMP_MAPS[n]?.[who];
-    return start != null ? targetCamp(start) : -1;
-  }, [isCheckers, state?.seatCount, state?.turn, seat]);
+    if (!isCheckers || !goEngineLike) return -1;
+    const who = (seat && seat !== 'spectator' ? seat : state?.turn) as never;
+    return goEngineLike.targetOfSeat(who) ?? -1;
+  }, [isCheckers, goEngineLike, state?.turn, seat]);
   const viewOwnCamp = useMemo(() => {
-    if (!isCheckers || !state) return -1;
-    const n = state.seatCount as 2 | 3 | 4 | 6;
-    const who = seat && seat !== 'spectator' ? seat : state.turn;
-    return SEAT_CAMP_MAPS[n]?.[who] ?? -1;
-  }, [isCheckers, state?.seatCount, state?.turn, seat]);
-  /** 我（或旁观视角座位）的起始营地 */
+    if (!isCheckers || !goEngineLike) return -1;
+    const who = (seat && seat !== 'spectator' ? seat : state?.turn) as never;
+    return goEngineLike.campOfSeat(who) ?? -1;
+  }, [isCheckers, goEngineLike, state?.turn, seat]);
   const ckOwnCamp = useMemo(() => {
-    if (!isCheckers || !state || !seat || seat === 'spectator') return -1;
-    const n = state.seatCount as 2 | 3 | 4 | 6;
-    return SEAT_CAMP_MAPS[n]?.[seat] ?? -1;
-  }, [isCheckers, state?.seatCount, seat]);
+    if (!isCheckers || !seat || seat === 'spectator') return -1;
+    return goEngineLike?.campOfSeat(seat as never) ?? -1;
+  }, [isCheckers, seat, goEngineLike]);
 
   /** 同步引用：点击处理器即时读取，避免快速连点命中过期闭包（丢步偶发缺陷修复） */
   const engineRef = useRef(engine);
@@ -680,11 +677,12 @@ export function Room({ roomId, onExit }: RoomProps) {
 
           {seat !== 'spectator' && state.phase === 'playing' && (
             <div className="card actions-card">
-              {state.kind === 'go' && goPhase === 'playing' && (
+              {(state.kind === 'go' || state.kind === 'checkers') && state.phase === 'playing' && (
                 <button
                   type="button"
                   className="btn wide"
                   onClick={() => void actions.move({ from: 'pass', to: 'pass' })}
+                  title={state.kind === 'checkers' ? '无合适着法时可停一手；双方连续停一手判和' : undefined}
                 >
                   停一手
                 </button>

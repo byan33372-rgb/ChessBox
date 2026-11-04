@@ -45,12 +45,13 @@ export const CHECKERS_NAMES: Record<string, string> = {
   f: '紫方',
 };
 
-function parseState(fen: string): { turn: CheckersSeat; order: CheckersSeat[]; pieces: Map<string, CheckersSeat>; seatCount: number; free: boolean } | null {
+function parseState(fen: string): { turn: CheckersSeat; order: CheckersSeat[]; pieces: Map<string, CheckersSeat>; seatCount: number; free: boolean; passes: number } | null {
   const parts = fen.split('|');
   if (parts[0] !== 'cc1') return null;
   let turn: CheckersSeat = 'a';
   let order: CheckersSeat[] = ['a', 'b'];
   let free = false;
+  let passes = 0;
   const pieces = new Map<string, CheckersSeat>();
   for (let i = 1; i < parts.length; i++) {
     const kv = parts[i].split('=');
@@ -58,6 +59,7 @@ function parseState(fen: string): { turn: CheckersSeat; order: CheckersSeat[]; p
     const [k, v] = kv;
     if (k === 'turn' && /^[a-f]$/.test(v)) turn = v as CheckersSeat;
     else if (k === 'free') free = v === '1';
+    else if (k === 'passes') passes = Number(v) || 0;
     else if (k === 'order' && /^[a-f]{1,6}$/.test(v)) order = v.split('') as CheckersSeat[];
     else if (k === 'p') {
       // 鲁棒解析：座位段以 ';' 或 ',' 分隔均可（'a:i10;b:j10' 或 'a:i10,b:j10'）
@@ -72,10 +74,10 @@ function parseState(fen: string): { turn: CheckersSeat; order: CheckersSeat[]; p
       }
     }
   }
-  return { turn, order, pieces, seatCount: order.length, free };
+  return { turn, order, pieces, seatCount: order.length, free, passes };
 }
 
-function serialize(turn: CheckersSeat, order: CheckersSeat[], pieces: Map<string, CheckersSeat>, free = false): string {
+function serialize(turn: CheckersSeat, order: CheckersSeat[], pieces: Map<string, CheckersSeat>, free: boolean): string {
   const bySeat = new Map<CheckersSeat, string[]>();
   for (const [cell, seat] of pieces) {
     const arr = bySeat.get(seat) ?? [];
@@ -101,6 +103,7 @@ export class CheckersEngine implements GameEngine {
   private camps: Map<CheckersSeat, number>; // seat → 起始营地
   private targets: Map<CheckersSeat, number>; // seat → 目标营地
   private plies = 0;
+  private consecutivePasses = 0;
   private _outcome: GameOutcome | null = null;
   /** 自由模式：阵营字母固定映射六营，座位在等待阶段动态入座（addSeat） */
   private freeMode = false;
@@ -116,6 +119,7 @@ export class CheckersEngine implements GameEngine {
       this.order = st.order;
       this.pieces = st.pieces;
       this.freeMode = st.free;
+      this.consecutivePasses = st.passes;
       if (st.free) {
         // 自由模式：字母固定六营映射（兼容任意人数子集）
         this.camps = new Map(st.order.map((s) => [s, FREE_SEAT_CAMPS[s]]));
@@ -170,6 +174,16 @@ export class CheckersEngine implements GameEngine {
     return this.freeMode;
   }
 
+  /** 某座位的起始营（自由模式=字母固定映射；旧模式=SEAT_CAMP_MAPS）；未入座返回 null */
+  campOfSeat(seat: CheckersSeat): number | null {
+    return this.camps.get(seat) ?? null;
+  }
+
+  /** 某座位的目标营（对面） */
+  targetOfSeat(seat: CheckersSeat): number | null {
+    return this.targets.get(seat) ?? null;
+  }
+
   /** 自由模式入座：在对应营地铺 10 子；先入座者成为先手（字母序最小者开局时轮转自然对齐） */
   addSeat(seat: CheckersSeat): void {
     if (!this.freeMode) throw new Error('非自由模式');
@@ -198,7 +212,7 @@ export class CheckersEngine implements GameEngine {
   }
 
   fen(): string {
-    return serialize(this.turnSeat, this.order, this.pieces, this.freeMode);
+    return serialize(this.turnSeat, this.order, this.pieces, this.freeMode) + `|passes=${this.consecutivePasses}`;
   }
 
   turn(): Side {
@@ -346,6 +360,34 @@ export class CheckersEngine implements GameEngine {
   }
 
   applyMove(move: MoveInput): AppliedMove | null {
+    // 停一手（DEF-CK-001）：本变体无强制跳跃，允许任意回合停一手；
+    // 双方连续停一手 = 双方均无法推进，判和（避免死锁）
+    if (move.from === 'pass') {
+      if (this._outcome) return null;
+      const fenBefore = this.fen();
+      this.consecutivePasses += 1;
+      this.plies += 1;
+      const idx = this.order.indexOf(this.turnSeat);
+      let next = this.turnSeat;
+      for (let step = 1; step <= this.order.length; step++) {
+        const cand = this.order[(idx + step) % this.order.length];
+        if (!this.resigned.has(cand)) { next = cand; break; }
+      }
+      this.turnSeat = next;
+      let outcome: GameOutcome | null = null;
+      if (this.consecutivePasses >= 2) {
+        this._outcome = { type: 'stalemate', winner: null, reason: '双方连续停一手，无子可动，判和' };
+        outcome = this._outcome;
+      }
+      return {
+        notation: '停一手',
+        captured: null,
+        gaveCheck: false,
+        fenBefore,
+        fenAfter: this.fen(),
+        outcome,
+      };
+    }
     const path = this.validatePath(move);
     if (!path) return null;
     const seat = this.turnSeat;
@@ -355,6 +397,7 @@ export class CheckersEngine implements GameEngine {
 
     this.pieces.delete(from);
     this.pieces.set(to, seat);
+    this.consecutivePasses = 0;
     this.plies += 1;
 
     // 轮转：跳过已退出的座位
