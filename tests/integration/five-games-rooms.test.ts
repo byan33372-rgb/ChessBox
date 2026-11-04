@@ -158,62 +158,67 @@ describe('围棋联机（TEST-005/GO-014~019）', () => {
   });
 });
 
-describe('创建者阵营选择（seat preference）', () => {
-  it('中象创建者选黑方：座位 b、加入者 a，红方先手', async () => {
-    const sa = connect(s.url);
-    const statesA = collect(sa);
-    const ack = await emitAck<CreateAck>(sa, 'room:create', { kind: 'xiangqi', name: '甲', seat: 'b' });
+describe('房间内选座（room:take-seat）', () => {
+  it('等待阶段：加入者抢占空位、换座、占位拒绝、就座满员后开始', async () => {
+    const host = connect(s.url);
+    const statesA = collect(host);
+    const ack = await emitAck<CreateAck>(host, 'room:create', { kind: 'xiangqi', name: '甲' });
     expect(ack.ok).toBe(true);
-    expect(ack.seat).toBe('b');
-    const sb = connect(s.url);
-    const statesB = collect(sb);
-    const j = await emitAck<JoinAck>(sb, 'room:join', { roomId: ack.roomId!, name: '乙' });
-    expect(j.seat).toBe('a');
+    expect(ack.seat).toBe('a');
+    const guest = connect(s.url);
+    const statesB = collect(guest);
+    const j = await emitAck<JoinAck>(guest, 'room:join', { roomId: ack.roomId!, name: '乙' });
+    expect(j.seat).toBe('b'); // 自动补位后仍在等待阶段
     await waitFor(() => statesA.at(-1)?.phase === 'playing');
-    // 红方（a=乙）先手：创建者（b）此刻走棋被拒
-    const stA = statesA.at(-1)!;
-    const early = await emitAck<MoveAck>(sa, 'game:move', {
-      requestId: `seat-early-${Date.now()}`, revision: stA.revision, from: 'h7', to: 'e7',
-    });
-    expect(early.ok).toBe(false);
-    expect(early.error?.code).toBe('NOT_YOUR_TURN');
-    // 乙（a）走一步后甲（b）可走
-    const m1 = await emitAck<MoveAck>(sb, 'game:move', {
-      requestId: `seat-m1-${Date.now()}`, revision: stA.revision, from: 'h7', to: 'e7',
-    });
-    expect(m1.ok, JSON.stringify(m1.error)).toBe(true);
-    await waitFor(() => statesA.at(-1)!.moves.length >= 1);
-    const m2 = await emitAck<MoveAck>(sa, 'game:move', {
-      requestId: `seat-m2-${Date.now()}`, revision: statesA.at(-1)!.revision, from: 'h0', to: 'g2',
-    });
-    expect(m2.ok, JSON.stringify(m2.error)).toBe(true);
-    const fin = statesA.at(-1)!;
-    expect(fin.moves[0].side).toBe('a');
-    expect(fin.moves[1].side).toBe('b');
-    void statesB;
+    // playing 后不可换座（防换边）
+    const late = await emitAck<AckBase>(guest, 'room:take-seat', { seat: 'a' });
+    expect(late.ok).toBe(false);
+    expect(['NOT_ALLOWED', 'GAME_ENDED', 'INVALID_INPUT']).toContain(late.error?.code);
   });
 
-  it('非法阵营回退首个座位；围棋选白方后黑方先手', async () => {
-    const sa = connect(s.url);
-    const statesA = collect(sa);
-    const bad = await emitAck<CreateAck>(sa, 'room:create', { kind: 'chess', seat: 'e' });
-    expect(bad.ok).toBe(true);
-    expect(bad.seat).toBe('a'); // 回退
-    const sg = connect(s.url);
-    const statesG = collect(sg);
-    const g = await emitAck<CreateAck>(sg, 'room:create', { kind: 'go', boardSize: 9, seat: 'b' });
-    expect(g.ok).toBe(true);
-    expect(g.seat).toBe('b');
-    const pg = connect(s.url);
-    const jg = await emitAck<JoinAck>(pg, 'room:join', { roomId: g.roomId!, name: '乙' });
-    expect(jg.seat).toBe('a');
-    await waitFor(() => statesG.at(-1)?.phase === 'playing');
-    // 先手仍是 a（黑）
-    const early = await emitAck<MoveAck>(sg, 'game:move', {
-      requestId: `go-early-${Date.now()}`, revision: statesG.at(-1)!.revision, from: 'e5', to: 'e5',
+  it('房间仅房主时：房主可换到空位；他人占用座位拒绝；观战者可选空位入座', async () => {
+    const host = connect(s.url);
+    const statesA = collect(host);
+    const ack = await emitAck<CreateAck>(host, 'room:create', { kind: 'chess', name: '甲' });
+    expect(ack.ok).toBe(true);
+    // 房主从 a 换到 b（b 空）
+    const toB = await emitAck<AckBase>(host, 'room:take-seat', { seat: 'b' });
+    expect(toB.ok, JSON.stringify(toB.error)).toBe(true);
+    expect(toB.seat).toBe('b');
+    await waitFor(() => statesA.at(-1)?.seats.a == null && statesA.at(-1)?.seats.b?.name === '甲');
+    // 第二人加入自动补 a（等待/开始）；换到 b 被拒（被房主占）
+    const guest = connect(s.url);
+    const j = await emitAck<JoinAck>(guest, 'room:join', { roomId: ack.roomId!, name: '乙' });
+    expect(j.seat).toBe('a');
+    const takeB = await emitAck<AckBase>(guest, 'room:take-seat', { seat: 'b' });
+    expect(takeB.ok).toBe(false);
+    // 第三人观战：满员 playing → 选座拒绝
+    const spec = connect(s.url);
+    const js = await emitAck<JoinAck>(spec, 'room:join', { roomId: ack.roomId!, name: '丙' });
+    expect(js.seat).toBe('spectator');
+    const specSeat = await emitAck<AckBase>(spec, 'room:take-seat', { seat: 'a' });
+    expect(specSeat.ok).toBe(false);
+    // 对局进行正常：乙（a）先手可走
+    const st = statesA.at(-1)!;
+    const m = await emitAck<MoveAck>(guest, 'game:move', {
+      requestId: `takemove-${Date.now()}`, revision: st.revision, from: 'e2', to: 'e4',
     });
-    expect(early.ok).toBe(false);
-    expect(early.error?.code).toBe('NOT_YOUR_TURN');
+    expect(m.ok, JSON.stringify(m.error)).toBe(true);
+  });
+
+  it('跳棋 4 人：观战阶段可自由挑空位（c/d 空位可选）', async () => {
+    const host = connect(s.url);
+    const ack = await emitAck<CreateAck>(host, 'room:create', { kind: 'checkers', seatCount: 4, name: '甲' });
+    expect(ack.ok).toBe(true);
+    const hostMove = await emitAck<AckBase>(host, 'room:take-seat', { seat: 'd' });
+    expect(hostMove.ok, JSON.stringify(hostMove.error)).toBe(true);
+    expect(hostMove.seat).toBe('d');
+    const guest = connect(s.url);
+    const j = await emitAck<JoinAck>(guest, 'room:join', { roomId: ack.roomId!, name: '乙' });
+    expect(j.seat).toBe('a');
+    const toC = await emitAck<AckBase>(guest, 'room:take-seat', { seat: 'c' });
+    expect(toC.ok, JSON.stringify(toC.error)).toBe(true);
+    expect(toC.seat).toBe('c');
   });
 });
 

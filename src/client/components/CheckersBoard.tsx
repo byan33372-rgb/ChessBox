@@ -34,12 +34,20 @@ const HIT_R = 19;
 
 /** 营地底色（比棋子色淡、可辨识，供 2-6 人识别座位区） */
 const CAMP_TINT: Record<number, string> = {
-  0: 'rgba(196,62,47,0.16)',
-  1: 'rgba(47,111,176,0.16)',
-  2: 'rgba(63,143,79,0.16)',
-  3: 'rgba(217,165,33,0.16)',
-  4: 'rgba(43,38,32,0.20)',
-  5: 'rgba(125,91,181,0.16)',
+  0: 'rgba(196,62,47,0.30)',
+  1: 'rgba(47,111,176,0.30)',
+  2: 'rgba(63,143,79,0.30)',
+  3: 'rgba(217,165,33,0.32)',
+  4: 'rgba(90,80,66,0.34)',
+  5: 'rgba(125,91,181,0.30)',
+};
+const CAMP_STROKE: Record<number, string> = {
+  0: 'rgba(196,62,47,0.75)',
+  1: 'rgba(47,111,176,0.75)',
+  2: 'rgba(63,143,79,0.75)',
+  3: 'rgba(217,165,33,0.8)',
+  4: 'rgba(150,134,110,0.8)',
+  5: 'rgba(125,91,181,0.75)',
 };
 
 export function checkersViewBox(): string {
@@ -112,8 +120,8 @@ export function CheckersBoard({
                 cy={p.y}
                 r={HOLE_R}
                 fill={camp >= 0 ? CAMP_TINT[camp] : 'rgba(255,255,255,0.05)'}
-                stroke="rgba(0,0,0,0.25)"
-                strokeWidth={1}
+                stroke={camp >= 0 ? CAMP_STROKE[camp] : 'rgba(0,0,0,0.25)'}
+                strokeWidth={camp >= 0 ? 1.2 : 1}
               />
             );
           })}

@@ -57,6 +57,8 @@ function emitWithAck<T extends AckBase>(socket: Socket, event: string, payload: 
 
 export interface RoomActions {
   move(input: { from: string; to: string; promotion?: string; path?: string[] }): Promise<void>;
+  /** 房间内选择/更换阵营（等待阶段） */
+  takeSeat(seat: Side): Promise<void>;
   resign(): Promise<void>;
   drawOffer(): Promise<void>;
   drawRespond(accept: boolean): Promise<void>;
@@ -224,6 +226,17 @@ export function useRoom(roomId: string | null): RoomSession {
         } else {
           if (ack.state) setState(ack.state); // STALE_REVISION 自愈：同步最新局面
           showError(ack.error, '走棋失败');
+        }
+      },
+      async takeSeat(nextSeat) {
+        const socket = socketRef.current;
+        if (!socket) return;
+        const ack = await emitWithAck<AckBase>(socket, 'room:take-seat', { seat: nextSeat });
+        if (!ack.ok) showError(ack.error, '选座失败');
+        else {
+          if (ack.state) setState(ack.state);
+          if (ack.seat) setSeat(ack.seat);
+          toast('已选择阵营', 'success');
         }
       },
       async resign() {

@@ -237,6 +237,30 @@ export class RoomManager {
     return { ok: true, room, session };
   }
 
+  /** 等待阶段选座/换座：目标必须为空位；对局开始后锁定（防中途换边） */
+  takeSeat(room: Room, session: SessionInfo, seat: Side): AckBase {
+    if (room.outcome) return { ok: false, error: err('GAME_ENDED', '对局已结束') };
+    const letters = seatLettersOf(room);
+    if (!letters.includes(seat)) return { ok: false, error: err('INVALID_INPUT', '无效座位') };
+    if (this.phaseOf(room) === 'playing') return { ok: false, error: err('NOT_ALLOWED', '对局已开始，不能更换阵营') };
+    if (room.seats[seat] && room.seats[seat]!.tokenHash !== session.tokenHash) {
+      return { ok: false, error: err('NOT_ALLOWED', '该座位已被占用，请选择空位') };
+    }
+    // 释放旧座位（同一会话迁移）
+    if (session.seat !== 'spectator' && session.seat !== seat) {
+      const old = room.seats[session.seat];
+      if (old && old.tokenHash === session.tokenHash) delete room.seats[session.seat];
+    }
+    session.seat = seat;
+    room.seats[seat] = session;
+    room.revision += 1;
+    room.updatedAt = Date.now();
+    this.store.saveSession({ tokenHash: session.tokenHash, roomId: room.id, seat, name: session.name, createdAt: Date.now() });
+    this.persist(room);
+    this.broadcast(room.id, this.publicState(room), 'seat');
+    return { ok: true, state: this.publicState(room), seat };
+  }
+
   bindSocket(session: SessionInfo, room: Room, socketId: string): void {
     if (session.seat !== 'spectator') {
       // 同一会话多标签页：后连的接管绑定

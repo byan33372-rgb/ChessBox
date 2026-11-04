@@ -36,7 +36,6 @@ async function main() {
     const cards = await page.locator('.create-card').count();
     check('首页五张创建卡片（中象/国象/跳棋/围棋/五子棋）', cards === 5);
     check('跳棋卡含人数选择 4 档', (await page.locator('.create-card.checkers .chk-seat-btn').count()) === 4);
-    check('五棋卡均有阵营选择 2 档', (await page.locator('.seat-side-btn').count()) === 10);
     const cardBox = await page.locator('.create-card.xiangqi').boundingBox();
     check('创建卡片宽度合理', cardBox && cardBox.width > 200 && cardBox.height > 150, JSON.stringify(cardBox));
     const btn = await page.locator('.join-row .btn').evaluate((el) => getComputedStyle(el).minHeight);

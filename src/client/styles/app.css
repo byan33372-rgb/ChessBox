@@ -2503,3 +2503,28 @@ body { min-height: 100dvh; }
 
 /* 创建者阵营选择 */
 .seat-side-btn { min-width: 78px; }
+
+
+/* 等待阶段可选阵营卡 */
+.player-card.pickable,
+.checkers-seat.pickable {
+  cursor: pointer;
+  border-style: dashed;
+  border-color: var(--accent);
+  animation: seat-pulse 2.2s ease-in-out infinite;
+}
+.player-card.pickable:hover,
+.checkers-seat.pickable:hover {
+  background: var(--hover);
+}
+.player-card.mine {
+  outline: 1px dashed var(--accent-ink);
+  outline-offset: 1px;
+}
+@keyframes seat-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 151, 63, 0); }
+  50% { box-shadow: 0 0 0 2px rgba(201, 151, 63, 0.25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .player-card.pickable, .checkers-seat.pickable { animation: none; }
+}

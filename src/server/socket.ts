@@ -42,6 +42,7 @@ const Schemas = {
     path: z.array(z.string().regex(CELL_RE)).min(2).max(16).optional(),
   }),
   respond: z.object({ accept: z.boolean() }),
+  takeSeat: z.object({ seat: z.enum(['a', 'b', 'c', 'd', 'e', 'f']) }),
   chat: z.object({ text: z.string().trim().min(1).max(200) }),
 };
 
@@ -198,6 +199,12 @@ export function setupSocket(io: AppServer, rooms: RoomManager): void {
         }
       });
     };
+
+    socket.on('room:take-seat', (p, ack) => {
+      const parsed = Schemas.takeSeat.safeParse(p);
+      if (!parsed.success) return fail(ack, 'INVALID_INPUT', '参数不合法');
+      withRoom(ack, (room, session) => ack(rooms.takeSeat(room, session, parsed.data.seat)));
+    });
 
     socket.on('game:resign', (_p, ack) => withRoom(ack, (room, session) => ack(rooms.resign(room, session))));
 

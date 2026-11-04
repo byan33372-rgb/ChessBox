@@ -94,6 +94,8 @@ export interface AckBase {
   error?: AppError;
   /** 失败时也可能携带最新状态（如 STALE_REVISION），便于客户端自愈 */
   state?: RoomState;
+  /** 选座等操作后返回当前会话座位 */
+  seat?: Side | 'spectator';
 }
 
 export interface CreateAck extends AckBase {
@@ -140,6 +142,7 @@ export type StateReason =
   | 'undo'
   | 'restart'
   | 'offer'
+  | 'seat'
   | 'spectator';
 
 export interface ClientToServerEvents {
@@ -147,6 +150,8 @@ export interface ClientToServerEvents {
   'room:join': (p: { roomId: string; name?: string }, ack: (r: JoinAck) => void) => void;
   'room:rejoin': (p: { roomId: string; token: string }, ack: (r: JoinAck) => void) => void;
   'room:leave': (p: Record<string, never>, ack: (r: AckBase) => void) => void;
+  /** 房间内选择/更换阵营（仅等待阶段；目标座位必须为空） */
+  'room:take-seat': (p: { seat: Side }, ack: (r: AckBase) => void) => void;
   'game:move': (p: MoveRequest, ack: (r: MoveAck) => void) => void;
   'game:resign': (p: Record<string, never>, ack: (r: AckBase) => void) => void;
   'game:draw:offer': (p: Record<string, never>, ack: (r: AckBase) => void) => void;

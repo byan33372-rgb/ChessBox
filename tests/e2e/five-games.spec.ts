@@ -5,7 +5,7 @@ async function mkRoom(page: Page, kind: string, opts?: { boardSize?: number }): 
   await page.goto('/');
   await page.locator(`.create-card.${kind}`).waitFor({ state: 'visible' });
   if (opts?.boardSize) {
-    await page.locator(`.create-card.go .seat-count-btn`).filter({ hasText: new RegExp(`^${opts.boardSize}路$`) }).click();
+    await page.locator(`.create-card.go .go-size-btn`).filter({ hasText: new RegExp(`^${opts.boardSize}路$`) }).click();
   }
   await page.locator(`.create-card.${kind} .gc-create-btn`).click();
   await expect(page).toHaveURL(/\/r\/[a-z2-9]{10}/, { timeout: 15_000 });
@@ -31,21 +31,23 @@ const clickPt = (page: Page, pt: string) =>
   })()`);
 
 test.describe('五棋升级验收', () => {
-  test('站点名「脆饼的棋盒」与首页五入口、阵营选择', async ({ page, browser }) => {
+  test('站点名「脆饼的棋盒」、首页五入口、房间内选阵营', async ({ page, browser }) => {
     await page.goto('/');
     await expect(page).toHaveTitle('脆饼的棋盒');
     await expect(page.locator('.brand h1')).toHaveText('脆饼的棋盒');
     await expect(page.locator('.create-card')).toHaveCount(5);
-    // 创建者阵营选择：中象选黑方 → 我的身份黑方；对手加入为红方并先手
-    await page.locator('.create-card.xiangqi .seat-count-btn', { hasText: '黑方后手' }).click();
-    await page.locator('.create-card.xiangqi .gc-create-btn').click();
-    await expect(page).toHaveURL(/\/r\/[a-z2-9]{10}/, { timeout: 15_000 });
-    await expect(page.locator('.my-seat')).toContainText('黑方', { timeout: 15_000 });
-    const roomId = page.url().split('/r/')[1];
+    // 首页无阵营按钮（阵营改在房间内选择）
+    await expect(page.locator('.seat-side-btn')).toHaveCount(0);
+    // 创建后：等待阶段点击空位选阵营（房主先选红方）
+    const roomId = await mkRoom(page, 'xiangqi');
+    await expect(page.locator('.player-card.pickable')).toHaveCount(1); // 唯一的空位（黑方）
+    await page.locator('.player-card.pickable').click();
+    await expect(page.locator('.my-seat')).toContainText('黑方', { timeout: 10_000 });
+    // 朋友加入自动补空位（红方），满员开局
     const pageB = await joinSecond(browser, roomId);
     await expect(pageB.locator('.my-seat')).toContainText('红方');
     await expect(pageB.locator('.status-line')).toContainText('轮到你走棋', { timeout: 10_000 });
-    // 红方（B）先走，黑方（A）在 B 未走前点击无效
+    // 红方（B）先手；黑方（A）在 B 未走前点击无效
     await page.locator('button[aria-label^="h9 "]').click();
     await expect(page.locator('.xq-sel-ring')).toHaveCount(0);
     await pageB.locator('button[aria-label^="h7 "]').click();
@@ -54,14 +56,8 @@ test.describe('五棋升级验收', () => {
     await page.locator('button[aria-label^="h0 "]').click();
     await page.locator('button[aria-label="g2"]').click();
     await expect(page.locator('.last-move-bar .lmb-text')).toContainText('马8进7', { timeout: 10_000 });
-    // 恢复首页继续原断言
-    await page.goto('/');
-    await expect(page.locator('.create-card')).toHaveCount(5);
-    await expect(page.locator('.create-card.go .card-title')).toHaveText('围棋');
-    await expect(page.locator('.create-card.gomoku .card-title')).toHaveText('五子棋');
-    await expect(page.locator('.create-card.go .go-size-btn')).toHaveCount(3);
-    await expect(page.locator('.create-card.go .seat-side-btn')).toHaveCount(2);
-    await expect(page.locator('.create-card.go')).toContainText('贴目 7.5');
+    // 对局中不可换座
+    await expect(page.locator('.player-card.pickable')).toHaveCount(0);
   });
 
   test('围棋 9 路双人对弈：落子→上一手角标→停一手→提子', async ({ page, browser }) => {

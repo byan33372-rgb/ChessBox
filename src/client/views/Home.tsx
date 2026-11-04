@@ -58,7 +58,7 @@ const PROMPTS: Record<
 const CARDS: Array<{ kind: GameKind; icon: string; title: string; sub: string }> = [
   { kind: 'xiangqi', icon: '帥', title: '中国象棋', sub: '车马炮 · 九宫格 · 将帅照面' },
   { kind: 'chess', icon: '♞', title: '国际象棋', sub: '王车易位 · 吃过路兵 · 升变' },
-  { kind: 'checkers', icon: '⬡', title: '中国跳棋', sub: '六角星盘 · 连跳竞速 · 2~6 人' },
+  { kind: 'checkers', icon: '⬡', title: '中国跳棋', sub: '六角星盘 · 六色营地 · 2~6 人' },
   { kind: 'go', icon: '碁', title: '围棋', sub: '交叉点博弈 · 9/13/19 路 · 贴目 7.5' },
   { kind: 'gomoku', icon: '五', title: '五子棋', sub: '15 路 · 自由规则 · 先成五连者胜' },
 ];
@@ -66,14 +66,6 @@ const CARDS: Array<{ kind: GameKind; icon: string; title: string; sub: string }>
 const CHECKER_SEAT_COUNTS = [2, 3, 4, 6] as const;
 const GO_SIZES = [9, 13, 19] as const;
 
-/** 创建者阵营标签（a=先手位；b=后手位） */
-const SEAT_LABELS: Record<GameKind, { a: string; b: string }> = {
-  xiangqi: { a: '红方先手', b: '黑方后手' },
-  chess: { a: '白方先手', b: '黑方后手' },
-  checkers: { a: '红方先手', b: '蓝方后手' },
-  go: { a: '黑方先手', b: '白方后手' },
-  gomoku: { a: '黑方先手', b: '白方后手' },
-};
 
 /** 进入视口才加载沙盒（LIGHT-004：首页不一次性加载全部引擎/棋盘） */
 function LazyPractice({ kind }: { kind: GameKind }) {
@@ -114,23 +106,18 @@ export function Home({ onEnter }: HomeProps) {
   const [error, setError] = useState<string | null>(null);
   const [checkerSeats, setCheckerSeats] = useState<2 | 3 | 4 | 6>(2);
   const [goSize, setGoSize] = useState<9 | 13 | 19>(19);
-  /** 各棋种创建者的阵营偏好 */
-  const [seatPref, setSeatPref] = useState<Record<string, 'a' | 'b'>>({
-    xiangqi: 'a', chess: 'a', checkers: 'a', go: 'a', gomoku: 'a',
-  });
+
 
   const handleCreate = async (kind: GameKind) => {
     setError(null);
     setCreating(kind);
     saveName(name.trim());
     try {
-      const seatAllowed = kind !== 'checkers' || checkerSeats === 2; // 多座位跳棋按加入顺序，无阵营选择
       const ack = await createRoomViaSocket(
         kind,
         name.trim() || undefined,
         kind === 'checkers' ? checkerSeats : undefined,
         kind === 'go' ? goSize : undefined,
-        seatAllowed ? seatPref[kind] : undefined,
       );
       if (ack.ok && ack.roomId) {
         onEnter(ack.roomId);
@@ -204,22 +191,6 @@ export function Home({ onEnter }: HomeProps) {
                       ))}
                     </div>
                   )}
-                  {(kind !== 'checkers' || checkerSeats === 2) && (
-                    <div className="seat-count-row" role="radiogroup" aria-label="选择阵营">
-                      {(['a', 'b'] as const).map((sx) => (
-                        <button
-                          key={sx}
-                          type="button"
-                          role="radio"
-                          aria-checked={seatPref[kind] === sx}
-                          className={`seat-count-btn seat-side-btn ${seatPref[kind] === sx ? 'on' : ''}`}
-                          onClick={() => setSeatPref((p) => ({ ...p, [kind]: sx }))}
-                        >
-                          {SEAT_LABELS[kind][sx]}
-                        </button>
-                      ))}
-                    </div>
-                  )}
                   {kind === 'go' && (
                     <div className="seat-count-row" role="radiogroup" aria-label="围棋棋盘路数">
                       {GO_SIZES.map((n) => (
@@ -237,7 +208,9 @@ export function Home({ onEnter }: HomeProps) {
                       <span className="go-komi-note">中国规则 · 贴目 7.5</span>
                     </div>
                   )}
-                  <span className="card-desc">本地规则沙盒 · 点击棋子试走 · 创建房间后与朋友联机对弈</span>
+                  <span className="card-desc">
+                    {kind === 'checkers' ? '六色营地沙盒（6 人演示）· 建房后房内选座对阵' : '本地规则沙盒 · 点击棋子试走 · 创建房间后与朋友联机对弈'}
+                  </span>
                   <button
                     type="button"
                     className="btn primary gc-create-btn"

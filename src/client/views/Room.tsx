@@ -535,11 +535,24 @@ export function Room({ roomId, onExit }: RoomProps) {
           {state.kind === 'checkers' && state.seatCount > 2 ? (
             <div className="checkers-seats" aria-label="多座位状态">
               {state.seatOrder.map((s) => (
-                <CheckersSeatCard key={s} state={state} side={s} mySeat={seat} />
+                <CheckersSeatCard
+                  key={s}
+                  state={state}
+                  side={s}
+                  mySeat={seat}
+                  onPickSeat={state.phase === 'waiting' ? () => void actions.takeSeat(s) : undefined}
+                />
               ))}
             </div>
           ) : (
-            <PlayerCard state={state} side={seat === 'a' ? 'b' : 'a'} seat={seat} turnLabel={turnLabel} isOpponentTop />
+            <PlayerCard
+              state={state}
+              side={seat === 'a' ? 'b' : 'a'}
+              seat={seat}
+              turnLabel={turnLabel}
+              isOpponentTop
+              onPickSeat={state.phase === 'waiting' ? () => void actions.takeSeat(seat === 'a' ? 'b' : 'a') : undefined}
+            />
           )}
           <div className="board-wrap">
             {board}
@@ -570,7 +583,7 @@ export function Room({ roomId, onExit }: RoomProps) {
               <div className="waiting-overlay">
                 <div className="card waiting-card">
                   <h3>{state.kind === 'checkers' && state.seatCount > 2 ? `等待玩家加入（${Object.keys(state.seats).length}/${state.seatCount}）` : '等待对手加入'}</h3>
-                  <p>把邀请链接发给朋友，TA 打开即可对弈</p>
+                  <p>把邀请链接发给朋友；双方可点击空位选择阵营，就座后开始</p>
                   <div className="invite-row">
                     <input readOnly value={inviteUrl} aria-label="邀请链接" onFocus={(e) => e.target.select()} />
                     <button type="button" className="btn primary" onClick={doCopyInvite}>
@@ -582,7 +595,13 @@ export function Room({ roomId, onExit }: RoomProps) {
             )}
           </div>
           {state.kind === 'checkers' && state.seatCount > 2 ? null : (
-            <PlayerCard state={state} side={seat === 'b' ? 'b' : 'a'} seat={seat} turnLabel={turnLabel} />
+            <PlayerCard
+              state={state}
+              side={seat === 'b' ? 'b' : 'a'}
+              seat={seat}
+              turnLabel={turnLabel}
+              onPickSeat={state.phase === 'waiting' ? () => void actions.takeSeat(seat === 'b' ? 'b' : 'a') : undefined}
+            />
           )}
 
           <div className="replay-controls" role="toolbar" aria-label="复盘控制">
@@ -875,12 +894,15 @@ function PlayerCard({
   seat,
   turnLabel,
   isOpponentTop,
+  onPickSeat,
 }: {
   state: RoomState;
   side: Side;
   seat: Side | 'spectator' | null;
   turnLabel: string;
   isOpponentTop?: boolean;
+  /** 等待阶段空位点击选座 */
+  onPickSeat?: () => void;
 }) {
   const info = state.seats[side];
   const kind = state.kind;
@@ -898,19 +920,29 @@ function PlayerCard({
     .filter((m) => m.side === side && m.captured)
     .map((m) => m.captured as string);
   const isTurn = state.phase === 'playing' && state.turn === side;
+  const pickable = !info && state.phase === 'waiting' && !!onPickSeat;
+  const isMine = seat !== null && seat !== 'spectator' && seat === side;
   void turnLabel;
   void isOpponentTop;
   return (
-    <div className={`player-card ${side} ${isTurn ? 'turn' : ''} ${info ? '' : 'empty'}`}>
+    <div
+      className={`player-card ${side} ${isTurn ? 'turn' : ''} ${info ? '' : 'empty'} ${pickable ? 'pickable' : ''} ${isMine ? 'mine' : ''}`}
+      onClick={pickable ? onPickSeat : undefined}
+      role={pickable ? 'button' : undefined}
+      tabIndex={pickable ? 0 : undefined}
+      onKeyDown={pickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPickSeat?.(); } } : undefined}
+      aria-label={pickable ? `选择${sideName}` : undefined}
+    >
       <span
         className={`seat-dot ${kind === 'xiangqi' ? (side === 'a' ? 'r' : 'k') : kind === 'checkers' ? `ck-${side}` : side === 'a' ? 'w' : 'b'}`}
         aria-hidden="true"
       />
       <div className="player-info">
-        <span className="player-name">{info ? info.name : '等待加入'}</span>
+        <span className="player-name">{info ? info.name : pickable ? '点击选择此阵营' : '等待加入'}</span>
         <span className="player-side">{sideName}</span>
       </div>
       {info && !info.connected && <span className="offline-badge">离线</span>}
+      {isMine && <span className="me-badge">我</span>}
       {isTurn && <span className="turn-badge">思考中</span>}
       {captured.length > 0 && (
         <div className="captured-row" aria-label="吃子">
@@ -926,14 +958,32 @@ function PlayerCard({
 }
 
 /** 跳棋多座位条目（3/4/6 人）：紧凑显示每个座位的名字/在线/轮次 */
-function CheckersSeatCard({ state, side, mySeat }: { state: RoomState; side: Side; mySeat: Side | 'spectator' | null }) {
+function CheckersSeatCard({
+  state,
+  side,
+  mySeat,
+  onPickSeat,
+}: {
+  state: RoomState;
+  side: Side;
+  mySeat: Side | 'spectator' | null;
+  onPickSeat?: () => void;
+}) {
   const info = state.seats[side];
   const isTurn = state.phase === 'playing' && state.turn === side;
   const isMe = mySeat === side;
+  const pickable = !info && !!onPickSeat;
   return (
-    <div className={`checkers-seat ${isTurn ? 'turn' : ''} ${info ? '' : 'empty'} ${isMe ? 'me' : ''}`}>
+    <div
+      className={`checkers-seat ${isTurn ? 'turn' : ''} ${info ? '' : 'empty'} ${isMe ? 'me' : ''} ${pickable ? 'pickable' : ''}`}
+      onClick={pickable ? onPickSeat : undefined}
+      role={pickable ? 'button' : undefined}
+      tabIndex={pickable ? 0 : undefined}
+      onKeyDown={pickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPickSeat?.(); } } : undefined}
+      aria-label={pickable ? `选择${CHECKERS_NAMES[side] ?? side}` : undefined}
+    >
       <span className={`seat-dot ck-${side}`} aria-hidden="true" />
-      <span className="seat-name">{info ? info.name : '等待加入'}</span>
+      <span className="seat-name">{info ? info.name : pickable ? '点击选座' : '等待加入'}</span>
       <span className="seat-side">{CHECKERS_NAMES[side] ?? side}</span>
       {isMe && <span className="me-badge">我</span>}
       {info && !info.connected && <span className="offline-badge">离线</span>}

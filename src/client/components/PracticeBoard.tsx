@@ -28,7 +28,11 @@ import type { GameKind } from '../../games/types';
 export function PracticeBoard({ kind }: { kind: GameKind }) {
   // 沙盒引擎：真实引擎实例；kind 变化或重置时重建
   const [resetKey, setResetKey] = useState(0);
-  const engine = useMemo(() => createEngine(kind), [kind, resetKey]);
+  // 跳棋沙盒用 6 人六色演示（联机房间按人数着色）
+  const engine = useMemo(
+    () => (kind === 'checkers' ? new CheckersEngine(undefined, { order: ['a', 'b', 'c', 'd', 'e', 'f'] }) : createEngine(kind)),
+    [kind, resetKey],
+  );
   const engineRef = useRef(engine);
   engineRef.current = engine;
 
