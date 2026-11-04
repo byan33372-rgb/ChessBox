@@ -347,8 +347,10 @@ input::placeholder {
 /* —— 上半：双棋类并排展示卡（深色） —— */
 .showcase-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) 380px;
   gap: 20px;
+  max-width: 1500px;
+  margin: 0 auto;
 }
 
 .create-card {
@@ -2249,9 +2251,37 @@ li.unverified .status-label {
   font-weight: 700;
 }
 
-/* 首页三卡片栅格（原有两列，扩展为自适应三列） */
+/* 首页：主区两列（中象/国象/围棋/五子棋）+ 右侧独立跳棋列 */
 .showcase-grid {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 1fr) 380px;
+  align-items: start;
+}
+.showcase-grid {
+  display: grid;
+}
+.showcase-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-content: start;
+}
+.showcase-rail {
+  display: grid;
+  align-content: stretch;
+}
+.showcase-rail .create-card {
+  height: 100%;
+}
+@media (max-width: 1100px) {
+  .showcase-grid {
+    grid-template-columns: 1fr;
+  }
+  .showcase-main {
+    grid-template-columns: 1fr;
+  }
+  .showcase-rail .create-card {
+    height: auto;
+  }
 }
 
 

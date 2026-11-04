@@ -157,7 +157,8 @@ export function Home({ onEnter }: HomeProps) {
       <main className="home-main">
         {/* —— 上半：双棋种并排展示（真实交互棋盘沙盒 + 创建房间） —— */}
         <section className="showcase-grid" aria-label="选择棋种">
-          {CARDS.map(({ kind, icon, title, sub }) => {
+          {(() => {
+            const renderCard = ({ kind, icon, title, sub }: (typeof CARDS)[number]) => {
             return (
               <article key={kind} className={`create-card theme-${kind} ${kind}`}>
                 <header className="gc-head">
@@ -224,7 +225,15 @@ export function Home({ onEnter }: HomeProps) {
                 </footer>
               </article>
             );
-          })}
+            };
+            const railCard = CARDS.find((c) => c.kind === 'checkers')!;
+            return (
+              <>
+                <div className="showcase-main">{CARDS.filter((c) => c.kind !== 'checkers').map(renderCard)}</div>
+                <div className="showcase-rail">{renderCard(railCard)}</div>
+              </>
+            );
+          })()}
         </section>
 
         {error && (
