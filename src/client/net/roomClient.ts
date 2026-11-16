@@ -13,6 +13,9 @@ import type {
   JoinAck,
   MoveAck,
   RoomState,
+  ServerTiming,
+  SgClientView,
+  UnoClientView,
 } from '../../shared/protocol';
 import type { GameKind, Side } from '../../games/types';
 
@@ -70,6 +73,30 @@ export interface RoomActions {
   leave(): Promise<void>;
 }
 
+export interface MoveTrace {
+  requestId: string;
+  sentAt: number;
+  ackAt: number | null;
+  ackMs: number | null;
+  serverTiming: ServerTiming | null;
+  revision: number | null;
+  ok: boolean | null;
+  errorCode: string | null;
+}
+
+/** 延迟诊断数据（仅开发者面板使用；不含令牌/内容） */
+export interface LatencyStats {
+  transport: string | null;
+  rttMs: number | null;
+  rttSamples: number;
+  lastMove: MoveTrace | null;
+  lastStateAt: number | null;
+  renderMs: number | null;
+  reconnects: number;
+  timeouts: number;
+  stateVersion: number | null;
+}
+
 export interface RoomSession {
   conn: ConnState;
   /** 加入流程状态 */
@@ -82,6 +109,18 @@ export interface RoomSession {
   dismissToast(id: number): void;
   toast(text: string, kind?: Toast['kind']): void;
   actions: RoomActions;
+  /** 三国杀个性化视图（仅 sanguosha 房间） */
+  sgView: SgClientView | null;
+  /** 三国杀命令（服务端权威校验） */
+  sgCommand(action: Record<string, unknown>): Promise<void>;
+  /** UNO 个性化视图（仅 uno 房间） */
+  unoView: UnoClientView | null;
+  /** UNO 命令（服务端权威校验） */
+  unoCommand(action: Record<string, unknown>): Promise<void>;
+  /** 延迟诊断（阶段二）：开发者面板读取；正常玩家不可见 */
+  latency: LatencyStats;
+  /** 棋盘提交后回填渲染耗时（下一次绘制），供面板显示 */
+  reportRender(ms: number): void;
 }
 
 export function useRoom(roomId: string | null): RoomSession {
@@ -92,8 +131,35 @@ export function useRoom(roomId: string | null): RoomSession {
   const [seat, setSeat] = useState<Side | 'spectator' | null>(null);
   const [state, setState] = useState<RoomState | null>(null);
   const [chat, setChat] = useState<ChatMessage[]>([]);
+  const [sgView, setSgView] = useState<SgClientView | null>(null);
+  const sgViewRef = useRef<SgClientView | null>(null);
+  const [unoView, setUnoView] = useState<UnoClientView | null>(null);
+  const unoViewRef = useRef<UnoClientView | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const toastId = useRef(1);
+  const [latency, setLatency] = useState<LatencyStats>({
+    transport: null,
+    rttMs: null,
+    rttSamples: 0,
+    lastMove: null,
+    lastStateAt: null,
+    renderMs: null,
+    reconnects: 0,
+    timeouts: 0,
+    stateVersion: null,
+  });
+  const rttRef = useRef<number[]>([]);
+  const lastStateAtRef = useRef<number | null>(null);
+  const moveSentRef = useRef<Map<string, number>>(new Map());
+
+  // 诊断钩子：供 e2e/延迟脚本读取（仅耗时与 requestId，无令牌/内容）
+  useEffect(() => {
+    (window as unknown as { __dcLatency?: LatencyStats }).__dcLatency = latency;
+  }, [latency]);
+
+  const reportRender = useCallback((ms: number) => {
+    setLatency((l) => ({ ...l, renderMs: Math.round(ms * 100) / 100 }));
+  }, []);
 
   const toast = useCallback((text: string, kind: Toast['kind'] = 'info') => {
     const id = toastId.current++;
@@ -123,6 +189,37 @@ export function useRoom(roomId: string | null): RoomSession {
     setConn('connecting');
     setStatus('joining');
     setFatal(null);
+    // 传输看门狗（NET-002/SOCKET-003）：轮询兜底可用但延迟高；
+    // 若因握手失败降级为 polling，有限次强制重连以重新尝试 WebSocket 升级。
+    let pollFixTries = 0;
+    const pollTimer = setInterval(() => {
+      if (!socket.connected) return;
+      if (socket.io.engine.transport.name === 'polling' && pollFixTries < 2) {
+        pollFixTries++;
+        console.warn('[latency] 当前为 polling，尝试重连以升级 WebSocket');
+        socket.disconnect();
+        socket.connect();
+      }
+    }, 12000);
+
+    const pingTimer = setInterval(() => {
+      if (!socket.connected) return;
+      const t = performance.now();
+      socket.emit('latency:ping', {}, (r: { ok?: boolean } | undefined) => {
+        if (!r?.ok) return;
+        const rtt = performance.now() - t;
+        const arr = rttRef.current;
+        arr.push(rtt);
+        if (arr.length > 20) arr.shift();
+        const sorted = [...arr].sort((a, b) => a - b);
+        setLatency((l) => ({
+          ...l,
+          transport: socket.io.engine.transport.name,
+          rttMs: Math.round(sorted[Math.floor(sorted.length / 2)] * 100) / 100,
+          rttSamples: arr.length,
+        }));
+      });
+    }, 3000);
 
     let joinAttempts = 0;
 
@@ -172,6 +269,11 @@ export function useRoom(roomId: string | null): RoomSession {
 
     socket.on('connect', () => {
       setConn('online');
+      setLatency((l) => ({
+        ...l,
+        transport: socket.io.engine.transport.name,
+        reconnects: l.reconnects + (l.stateVersion == null ? 0 : 1),
+      }));
       // 每次连接（含重连）都恢复会话
       void doJoin();
     });
@@ -182,11 +284,34 @@ export function useRoom(roomId: string | null): RoomSession {
       setConn('reconnecting');
     });
     socket.on('room:state', (p: { state: RoomState; reason: string }) => {
-      setState(p.state);
+      lastStateAtRef.current = performance.now();
+      // 旧版本/重复广播不覆盖新状态（SOCKET-012/013：WS 重连与多事件源下防回退）
+      setState((prev) => (prev && p.state.revision < prev.revision ? prev : p.state));
+      setLatency((l) => ({ ...l, lastStateAt: lastStateAtRef.current, stateVersion: p.state.revision }));
+      // 双 rAF ≈ 下一次绘制；用于「事件到达→棋盘可见」客户端耗时
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const at = lastStateAtRef.current;
+          if (at != null) reportRender(performance.now() - at);
+        });
+      });
       if (p.reason === 'restart') setChat([]);
     });
     socket.on('chat:message', (m: ChatMessage) => {
       setChat((c) => [...c.slice(-99), m]);
+    });
+    socket.on('sg:state', (p: { view: SgClientView; reason: string }) => {
+      // 个性化视图：取最新 revision（各 socket 同一计数器）
+      if (!sgViewRef.current || p.view.revision >= sgViewRef.current.revision) {
+        sgViewRef.current = p.view;
+        setSgView(p.view);
+      }
+    });
+    socket.on('uno:state', (p: { view: UnoClientView }) => {
+      if (!unoViewRef.current || p.view.revision >= unoViewRef.current.revision) {
+        unoViewRef.current = p.view;
+        setUnoView(p.view);
+      }
     });
     socket.on('chat:history', (p: { messages: ChatMessage[] }) => {
       // 加入/重连时一次性恢复历史（之后的新消息继续增量追加）
@@ -194,10 +319,12 @@ export function useRoom(roomId: string | null): RoomSession {
     });
 
     return () => {
+      clearInterval(pingTimer);
+      clearInterval(pollTimer);
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [roomId]);
+  }, [roomId, reportRender]);
 
   const showError = useCallback(
     (e: AppError | undefined, fallback: string) => {
@@ -206,6 +333,46 @@ export function useRoom(roomId: string | null): RoomSession {
     [toast],
   );
 
+  const unoCommand = useCallback(
+    async (action: Record<string, unknown>) => {
+      const socket = socketRef.current;
+      if (!socket) return;
+      const commandId = crypto.randomUUID();
+      const ack = await emitWithAck<{ ok: boolean; error?: AppError; revision?: number; view?: UnoClientView }>(
+        socket,
+        'uno:command',
+        { commandId, expectedRevision: unoViewRef.current?.revision ?? null, action },
+      );
+      if (ack.view) {
+        unoViewRef.current = ack.view;
+        setUnoView(ack.view);
+      }
+      if (!ack.ok) showError(ack.error, '操作无效');
+    },
+    [showError],
+  );
+
+  const sgCommand = useCallback(
+    async (action: Record<string, unknown>) => {
+      const socket = socketRef.current;
+      if (!socket) return;
+      const commandId = crypto.randomUUID();
+      const ack = await emitWithAck<{ ok: boolean; error?: AppError; revision?: number; view?: SgClientView }>(
+        socket,
+        'sg:command',
+        { commandId, expectedRevision: sgViewRef.current?.revision ?? null, action },
+      );
+      if (ack.ok && ack.view) {
+        sgViewRef.current = ack.view;
+        setSgView(ack.view);
+      } else if (!ack.ok) {
+        showError(ack.error, '操作无效');
+      }
+    },
+    [showError],
+  );
+
+
   const actions = useMemo<RoomActions>(
     () => ({
       async move(input) {
@@ -213,6 +380,8 @@ export function useRoom(roomId: string | null): RoomSession {
         const current = stateRef.current;
         if (!socket || !current) return;
         const requestId = crypto.randomUUID();
+        const sentAt = performance.now();
+        moveSentRef.current.set(requestId, sentAt);
         const ack = await emitWithAck<MoveAck>(socket, 'game:move', {
           requestId,
           revision: current.revision,
@@ -221,10 +390,27 @@ export function useRoom(roomId: string | null): RoomSession {
           promotion: input.promotion,
           path: input.path,
         });
+        const ackAt = performance.now();
+        const timing = ack.serverTiming ?? null;
+        setLatency((l) => ({
+          ...l,
+          timeouts: l.timeouts + (ackAt - sentAt > 7000 ? 1 : 0),
+          lastMove: {
+            requestId,
+            sentAt,
+            ackAt,
+            ackMs: Math.round((ackAt - sentAt) * 100) / 100,
+            serverTiming: timing,
+            revision: ack.revision ?? null,
+            ok: ack.ok,
+            errorCode: ack.error?.code ?? null,
+          },
+        }));
         if (ack.ok) {
-          if (ack.state) setState(ack.state);
+          if (ack.state) setState((prev) => (prev && ack.state!.revision < prev.revision ? prev : ack.state!));
         } else {
-          if (ack.state) setState(ack.state); // STALE_REVISION 自愈：同步最新局面
+          // STALE_REVISION 自愈：同步最新局面（版本不低于本地才应用）
+          if (ack.state) setState((prev) => (prev && ack.state!.revision < prev.revision ? prev : ack.state!));
           showError(ack.error, '走棋失败');
         }
       },
@@ -314,7 +500,7 @@ export function useRoom(roomId: string | null): RoomSession {
     [showError, toast, roomId],
   );
 
-  return { conn, status, fatal, seat, state, chat, toasts, dismissToast, toast, actions };
+  return { conn, status, fatal, seat, state, chat, toasts, dismissToast, toast, actions, sgView, sgCommand, unoView, unoCommand, latency, reportRender };
 }
 
 /** 创建房间（首页使用）：独立短连接；seatCount 仅跳棋多人生效 */

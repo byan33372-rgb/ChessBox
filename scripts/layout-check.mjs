@@ -34,7 +34,7 @@ async function main() {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     check('首页桌面无横向溢出', overflow <= 0, `overflow=${overflow}px`);
     const cards = await page.locator('.create-card').count();
-    check('首页五张创建卡片（中象/国象/跳棋/围棋/五子棋）', cards === 5);
+    check('首页七张创建卡片（五棋+三国杀+UNO）', cards === 7);
     check('跳棋卡含人数选择 4 档', (await page.locator('.create-card.checkers .chk-seat-btn').count()) === 4);
     const cardBox = await page.locator('.create-card.xiangqi').boundingBox();
     check('创建卡片宽度合理', cardBox && cardBox.width > 200 && cardBox.height > 150, JSON.stringify(cardBox));

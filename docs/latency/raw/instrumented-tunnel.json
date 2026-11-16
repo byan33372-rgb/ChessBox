@@ -1,0 +1,404 @@
+{
+  "label": "tunnel-instrumented",
+  "url": "https://accessibility-consumption-attacked-mirror.trycloudflare.com",
+  "kind": "gomoku",
+  "moves": 20,
+  "transportMode": "auto",
+  "transportA": "websocket",
+  "transportB": "websocket",
+  "ack": {
+    "n": 20,
+    "p50": 459.02399999999943,
+    "p95": 1170.6939999999995,
+    "p99": 1203.2240000000002,
+    "max": 1203.2240000000002,
+    "min": 401.02800000000025,
+    "mean": 584.89,
+    "gt300": 20,
+    "gt500": 10,
+    "gt1000": 2,
+    "gt2000": 0
+  },
+  "peer": {
+    "n": 20,
+    "p50": 416.0060999999987,
+    "p95": 1019.3895999999995,
+    "p99": 1058.3029999999999,
+    "max": 1058.3029999999999,
+    "min": 400.1430999999993,
+    "mean": 582.84,
+    "gt300": 20,
+    "gt500": 8,
+    "gt1000": 2,
+    "gt2000": 0
+  },
+  "payloadBytes": {
+    "first": 714,
+    "last": 5480,
+    "mean": 2900
+  },
+  "errors": [],
+  "rows": [
+    {
+      "i": 0,
+      "from": "a1",
+      "to": "a1",
+      "ackMs": 554.49,
+      "peerMs": 1019.39,
+      "selfMs": 554.46,
+      "payload": 714,
+      "serverTiming": {
+        "queueMs": 0.07,
+        "validateMs": 0.01,
+        "applyMs": 0.01,
+        "stateMs": 0,
+        "persistMs": 0.17,
+        "broadcastMs": 0.14,
+        "totalMs": 0.41
+      }
+    },
+    {
+      "i": 1,
+      "from": "a8",
+      "to": "a8",
+      "ackMs": 457.12,
+      "peerMs": 456.99,
+      "selfMs": 457.1,
+      "payload": 899,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0,
+        "applyMs": 0.01,
+        "stateMs": 0,
+        "persistMs": 0.15,
+        "broadcastMs": 0.14,
+        "totalMs": 0.36
+      }
+    },
+    {
+      "i": 2,
+      "from": "b3",
+      "to": "b3",
+      "ackMs": 406.15,
+      "peerMs": 406.23,
+      "selfMs": 406.1,
+      "payload": 1091,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "stateMs": 0.08,
+        "persistMs": 0.15,
+        "broadcastMs": 0.16,
+        "totalMs": 0.46
+      }
+    },
+    {
+      "i": 3,
+      "from": "b10",
+      "to": "b10",
+      "ackMs": 584.88,
+      "peerMs": 992.29,
+      "selfMs": 584.78,
+      "payload": 1299,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0,
+        "persistMs": 0.14,
+        "broadcastMs": 0.14,
+        "totalMs": 0.36
+      }
+    },
+    {
+      "i": 4,
+      "from": "c5",
+      "to": "c5",
+      "ackMs": 511.09,
+      "peerMs": 511.17,
+      "selfMs": 511.05,
+      "payload": 1504,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0,
+        "persistMs": 0.16,
+        "broadcastMs": 0.15,
+        "totalMs": 0.43
+      }
+    },
+    {
+      "i": 5,
+      "from": "c12",
+      "to": "c12",
+      "ackMs": 1170.69,
+      "peerMs": 903.7,
+      "selfMs": 703.65,
+      "payload": 1726,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0,
+        "persistMs": 0.15,
+        "broadcastMs": 0.17,
+        "totalMs": 0.39
+      }
+    },
+    {
+      "i": 6,
+      "from": "d7",
+      "to": "d7",
+      "ackMs": 459.02,
+      "peerMs": 451.16,
+      "selfMs": 458.96,
+      "payload": 1945,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.18,
+        "broadcastMs": 0.17,
+        "totalMs": 0.43
+      }
+    },
+    {
+      "i": 7,
+      "from": "d14",
+      "to": "d14",
+      "ackMs": 708.48,
+      "peerMs": 504.34,
+      "selfMs": 708.44,
+      "payload": 2182,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.15,
+        "broadcastMs": 0.17,
+        "totalMs": 0.4
+      }
+    },
+    {
+      "i": 8,
+      "from": "e9",
+      "to": "e9",
+      "ackMs": 409.42,
+      "peerMs": 411.23,
+      "selfMs": 409.38,
+      "payload": 2415,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.2,
+        "broadcastMs": 0.16,
+        "totalMs": 0.45
+      }
+    },
+    {
+      "i": 9,
+      "from": "e1",
+      "to": "e1",
+      "ackMs": 410.13,
+      "peerMs": 407.07,
+      "selfMs": 410.1,
+      "payload": 2658,
+      "serverTiming": {
+        "queueMs": 0.17,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.16,
+        "broadcastMs": 0.18,
+        "totalMs": 0.55
+      }
+    },
+    {
+      "i": 10,
+      "from": "f11",
+      "to": "f11",
+      "ackMs": 1203.22,
+      "peerMs": 1058.3,
+      "selfMs": 1203.2,
+      "payload": 2915,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0,
+        "applyMs": 0.03,
+        "stateMs": 0.01,
+        "persistMs": 0.14,
+        "broadcastMs": 0.16,
+        "totalMs": 0.38
+      }
+    },
+    {
+      "i": 11,
+      "from": "f3",
+      "to": "f3",
+      "ackMs": 407.65,
+      "peerMs": 403.97,
+      "selfMs": 407.62,
+      "payload": 3169,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.16,
+        "broadcastMs": 0.15,
+        "totalMs": 0.39
+      }
+    },
+    {
+      "i": 12,
+      "from": "g13",
+      "to": "g13",
+      "ackMs": 652.66,
+      "peerMs": 400.14,
+      "selfMs": 398.44,
+      "payload": 3440,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.15,
+        "broadcastMs": 0.15,
+        "totalMs": 0.39
+      }
+    },
+    {
+      "i": 13,
+      "from": "g5",
+      "to": "g5",
+      "ackMs": 405.89,
+      "peerMs": 402.02,
+      "selfMs": 405.86,
+      "payload": 3708,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.03,
+        "stateMs": 0.01,
+        "persistMs": 0.16,
+        "broadcastMs": 0.23,
+        "totalMs": 0.48
+      }
+    },
+    {
+      "i": 14,
+      "from": "h15",
+      "to": "h15",
+      "ackMs": 401.03,
+      "peerMs": 846.36,
+      "selfMs": 397.56,
+      "payload": 3993,
+      "serverTiming": {
+        "queueMs": 0.06,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.14,
+        "broadcastMs": 0.2,
+        "totalMs": 0.43
+      }
+    },
+    {
+      "i": 15,
+      "from": "h7",
+      "to": "h7",
+      "ackMs": 412.45,
+      "peerMs": 407.37,
+      "selfMs": 407.91,
+      "payload": 4275,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.16,
+        "broadcastMs": 0.16,
+        "totalMs": 0.41
+      }
+    },
+    {
+      "i": 16,
+      "from": "i2",
+      "to": "i2",
+      "ackMs": 656.77,
+      "peerMs": 410.52,
+      "selfMs": 656.75,
+      "payload": 4565,
+      "serverTiming": {
+        "queueMs": 0.07,
+        "validateMs": 0.01,
+        "applyMs": 0.05,
+        "stateMs": 0.02,
+        "persistMs": 0.29,
+        "broadcastMs": 0.34,
+        "totalMs": 0.79
+      }
+    },
+    {
+      "i": 17,
+      "from": "i9",
+      "to": "i9",
+      "ackMs": 626.56,
+      "peerMs": 416.01,
+      "selfMs": 626.53,
+      "payload": 4861,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.17,
+        "broadcastMs": 0.17,
+        "totalMs": 0.44
+      }
+    },
+    {
+      "i": 18,
+      "from": "j4",
+      "to": "j4",
+      "ackMs": 416.27,
+      "peerMs": 412.85,
+      "selfMs": 416.25,
+      "payload": 5163,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0.01,
+        "persistMs": 0.19,
+        "broadcastMs": 0.21,
+        "totalMs": 0.48
+      }
+    },
+    {
+      "i": 19,
+      "from": "j11",
+      "to": "j11",
+      "ackMs": 843.76,
+      "peerMs": 835.69,
+      "selfMs": 843.73,
+      "payload": 5480,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0.01,
+        "applyMs": 0.04,
+        "stateMs": 0.01,
+        "persistMs": 0.15,
+        "broadcastMs": 0.22,
+        "totalMs": 0.47
+      }
+    }
+  ],
+  "ranAt": "2026-11-05T04:57:45.631Z"
+}

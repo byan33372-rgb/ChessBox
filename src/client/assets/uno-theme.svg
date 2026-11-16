@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" role="img" aria-label="UNO 主题：四色卡牌欢乐牌桌（原创设计）">
+  <defs>
+    <linearGradient id="unoBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a1418"/>
+      <stop offset=".4" stop-color="#4a1a14"/>
+      <stop offset="1" stop-color="#141018"/>
+    </linearGradient>
+    <linearGradient id="unoSwirl" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff6b35" stop-opacity=".85"/>
+      <stop offset=".4" stop-color="#e8452c" stop-opacity=".9"/>
+      <stop offset=".7" stop-color="#2d6cb5" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#f0c53c" stop-opacity=".6"/>
+    </linearGradient>
+    <linearGradient id="unoGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5d78e"/>
+      <stop offset=".5" stop-color="#c9962e"/>
+      <stop offset="1" stop-color="#8a6520"/>
+    </linearGradient>
+    <linearGradient id="unoRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff3b30"/>
+      <stop offset="1" stop-color="#c62828"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="260" rx="12" fill="url(#unoBg)"/>
+
+  <!-- 彩色漩涡 -->
+  <ellipse cx="200" cy="130" rx="180" ry="110" fill="url(#unoSwirl)" opacity=".55" transform="rotate(-15 200 130)"/>
+  <ellipse cx="210" cy="125" rx="140" ry="80" fill="#e8452c" opacity=".35" transform="rotate(10 210 125)"/>
+
+  <!-- 金色华丽边框 -->
+  <rect x="4" y="4" width="392" height="252" rx="10" fill="none" stroke="url(#unoGold)" stroke-width="2.5"/>
+  <rect x="9" y="9" width="382" height="242" rx="7" fill="none" stroke="#8a6520" stroke-width="1" opacity=".6"/>
+  <path d="M4 22 Q4 4 22 4" fill="none" stroke="url(#unoGold)" stroke-width="3"/>
+  <path d="M378 4 Q396 4 396 22" fill="none" stroke="url(#unoGold)" stroke-width="3"/>
+  <path d="M4 238 Q4 256 22 256" fill="none" stroke="url(#unoGold)" stroke-width="3"/>
+  <path d="M378 256 Q396 256 396 238" fill="none" stroke="url(#unoGold)" stroke-width="3"/>
+
+  <!-- UNO 标志 -->
+  <ellipse cx="88" cy="50" rx="58" ry="32" fill="#d63031" stroke="#fff" stroke-width="4" transform="rotate(-12 88 50)"/>
+  <text x="88" y="63" text-anchor="middle" font-family="'Arial Black','Arial',sans-serif" font-size="32" font-weight="900" font-style="italic" fill="#ffd977" stroke="#6b1522" stroke-width="2" letter-spacing="2" transform="rotate(-12 88 50)">UNO</text>
+
+  <!-- UNO 标题 -->
+  <text x="172" y="42" font-family="'Arial Black',sans-serif" font-size="28" font-weight="900" font-style="italic" fill="#f5d78e" letter-spacing="3">UNO</text>
+  <text x="172" y="64" font-family="'Microsoft YaHei',sans-serif" font-size="11" fill="#e8c887" letter-spacing="2">经典卡牌，欢乐对战</text>
+
+  <!-- 扇形卡牌组 -->
+  <g transform="translate(200, 148) rotate(0)">
+    <!-- 红色 1 -->
+    <g transform="rotate(-28) translate(-62, -8)">
+      <rect x="-24" y="-35" width="48" height="72" rx="8" fill="#d64541" stroke="#fff" stroke-width="2.5"/>
+      <rect x="-18" y="-28" width="36" height="58" rx="6" fill="none" stroke="#fff" stroke-width="1.5" opacity=".6"/>
+      <ellipse cx="0" cy="0" rx="14" ry="22" fill="none" stroke="#fff" stroke-width="2" opacity=".5"/>
+      <text x="0" y="12" text-anchor="middle" font-family="'Arial Black',sans-serif" font-size="26" font-weight="900" fill="#fff">1</text>
+      <text x="-16" y="-20" text-anchor="middle" font-family="'Arial',sans-serif" font-size="10" font-weight="bold" fill="#fff">1</text>
+    </g>
+    <!-- 黄色 +2 -->
+    <g transform="rotate(-12) translate(-22, -14)">
+      <rect x="-24" y="-35" width="48" height="72" rx="8" fill="#f0c53c" stroke="#fff" stroke-width="2.5"/>
+      <rect x="-18" y="-28" width="36" height="58" rx="6" fill="none" stroke="#3a2e08" stroke-width="1.5" opacity=".4"/>
+      <ellipse cx="0" cy="0" rx="14" ry="22" fill="none" stroke="#3a2e08" stroke-width="2" opacity=".5"/>
+      <text x="0" y="12" text-anchor="middle" font-family="'Arial Black',sans-serif" font-size="20" font-weight="900" fill="#3a2e08">+2</text>
+      <text x="-16" y="-20" text-anchor="middle" font-family="'Arial',sans-serif" font-size="10" font-weight="bold" fill="#3a2e08">+2</text>
+    </g>
+    <!-- 蓝色反转 -->
+    <g transform="rotate(4) translate(18, -14)">
+      <rect x="-24" y="-35" width="48" height="72" rx="8" fill="#4a90d9" stroke="#fff" stroke-width="2.5"/>
+      <rect x="-18" y="-28" width="36" height="58" rx="6" fill="none" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+      <ellipse cx="0" cy="0" rx="14" ry="22" fill="none" stroke="#fff" stroke-width="2" opacity=".5"/>
+      <text x="0" y="12" text-anchor="middle" font-family="'Arial Black',sans-serif" font-size="22" font-weight="900" fill="#fff">⟲</text>
+      <text x="-16" y="-20" text-anchor="middle" font-family="'Arial',sans-serif" font-size="10" font-weight="bold" fill="#fff">⟲</text>
+    </g>
+    <!-- 绿色 7 -->
+    <g transform="rotate(20) translate(58, -8)">
+      <rect x="-24" y="-35" width="48" height="72" rx="8" fill="#3cb371" stroke="#fff" stroke-width="2.5"/>
+      <rect x="-18" y="-28" width="36" height="58" rx="6" fill="none" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+      <ellipse cx="0" cy="0" rx="14" ry="22" fill="none" stroke="#fff" stroke-width="2" opacity=".5"/>
+      <text x="0" y="12" text-anchor="middle" font-family="'Arial Black',sans-serif" font-size="26" font-weight="900" fill="#fff">7</text>
+      <text x="-16" y="-20" text-anchor="middle" font-family="'Arial',sans-serif" font-size="10" font-weight="bold" fill="#fff">7</text>
+    </g>
+    <!-- 黑色 +4（最后一张，最高） -->
+    <g transform="rotate(36) translate(92, 2)">
+      <rect x="-24" y="-35" width="48" height="72" rx="8" fill="#1a1a2e" stroke="#f0c53c" stroke-width="3"/>
+      <rect x="-18" y="-28" width="36" height="58" rx="6" fill="none" stroke="#f0c53c" stroke-width="1.5"/>
+      <text x="0" y="10" text-anchor="middle" font-family="'Arial Black',sans-serif" font-size="18" font-weight="900" fill="#f0c53c">+4</text>
+      <g transform="translate(0, 18)">
+        <rect x="-14" y="-8" width="9" height="9" rx="2" fill="#d64541"/>
+        <rect x="-5" y="-8" width="9" height="9" rx="2" fill="#f0c53c"/>
+        <rect x="4" y="-8" width="9" height="9" rx="2" fill="#3cb371"/>
+        <rect x="-9" y="1" width="9" height="9" rx="2" fill="#4a90d9"/>
+        <rect x="0" y="1" width="9" height="9" rx="2" fill="#f0c53c"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- 标语 -->
+  <text x="200" y="222" text-anchor="middle" font-family="'KaiTi','STKaiti',serif" font-size="15" font-weight="bold" fill="#f5d78e" opacity=".9">喊出 UNO，赢得胜利！</text>
+
+  <!-- 底部信息徽章 -->
+  <g font-family="'Microsoft YaHei',sans-serif" font-size="10">
+    <rect x="14" y="236" width="58" height="18" rx="9" fill="#1a1418" stroke="#c9962e" stroke-width="1"/>
+    <text x="43" y="248" text-anchor="middle" fill="#e8d4a6">👥 3-4 人</text>
+    <rect x="78" y="236" width="70" height="18" rx="9" fill="#1a1418" stroke="#c9962e" stroke-width="1"/>
+    <text x="113" y="248" text-anchor="middle" fill="#e8d4a6">🎨 108 张牌</text>
+    <rect x="270" y="232" width="112" height="24" rx="12" fill="url(#unoGold)"/>
+    <text x="326" y="248" text-anchor="middle" fill="#1a1418" font-weight="bold" font-size="12">创建房间 ›</text>
+  </g>
+
+  <!-- 暗角 -->
+  <rect width="400" height="260" rx="12" fill="none" stroke="#000" stroke-width="30" stroke-opacity=".12"/>
+</svg>

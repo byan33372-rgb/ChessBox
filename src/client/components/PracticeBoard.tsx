@@ -54,7 +54,7 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
   chainRef.current = chain;
 
   // 沙盒动画：本地引擎走棋成功（=本沙盒的权威确认）即构造 FLIP 描述
-  const { enabled: animEnabled } = useAnimPref();
+  const { enabled: animEnabled, speedMs: animSpeed } = useAnimPref();
   const [anim, setAnim] = useState<BoardAnim | null>(null);
   useEffect(() => setAnim(null), [engine]);
 
@@ -250,7 +250,11 @@ export function PracticeBoard({ kind }: { kind: GameKind }) {
     );
 
   return (
-    <div className="practice-board" data-kind={kind}>
+    <div
+      className="practice-board"
+      data-kind={kind}
+      style={{ ['--anim-move-ms' as string]: `${animSpeed}ms` } as React.CSSProperties}
+    >
       {board}
       <div className="practice-meta">
         {outcome ? (

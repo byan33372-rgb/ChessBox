@@ -17,7 +17,7 @@ import { CHESS_START_FEN } from '../../games';
 import { targetCamp } from '../../games/checkers/board';
 import { pieceLabel } from '../../games/xiangqi/notation';
 import type { Side } from '../../games/types';
-import type { RoomState } from '../../shared/protocol';
+import type { PublicMove, RoomState } from '../../shared/protocol';
 import { ChessBoard } from '../components/ChessBoard';
 import { XiangqiBoard } from '../components/XiangqiBoard';
 import { CheckersBoard } from '../components/CheckersBoard';
@@ -35,6 +35,9 @@ import {
   type CheckersSim,
 } from '../components/checkersUi';
 import { MoveList, RecentMovesPanel } from '../components/MoveList';
+import { LatencyPanel } from '../components/LatencyPanel';
+import { SanguoshaTable } from '../components/SanguoshaTable';
+import { UnoTable } from '../components/UnoTable';
 import { ChatPanel } from '../components/ChatPanel';
 import {
   buildCheckersJson,
@@ -68,12 +71,12 @@ interface PendingPromotion {
 }
 
 export function Room({ roomId, onExit }: RoomProps) {
-  const { conn, status, fatal, seat, state, chat, toasts, dismissToast, toast, actions } = useRoom(roomId);
+  const { conn, status, fatal, seat, state, chat, toasts, dismissToast, toast, actions, sgView, sgCommand, unoView, unoCommand, latency } = useRoom(roomId);
   const [selected, setSelected] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [viewPly, setViewPly] = useState<number | null>(null);
   const [pendingPromo, setPendingPromo] = useState<PendingPromotion | null>(null);
-  const { enabled: animEnabled, userOn: animUserOn, toggle: toggleAnimPref } = useAnimPref();
+  const { enabled: animEnabled, mode: animMode, speedMs: animSpeed, userOn: animUserOn, toggle: toggleAnimPref } = useAnimPref();
   const [anim, setAnim] = useState<BoardAnim | null>(null);
   /** 跳棋连跳链（逐段选点进行中；[起点, ...落点]） */
   const [chain, setChain] = useState<string[] | null>(null);
@@ -156,11 +159,11 @@ export function Room({ roomId, onExit }: RoomProps) {
     const canAnimate = animEnabled && conn === 'online' && viewPly === null && (state.phase === 'playing' || state.phase === 'ended');
     if (state.kind === 'checkers' && moves.length === prevCount + 1 && last && freshPly && canAnimate) {
       setCkFlight({ seat: last.side, from: last.from, to: last.to, key: last.ply });
-      const t = setTimeout(() => setCkFlight(null), 240);
+      const t = setTimeout(() => setCkFlight(null), animMode === 'fast' ? 120 : 240);
       return () => clearTimeout(t);
     }
     if (state.kind === 'checkers') setCkFlight(null);
-  }, [state, animEnabled, conn, viewPly]);
+  }, [state, animEnabled, animMode, conn, viewPly]);
 
   // 关闭动效时立即清掉在飞的层
   useEffect(() => {
@@ -172,15 +175,74 @@ export function Room({ roomId, onExit }: RoomProps) {
     return state.moves.length > 0 ? state.moves[0].fenBefore : state.fen;
   }, [state]);
 
-  // —— 复盘感知的展示局面 ——
+  // —— 乐观落子（FRONT-003/004）：本地先落、服务端拒绝则回滚 ——
+  const [optimistic, setOptimistic] = useState<{
+    baseRevision: number;
+    fen: string;
+    ply: number;
+    move: PublicMove;
+  } | null>(null);
+  const optimisticPendingRef = useRef(false);
+  useEffect(() => {
+    if (optimistic && state && state.revision !== optimistic.baseRevision) setOptimistic(null);
+  }, [state, optimistic]);
+
+  // —— 复盘感知的展示局面（含乐观层） ——
   const display = useMemo(() => {
     if (!state) return null;
+    if (optimistic && viewPly === null && optimistic.baseRevision === state.revision) {
+      return { fen: optimistic.fen, lastMove: optimistic.move, ply: optimistic.ply, viewing: false };
+    }
     const moves = state.moves;
     const ply = viewPly === null ? moves.length : Math.min(viewPly, moves.length);
     const fen = ply === 0 ? initialFen : moves[ply - 1].fenAfter;
     const lastMove = ply > 0 ? moves[ply - 1] : null;
     return { fen, lastMove, ply, viewing: viewPly !== null };
-  }, [state, viewPly, initialFen]);
+  }, [state, viewPly, initialFen, optimistic]);
+
+  /** 提交走棋：先本地预览（同一规则引擎），服务端拒绝时回滚；特殊动作不进乐观层 */
+  const submitMove = (input: { from: string; to: string; promotion?: string; path?: string[] }) => {
+    if (!state || !display) return;
+    const special = input.from === 'pass' || input.from.startsWith('mark:') || input.from.startsWith('score-');
+    if (special || display.viewing || optimisticPendingRef.current) {
+      void actions.move(input);
+      return;
+    }
+    let preview: ReturnType<typeof createEngine> | null = null;
+    let applied: ReturnType<ReturnType<typeof createEngine>['applyMove']> | null = null;
+    try {
+      preview = createEngine(state.kind, display.fen);
+      applied = preview.applyMove(input);
+    } catch {
+      applied = null;
+    }
+    if (!preview || !applied) {
+      void actions.move(input);
+      return;
+    }
+    optimisticPendingRef.current = true;
+    const move: PublicMove = {
+      ply: state.moves.length + 1,
+      side: seat && seat !== 'spectator' ? seat : state.turn,
+      from: input.from,
+      to: input.to,
+      promotion: input.promotion,
+      notation: applied.notation,
+      fenBefore: applied.fenBefore,
+      fenAfter: applied.fenAfter,
+      captured: applied.captured,
+      capturedSq: applied.capturedSq,
+      path: applied.path,
+      extra: applied.extra,
+      check: applied.gaveCheck,
+      ts: Date.now(),
+    };
+    setOptimistic({ baseRevision: state.revision, fen: preview.fen(), ply: move.ply, move });
+    void actions.move(input).finally(() => {
+      optimisticPendingRef.current = false;
+      setOptimistic(null);
+    });
+  };
 
   // 本地引擎（仅用于 UI 合法着法提示；权威校验在服务端）
   const engine = useMemo(() => {
@@ -287,13 +349,13 @@ export function Room({ roomId, onExit }: RoomProps) {
         return;
       }
       if (!eng.pieceAt(sq)) {
-        void actions.move({ from: sq, to: sq });
+        submitMove({ from: sq, to: sq });
       }
       return;
     }
     if (state.kind === 'gomoku') {
       if (!eng.pieceAt(sq)) {
-        void actions.move({ from: sq, to: sq });
+        submitMove({ from: sq, to: sq });
       }
       return;
     }
@@ -311,7 +373,7 @@ export function Room({ roomId, onExit }: RoomProps) {
         return;
       }
       if (result.type === 'commit') {
-        void actions.move({ from: result.from, to: result.to, path: result.path });
+        submitMove({ from: result.from, to: result.to, path: result.path });
         selectedRef.current = null;
         setSelected(null);
         setChain(null);
@@ -339,7 +401,7 @@ export function Room({ roomId, onExit }: RoomProps) {
         setSelected(null);
         return;
       }
-      void actions.move({ from: sel, to: sq });
+      submitMove({ from: sel, to: sq });
       selectedRef.current = null;
       setSelected(null);
       return;
@@ -358,7 +420,7 @@ export function Room({ roomId, onExit }: RoomProps) {
   const commitChain = () => {
     const cur = chainRef.current;
     if (!cur || cur.length < 2) return;
-    void actions.move({ from: cur[0], to: cur[cur.length - 1], path: cur });
+    submitMove({ from: cur[0], to: cur[cur.length - 1], path: cur });
     selectedRef.current = null;
     setSelected(null);
     setChain(null);
@@ -366,7 +428,7 @@ export function Room({ roomId, onExit }: RoomProps) {
 
   const finishPromotion = (code: string) => {
     if (pendingPromo) {
-      void actions.move({ ...pendingPromo, promotion: code });
+      submitMove({ ...pendingPromo, promotion: code });
     }
     setPendingPromo(null);
   };
@@ -423,11 +485,15 @@ export function Room({ roomId, onExit }: RoomProps) {
       ? s === 'a'
         ? '红方'
         : '黑方'
-      : state.kind === 'chess' || state.kind === 'go' || state.kind === 'gomoku'
+      : state.kind === 'chess'
         ? s === 'a'
-          ? '黑方'
-          : '白方'
-        : (CHECKERS_NAMES[s] ?? s);
+          ? '白方'
+          : '黑方'
+        : state.kind === 'go' || state.kind === 'gomoku'
+          ? s === 'a'
+            ? '黑方'
+            : '白方'
+          : (CHECKERS_NAMES[s] ?? s);
   const kindName =
     state.kind === 'xiangqi'
       ? '中国象棋'
@@ -508,7 +574,10 @@ export function Room({ roomId, onExit }: RoomProps) {
   void GO_KOMI;
 
   return (
-    <div className={`room theme-${state.kind}`}>
+    <div
+      className={`room theme-${state.kind}`}
+      style={{ ['--anim-move-ms' as string]: `${animSpeed}ms` } as React.CSSProperties}
+    >
       <header className="room-header">
         <button type="button" className="icon-btn" onClick={onExit} aria-label="返回首页">
           ←
@@ -528,7 +597,31 @@ export function Room({ roomId, onExit }: RoomProps) {
         </span>
       </header>
 
+      <LatencyPanel latency={latency} conn={conn} />
+
       <div className="room-body">
+        {state.kind === 'sanguosha' || state.kind === 'uno' ? (
+          state.kind === 'sanguosha' ? (
+            <SanguoshaTable
+              view={sgView}
+              seat={seat}
+              conn={conn}
+              chat={chat}
+              onSend={(t) => void actions.chat(t)}
+              onCommand={(a) => void sgCommand(a as never)}
+            />
+          ) : (
+            <UnoTable
+              view={unoView}
+              seat={seat}
+              conn={conn}
+              chat={chat}
+              onSend={(t) => void actions.chat(t)}
+              onCommand={(a) => void unoCommand(a)}
+            />
+          )
+        ) : (
+        <>
         <div className="board-col">
           {state.kind === 'checkers' && state.seatOrder.length > 2 ? (
             <div className="checkers-seats" aria-label="多座位状态">
@@ -656,7 +749,7 @@ export function Room({ roomId, onExit }: RoomProps) {
               aria-pressed={animUserOn}
               title="走棋动效开关（不影响规则）"
             >
-              {animUserOn ? '动效 开' : '动效 关'}
+              {animMode === 'normal' ? '动效 普通' : animMode === 'fast' ? '动效 快速' : '动效 关'}
             </button>
           </div>
         </div>
@@ -865,6 +958,8 @@ export function Room({ roomId, onExit }: RoomProps) {
 
           <ChatPanel chat={chat} onSend={(t) => void actions.chat(t)} seat={seat} />
         </aside>
+        </>
+        )}
       </div>
 
       {pendingPromo && (
@@ -919,11 +1014,15 @@ function PlayerCard({
       ? side === 'a'
         ? '红方'
         : '黑方'
-      : kind === 'chess' || kind === 'go' || kind === 'gomoku'
+      : kind === 'chess'
         ? side === 'a'
-          ? '黑方'
-          : '白方'
-        : (CHECKERS_NAMES[side] ?? side);
+          ? '白方'
+          : '黑方'
+        : kind === 'go' || kind === 'gomoku'
+          ? side === 'a'
+            ? '黑方'
+            : '白方'
+          : (CHECKERS_NAMES[side] ?? side);
   const captured = state.moves
     .filter((m) => m.side === side && m.captured)
     .map((m) => m.captured as string);
@@ -1136,11 +1235,15 @@ function LastMoveBar({
       ? lastMove.side === 'a'
         ? '红方'
         : '黑方'
-      : kind === 'chess' || kind === 'go' || kind === 'gomoku'
+      : kind === 'chess'
         ? lastMove.side === 'a'
-          ? '黑方'
-          : '白方'
-        : (CHECKERS_NAMES[lastMove.side] ?? lastMove.side);
+          ? '白方'
+          : '黑方'
+        : kind === 'go' || kind === 'gomoku'
+          ? lastMove.side === 'a'
+            ? '黑方'
+            : '白方'
+          : (CHECKERS_NAMES[lastMove.side] ?? lastMove.side);
   // notation 已含「连跳×N」时不重复追加
   const trail =
     lastMove.path && lastMove.path.length > 2 && !lastMove.notation.includes('连跳')

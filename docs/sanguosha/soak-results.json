@@ -1,0 +1,10 @@
+{
+  "games": 0,
+  "commands": 3,
+  "rejected": 1,
+  "errors": 1,
+  "reconnects": 1,
+  "maxRevision": 3,
+  "started": 1793917040543,
+  "durationMs": 1800373
+}

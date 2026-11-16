@@ -11,6 +11,10 @@
 import { createEngine, createCheckersEngine, replayEngine } from '../games';
 import { CheckersEngine, GoEngine, SUPPORTED_SEAT_COUNTS } from '../games';
 import type { GameEngine, GameKind, GameOutcome, MoveInput, Side } from '../games/types';
+import { SanguoshaGame } from '../games/sanguosha/engine';
+import { SanguoshaStubEngine } from '../games/sanguosha/adapter';
+import { UnoGame } from '../games/uno/engine';
+import { UnoStubEngine } from '../games/uno/adapter';
 import type {
   AckBase,
   AppError,
@@ -52,6 +56,12 @@ export interface Room {
   chat: ChatMessage[];
   queue: Promise<unknown>;
   moveAcks: Map<string, MoveAck>;
+  /** 三国杀对局（仅 kind==='sanguosha'） */
+  sg?: SanguoshaGame;
+  /** 三国杀牌堆配置 */
+  sgDeck?: 'standard_only' | 'standard_plus_military';
+  /** UNO 对局（仅 kind==='uno'） */
+  uno?: UnoGame;
   createdAt: number;
   updatedAt: number;
 }
@@ -65,6 +75,8 @@ function seatLettersOf(room: Room): Side[] {
   if (room.kind === 'checkers' && room.engine instanceof CheckersEngine) {
     return room.engine.isFree() ? (['a', 'b', 'c', 'd', 'e', 'f'] as Side[]) : room.engine.seatOrder();
   }
+  if (room.kind === 'sanguosha') return ['a', 'b', 'c', 'd'].slice(0, room.capacity ?? 4) as Side[];
+  if (room.kind === 'uno') return ['a', 'b', 'c', 'd'].slice(0, room.capacity ?? 4) as Side[];
   return ['a', 'b'];
 }
 
@@ -78,6 +90,8 @@ function seatsAllFilled(room: Room): boolean {
   if (room.kind === 'checkers' && room.engine instanceof CheckersEngine && room.engine.isFree()) {
     return seatedCount(room) >= (room.capacity ?? 2);
   }
+  if (room.kind === 'sanguosha') return seatedCount(room) >= (room.capacity ?? 4);
+  if (room.kind === 'uno') return seatedCount(room) >= (room.capacity ?? 4);
   return seatLettersOf(room).every((s) => room.seats[s] != null);
 }
 
@@ -107,6 +121,8 @@ function freshEngine(room: Room): GameEngine {
 const MAX_NAME = 12;
 const MAX_CHAT = 200;
 const CHAT_KEEP = 100;
+const round2 = (n: number): number => Math.round(n * 100) / 100;
+
 const MOVE_ACK_KEEP = 256;
 
 export class RoomManager {
@@ -122,6 +138,10 @@ export class RoomManager {
     this.store = store;
   }
 
+  roomById(id: string): Room | undefined {
+    return this.rooms.get(id);
+  }
+
   /** 服务重启后从 SQLite 恢复所有房间与会话 */
   loadPersisted(): number {
     const persisted = this.store.loadRooms();
@@ -131,8 +151,9 @@ export class RoomManager {
     for (const p of persisted) {
       try {
         const moves = this.store.loadMoves(p.roomId);
-        const engine =
-          moves.length > 0
+        const engine = p.kind === 'sanguosha'
+          ? new SanguoshaStubEngine()
+          : moves.length > 0
             ? replayEngine(p.kind, moves, p.kind === 'checkers' ? (p.seatCount ?? 2) : undefined)
             : createEngine(p.kind, p.fen);
         const room: Room = {
@@ -143,7 +164,7 @@ export class RoomManager {
           moves,
           outcome: engine.outcome() ?? p.outcome,
           seats: {},
-          capacity: p.kind === 'checkers' ? (p.seatCount ?? 2) : undefined,
+          capacity: p.kind === 'checkers' ? (p.seatCount ?? 2) : p.kind === 'sanguosha' ? (p.seatCount ?? 4) : undefined,
           spectators: new Set(),
           offers: p.offers ?? { draw: null, undo: null, restart: null },
           chat: this.store.loadChat(p.roomId),
@@ -197,8 +218,20 @@ export class RoomManager {
         ? seatCount
         : kind === 'checkers'
           ? 2
-          : undefined;
-    const engine = kind === 'checkers' ? CheckersEngine.createFree() : createEngine(kind, undefined, boardSize);
+          : kind === 'sanguosha' || kind === 'uno'
+            ? seatCount === 3
+              ? 3
+              : 4
+            : undefined;
+    const sgDeck: 'standard_only' | 'standard_plus_military' = 'standard_plus_military';
+    const engine =
+      kind === 'checkers'
+        ? CheckersEngine.createFree()
+        : kind === 'sanguosha'
+          ? new SanguoshaStubEngine()
+          : kind === 'uno'
+            ? new UnoStubEngine()
+            : createEngine(kind, undefined, boardSize);
     const room: Room = {
       id,
       kind,
@@ -216,6 +249,13 @@ export class RoomManager {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
+    if (kind === 'sanguosha') {
+      room.sgDeck = sgDeck;
+      room.sg = SanguoshaGame.create(['a', 'b', 'c', 'd'].slice(0, room.capacity ?? 4) as never, sgDeck, (Math.random() * 0xffffffff) >>> 0);
+    }
+    if (kind === 'uno') {
+      room.uno = UnoGame.create(['a', 'b', 'c', 'd'].slice(0, room.capacity ?? 4) as never, 'uno_classic_108', 'classic_ffa', (Math.random() * 0xffffffff) >>> 0);
+    }
     const name = this.cleanName(rawName) ?? `${randomNick()}`;
     if (room.kind === 'checkers') {
       // 跳棋：创建者不自动入座，进房后在六阵营面板中自选（其他玩家同理）
@@ -345,24 +385,33 @@ export class RoomManager {
   }
 
   /** 走棋（必须在 room 队列内执行） */
-  applyPlayerMove(room: Room, session: SessionInfo, req: MoveRequest): MoveAck {
+  applyPlayerMove(room: Room, session: SessionInfo, req: MoveRequest, receivedAt = performance.now()): MoveAck {
+    const t0 = performance.now();
     const cached = room.moveAcks.get(req.requestId);
     if (cached) return cached;
+    let tValidate = t0;
+    let tApply = t0;
+    let tState = t0;
+    let tPersist = t0;
 
     const ackFail = (code: AppError['code'], message: string): MoveAck => {
       // 失败不缓存：STALE_REVISION 等瞬态错误允许客户端同步后用同一 requestId 重试
       return { ok: false, error: err(code, message), state: this.publicState(room) };
     };
 
+    if (room.kind === 'sanguosha') return ackFail('NOT_ALLOWED', '三国杀请使用 sg:command');
+    if (room.kind === 'uno') return ackFail('NOT_ALLOWED', 'UNO 请使用 uno:command');
     if (session.seat === 'spectator') return ackFail('NOT_PLAYER', '观战者不能走棋');
     if (room.outcome) return ackFail('GAME_ENDED', '对局已结束');
     if (!seatsAllFilled(room)) return ackFail('GAME_NOT_PLAYING', '等待对手加入');
     if (room.engine.turn() !== session.seat) return ackFail('NOT_YOUR_TURN', '还没轮到你走棋');
     if (req.revision !== room.revision) return ackFail('STALE_REVISION', '局面版本不一致，已为你同步最新局面');
+    tValidate = performance.now();
 
     const input: MoveInput = { from: req.from, to: req.to, promotion: req.promotion, path: req.path };
     const applied = room.engine.applyMove(input);
     if (!applied) return ackFail('ILLEGAL_MOVE', '非法走法');
+    tApply = performance.now();
 
     const move: PublicMove = {
       ply: room.moves.length + 1,
@@ -391,16 +440,56 @@ export class RoomManager {
       room.offers.draw = null;
       room.offers.undo = null;
     }
-    this.store.appendMoveAndSaveRoom(room.id, move, this.buildPersist(room));
+    // 持久化失败回滚（C-DB-008 / SERVER-009）：内存局面、棋谱、版本号一起回退，
+    // 避免「内存已走、数据库未落、客户端收到错误」的三方不一致。
+    const snapFen = move.fenBefore;
+    const snapMoves = room.moves.length - 1;
+    const snapRevision = room.revision - 1;
+    const snapOutcome = null; // 走棋前已校验 room.outcome 为空
+    const snapOffers = { ...room.offers };
+    const snapUpdatedAt = room.updatedAt;
+    try {
+      this.store.appendMoveAndSaveRoom(room.id, move, this.buildPersist(room));
+    } catch (e) {
+      room.engine = createEngine(room.kind, snapFen);
+      room.moves.length = snapMoves;
+      room.revision = snapRevision;
+      room.outcome = snapOutcome;
+      room.offers = snapOffers;
+      room.updatedAt = snapUpdatedAt;
+      throw e;
+    }
+    tPersist = performance.now();
 
-    const ack: MoveAck = { ok: true, revision: room.revision, state: this.publicState(room) };
+    const state = this.publicState(room);
+    tState = performance.now();
+    const ack: MoveAck = {
+      ok: true,
+      revision: room.revision,
+      state,
+      serverTiming: {
+        queueMs: 0, // socket 层回填真实排队时间
+        validateMs: round2(tValidate - t0),
+        applyMs: round2(tApply - tValidate),
+        stateMs: round2(tState - tPersist),
+        persistMs: round2(tPersist - tApply),
+        broadcastMs: 0,
+        totalMs: round2(performance.now() - t0),
+      },
+    };
     room.moveAcks.set(req.requestId, ack);
     this.trimAcks(room);
-    this.broadcast(room.id, ack.state!, 'move');
+    const tB0 = performance.now();
+    this.broadcast(room.id, state, 'move');
+    const tB1 = performance.now();
+    ack.serverTiming!.broadcastMs = round2(tB1 - tB0);
+    ack.serverTiming!.totalMs = round2(performance.now() - t0);
     return ack;
   }
 
   resign(room: Room, session: SessionInfo): AckBase {
+    if (room.kind === 'sanguosha') return { ok: false, error: err('NOT_ALLOWED', '三国杀不支持该操作') };
+    if (room.kind === 'uno') return { ok: false, error: err('NOT_ALLOWED', 'UNO 不支持该操作') };
     if (session.seat === 'spectator') return { ok: false, error: err('NOT_PLAYER', '观战者不能认输') };
     if (room.outcome) return { ok: false, error: err('GAME_ENDED', '对局已结束') };
     if (!seatsAllFilled(room)) return { ok: false, error: err('GAME_NOT_PLAYING', '对局尚未开始') };
@@ -423,6 +512,8 @@ export class RoomManager {
   }
 
   drawOffer(room: Room, session: SessionInfo): AckBase {
+    if (room.kind === 'sanguosha') return { ok: false, error: err('NOT_ALLOWED', '三国杀不支持该操作') };
+    if (room.kind === 'uno') return { ok: false, error: err('NOT_ALLOWED', 'UNO 不支持该操作') };
     if (session.seat === 'spectator') return { ok: false, error: err('NOT_PLAYER', '观战者不能提和') };
     if (room.outcome) return { ok: false, error: err('GAME_ENDED', '对局已结束') };
     if (!room.seats.a || !room.seats.b) return { ok: false, error: err('GAME_NOT_PLAYING', '对局尚未开始') };
@@ -465,6 +556,8 @@ export class RoomManager {
   }
 
   undoOffer(room: Room, session: SessionInfo): AckBase {
+    if (room.kind === 'sanguosha') return { ok: false, error: err('NOT_ALLOWED', '三国杀不支持该操作') };
+    if (room.kind === 'uno') return { ok: false, error: err('NOT_ALLOWED', 'UNO 不支持该操作') };
     if (session.seat === 'spectator') return { ok: false, error: err('NOT_PLAYER', '观战者不能悔棋') };
     if (room.moves.length === 0) return { ok: false, error: err('NOTHING_TO_UNDO', '还没有任何走棋') };
     const me = session.seat;
@@ -525,6 +618,8 @@ export class RoomManager {
   }
 
   restartOffer(room: Room, session: SessionInfo): AckBase {
+    if (room.kind === 'sanguosha') return { ok: false, error: err('NOT_ALLOWED', '三国杀不支持该操作') };
+    if (room.kind === 'uno') return { ok: false, error: err('NOT_ALLOWED', 'UNO 不支持该操作') };
     if (session.seat === 'spectator') return { ok: false, error: err('NOT_PLAYER', '观战者不能请求重开') };
     const me = session.seat;
     if (room.offers.restart === me) {
@@ -616,6 +711,16 @@ export class RoomManager {
   }
 
   phaseOf(room: Room): RoomPhase {
+    if (room.kind === 'sanguosha') {
+      if (!room.sg) return 'waiting';
+      if (room.sg.st.winner !== null) return 'ended';
+      return room.sg.st.phase === 'select' ? 'waiting' : 'playing';
+    }
+    if (room.kind === 'uno') {
+      if (!room.uno) return 'waiting';
+      if (room.uno.st.winner !== null || room.uno.st.phase === 'roundEnd') return 'ended';
+      return room.uno.st.phase === 'select' ? 'waiting' : 'playing';
+    }
     if (room.outcome) return 'ended';
     return seatsAllFilled(room) ? 'playing' : 'waiting';
   }
@@ -678,10 +783,52 @@ export class RoomManager {
       outcome: room.outcome,
       offers: room.offers,
       seats,
-      seatCount: room.kind === 'checkers' ? (room.capacity ?? seatLettersOf(room).length) : undefined,
+      seatCount: room.kind === 'checkers'
+        ? (room.capacity ?? seatLettersOf(room).length)
+        : room.kind === 'sanguosha'
+          ? (room.capacity ?? 4)
+          : undefined,
       createdAt: room.createdAt,
       updatedAt: room.updatedAt,
+      sgJson: room.sg ? room.sg.serialize() : null,
+      sgDeck: room.kind === 'sanguosha' ? room.sgDeck : null,
+      unoJson: room.uno ? room.uno.serialize() : null,
     };
+  }
+
+  /** 三国杀：持久化对局（命令历史重放式恢复）；节流防 OOM */
+  private sgPersistCount = new Map<string, number>();
+  private sgPersistLast = new Map<string, number>();
+  persistSanguosha(room: Room): void {
+    if (room.kind !== 'sanguosha' || !room.sg) return;
+    // 节流：每 10 条命令或每 5 秒持久化一次（serialize 整个 history 会产生大量临时字符串）
+    const count = (this.sgPersistCount.get(room.id) ?? 0) + 1;
+    this.sgPersistCount.set(room.id, count);
+    const now = Date.now();
+    const last = this.sgPersistLast.get(room.id) ?? 0;
+    if (count % 10 !== 0 && now - last < 5000) return;
+    this.sgPersistLast.set(room.id, now);
+    try {
+      this.persist(room);
+    } catch {
+      // 持久化失败不阻断对局（内存权威；重启后该局退回选将态）
+    }
+  }
+
+  /** UNO：持久化对局（节流同 SG） */
+  persistUno(room: Room): void {
+    if (room.kind !== 'uno' || !room.uno) return;
+    const count = (this.sgPersistCount.get(room.id) ?? 0) + 1;
+    this.sgPersistCount.set(room.id, count);
+    const now = Date.now();
+    const last = this.sgPersistLast.get(room.id) ?? 0;
+    if (count % 10 !== 0 && now - last < 5000) return;
+    this.sgPersistLast.set(room.id, now);
+    try {
+      this.persist(room);
+    } catch {
+      // 同上
+    }
   }
 
   private trimAcks(room: Room): void {

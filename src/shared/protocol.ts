@@ -109,8 +109,101 @@ export interface JoinAck extends AckBase {
   seat?: Side | 'spectator';
 }
 
+/** 三国杀客户端视图（服务端 engine.view 序列化；字段与引擎保持同步） */
+export interface SgClientView {
+  revision: number;
+  phase: string;
+  turnNumber: number;
+  current: string;
+  winner: string | null;
+  deckConfig: string;
+  rulesetVersion: string;
+  drawCount: number;
+  discardCount: number;
+  discardTop: { id: string; name: string; suit: string; rank: number } | null;
+  myHand: string[];
+  /** 出牌阶段合法性提示（仅轮到自己出牌时非空） */
+  hints: Array<{ cardId: string; as?: string; ok: boolean; reason?: string; targets: string[]; minTargets: number; maxTargets: number; multi?: boolean }>;
+  players: Array<{
+    id: string;
+    general: string | null;
+    hp: number;
+    maxHp: number;
+    alive: boolean;
+    chained: boolean;
+    handCount: number;
+    equips: { weapon: string | null; armor: string | null; horsePlus: string | null; horseMinus: string | null };
+    judgments: string[];
+    selected: boolean;
+  }>;
+  pending: {
+    kind: string;
+    playerId?: string;
+    need?: string;
+    promptId?: string;
+    dyingId?: string;
+    legalCards?: string[];
+    converters?: string[];
+    prompt?: string;
+    min?: number;
+    max?: number;
+    count?: number;
+    options?: string[];
+    candidates?: string[];
+    cards?: string[];
+    windowId: string;
+  } | null;
+  log: Array<{ seq: number; rev: number; t: string; [k: string]: unknown }>;
+}
+
+/** UNO 客户端视图（服务端 uno.view 序列化） */
+export interface UnoClientView {
+  revision: number;
+  phase: string;
+  ruleProfile: string;
+  deckProfile: string;
+  turnNumber: number;
+  turn: string;
+  direction: 1 | -1;
+  currentColor: string;
+  drawCount: number;
+  discardCount: number;
+  discardTop: string | null;
+  myHand: string[];
+  playableIds: string[];
+  myUnoCalled: boolean;
+  winner: string | null;
+  winningTeam: string | null;
+  roundWinner: string | null;
+  teamPassDone: boolean;
+  pendingDraw: number;
+  lastActor: { seat: string; calledUno: boolean } | null;
+  players: Array<{ id: string; team: string | null; handCount: number; unoCalled: boolean; isOut: boolean; ready: boolean }>;
+  pending: { kind: string; playerId?: string; windowId?: string; picks?: Record<string, string> } | null;
+  log: Array<{ seq: number; rev: number; t: string; [k: string]: unknown }>;
+}
 export interface MoveAck extends AckBase {
   revision?: number;
+  /** 服务端分阶段耗时（仅延迟诊断使用，ttl 内缓存于幂等 ack） */
+  serverTiming?: ServerTiming;
+}
+
+/** 服务端处理链路耗时（毫秒，同一进程单调时钟，不可跨设备比较绝对值） */
+export interface ServerTiming {
+  /** 从 socket 收到事件到进入房间队列 */
+  queueMs: number;
+  /** 座位/回合/版本/幂等校验 */
+  validateMs: number;
+  /** 规则引擎计算合法性与终局判定 */
+  applyMs: number;
+  /** 权威状态构建（publicState） */
+  stateMs: number;
+  /** SQLite 持久化（事务：落子 + 房间快照） */
+  persistMs: number;
+  /** 广播 emit 调用耗时（序列化在 socket.io 内部异步完成，不计入） */
+  broadcastMs: number;
+  /** 从收到事件到 ack 回调前的总耗时 */
+  totalMs: number;
 }
 
 export interface ChatMessage {
@@ -143,7 +236,8 @@ export type StateReason =
   | 'restart'
   | 'offer'
   | 'seat'
-  | 'spectator';
+  | 'spectator'
+  | 'sg';
 
 export interface ClientToServerEvents {
   'room:create': (p: { kind: GameKind; name?: string; seatCount?: number; boardSize?: number; seat?: Side }, ack: (r: CreateAck) => void) => void;
@@ -161,10 +255,26 @@ export interface ClientToServerEvents {
   'game:restart:offer': (p: Record<string, never>, ack: (r: AckBase) => void) => void;
   'game:restart:respond': (p: { accept: boolean }, ack: (r: AckBase) => void) => void;
   'chat:send': (p: { text: string }, ack: (r: AckBase) => void) => void;
+  /** 延迟探针（只回环时间，不改变对局状态） */
+  'latency:ping': (p: Record<string, never>, ack: (r: { ok: boolean; t: number }) => void) => void;
+  /** UNO 命令（服务端权威校验+结算） */
+  'uno:command': (
+    p: { commandId: string; expectedRevision?: number | null; action: { type: string } & Record<string, unknown> },
+    ack: (r: { ok: boolean; error?: AppError; revision?: number; view?: UnoClientView }) => void,
+  ) => void;
+  /** 三国杀命令（服务端权威校验+结算） */
+  'sg:command': (
+    p: { commandId: string; expectedRevision?: number | null; action: { type: string } & Record<string, unknown> },
+    ack: (r: { ok: boolean; error?: AppError; revision?: number; view?: SgClientView }) => void,
+  ) => void;
 }
 
 export interface ServerToClientEvents {
   'room:state': (p: { state: RoomState; reason: StateReason }) => void;
+  /** UNO 个性化脱敏视图（每 socket 独立） */
+  'uno:state': (p: { view: UnoClientView; reason: StateReason }) => void;
+  /** 三国杀个性化脱敏视图（每 socket 独立） */
+  'sg:state': (p: { view: SgClientView; reason: StateReason }) => void;
   'chat:message': (p: ChatMessage) => void;
   /** 加入/重连时下发的历史聊天（仅发给该 socket） */
   'chat:history': (p: { messages: ChatMessage[] }) => void;

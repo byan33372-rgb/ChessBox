@@ -1,0 +1,628 @@
+{
+  "label": "local",
+  "url": "http://127.0.0.1:3001",
+  "moves": 6,
+  "games": [
+    {
+      "kind": "xiangqi",
+      "ack": {
+        "n": 6,
+        "p50": 1.7,
+        "p95": 2.32,
+        "p99": 2.32,
+        "max": 2.318899999999985
+      },
+      "peer": {
+        "n": 6,
+        "p50": 1.82,
+        "p95": 2.19,
+        "p99": 2.19,
+        "max": 2.1943999999999733
+      },
+      "serverAvg": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.68,
+        "persistMs": 0.19,
+        "stateMs": 0.01,
+        "broadcastMs": 0.17,
+        "totalMs": 1.11
+      },
+      "rows": [
+        {
+          "i": 0,
+          "move": "a6→a5",
+          "ackMs": 1.67,
+          "peerMs": 1.82,
+          "payload": 924,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.59,
+            "stateMs": 0.01,
+            "persistMs": 0.17,
+            "broadcastMs": 0.14,
+            "totalMs": 0.97
+          }
+        },
+        {
+          "i": 1,
+          "move": "a0→a1",
+          "ackMs": 2.17,
+          "peerMs": 1.92,
+          "payload": 1188,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.54,
+            "stateMs": 0.01,
+            "persistMs": 0.21,
+            "broadcastMs": 0.18,
+            "totalMs": 1
+          }
+        },
+        {
+          "i": 2,
+          "move": "a5→a4",
+          "ackMs": 1.7,
+          "peerMs": 1.75,
+          "payload": 1452,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.47,
+            "stateMs": 0.01,
+            "persistMs": 0.16,
+            "broadcastMs": 0.13,
+            "totalMs": 0.82
+          }
+        },
+        {
+          "i": 3,
+          "move": "b0→a2",
+          "ackMs": 2.32,
+          "peerMs": 2.19,
+          "payload": 1712,
+          "serverTiming": {
+            "queueMs": 0.05,
+            "validateMs": 0.01,
+            "applyMs": 1.17,
+            "stateMs": 0.01,
+            "persistMs": 0.17,
+            "broadcastMs": 0.16,
+            "totalMs": 1.58
+          }
+        },
+        {
+          "i": 4,
+          "move": "a4→a3",
+          "ackMs": 2.02,
+          "peerMs": 2.08,
+          "payload": 1967,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.8,
+            "stateMs": 0.03,
+            "persistMs": 0.25,
+            "broadcastMs": 0.25,
+            "totalMs": 1.38
+          }
+        },
+        {
+          "i": 5,
+          "move": "c0→e2",
+          "ackMs": 1.63,
+          "peerMs": 1.52,
+          "payload": 2229,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.53,
+            "stateMs": 0.01,
+            "persistMs": 0.15,
+            "broadcastMs": 0.14,
+            "totalMs": 0.88
+          }
+        }
+      ]
+    },
+    {
+      "kind": "chess",
+      "ack": {
+        "n": 6,
+        "p50": 1.65,
+        "p95": 3.91,
+        "p99": 3.91,
+        "max": 3.9142000000000507
+      },
+      "peer": {
+        "n": 6,
+        "p50": 1.78,
+        "p95": 3.97,
+        "p99": 3.97,
+        "max": 3.9746999999999844
+      },
+      "serverAvg": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.92,
+        "persistMs": 0.21,
+        "stateMs": 0.02,
+        "broadcastMs": 0.22,
+        "totalMs": 1.42
+      },
+      "rows": [
+        {
+          "i": 0,
+          "move": "a2→a3",
+          "ackMs": 3.91,
+          "peerMs": 3.97,
+          "payload": 932,
+          "serverTiming": {
+            "queueMs": 0.06,
+            "validateMs": 0.02,
+            "applyMs": 2.08,
+            "stateMs": 0.02,
+            "persistMs": 0.36,
+            "broadcastMs": 0.33,
+            "totalMs": 2.87
+          }
+        },
+        {
+          "i": 1,
+          "move": "b8→c6",
+          "ackMs": 2.27,
+          "peerMs": 2.13,
+          "payload": 1210,
+          "serverTiming": {
+            "queueMs": 0.05,
+            "validateMs": 0.01,
+            "applyMs": 0.85,
+            "stateMs": 0.01,
+            "persistMs": 0.18,
+            "broadcastMs": 0.17,
+            "totalMs": 1.27
+          }
+        },
+        {
+          "i": 2,
+          "move": "a3→a4",
+          "ackMs": 1.46,
+          "peerMs": 1.78,
+          "payload": 1484,
+          "serverTiming": {
+            "queueMs": 0.03,
+            "validateMs": 0.01,
+            "applyMs": 0.41,
+            "stateMs": 0.01,
+            "persistMs": 0.14,
+            "broadcastMs": 0.19,
+            "totalMs": 0.79
+          }
+        },
+        {
+          "i": 3,
+          "move": "a8→b8",
+          "ackMs": 1.65,
+          "peerMs": 1.55,
+          "payload": 1756,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.6,
+            "stateMs": 0.01,
+            "persistMs": 0.14,
+            "broadcastMs": 0.13,
+            "totalMs": 0.93
+          }
+        },
+        {
+          "i": 4,
+          "move": "a4→a5",
+          "ackMs": 2.51,
+          "peerMs": 2.56,
+          "payload": 2025,
+          "serverTiming": {
+            "queueMs": 0.05,
+            "validateMs": 0.01,
+            "applyMs": 1.04,
+            "stateMs": 0.03,
+            "persistMs": 0.25,
+            "broadcastMs": 0.33,
+            "totalMs": 1.74
+          }
+        },
+        {
+          "i": 5,
+          "move": "b8→a8",
+          "ackMs": 1.4,
+          "peerMs": 1.33,
+          "payload": 2298,
+          "serverTiming": {
+            "queueMs": 0.03,
+            "validateMs": 0.01,
+            "applyMs": 0.56,
+            "stateMs": 0.01,
+            "persistMs": 0.17,
+            "broadcastMs": 0.14,
+            "totalMs": 0.92
+          }
+        }
+      ]
+    },
+    {
+      "kind": "checkers",
+      "ack": {
+        "n": 6,
+        "p50": 1,
+        "p95": 1.15,
+        "p99": 1.15,
+        "max": 1.1458000000000084
+      },
+      "peer": {
+        "n": 6,
+        "p50": 0.96,
+        "p95": 1.19,
+        "p99": 1.19,
+        "max": 1.1886999999999261
+      },
+      "serverAvg": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.05,
+        "persistMs": 0.16,
+        "stateMs": 0.01,
+        "broadcastMs": 0.15,
+        "totalMs": 0.43
+      },
+      "rows": [
+        {
+          "i": 0,
+          "move": "e3→e5",
+          "ackMs": 1,
+          "peerMs": 1.05,
+          "payload": 1143,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.06,
+            "stateMs": 0.02,
+            "persistMs": 0.15,
+            "broadcastMs": 0.13,
+            "totalMs": 0.42
+          }
+        },
+        {
+          "i": 1,
+          "move": "j5→i5",
+          "ackMs": 0.9,
+          "peerMs": 0.83,
+          "payload": 1485,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.05,
+            "stateMs": 0.01,
+            "persistMs": 0.16,
+            "broadcastMs": 0.13,
+            "totalMs": 0.39
+          }
+        },
+        {
+          "i": 2,
+          "move": "e1→e3",
+          "ackMs": 0.85,
+          "peerMs": 0.9,
+          "payload": 1827,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.05,
+            "stateMs": 0.01,
+            "persistMs": 0.14,
+            "broadcastMs": 0.14,
+            "totalMs": 0.38
+          }
+        },
+        {
+          "i": 3,
+          "move": "i5→h5",
+          "ackMs": 1.04,
+          "peerMs": 0.96,
+          "payload": 2169,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.08,
+            "stateMs": 0.01,
+            "persistMs": 0.16,
+            "broadcastMs": 0.19,
+            "totalMs": 0.49
+          }
+        },
+        {
+          "i": 4,
+          "move": "e2→e1",
+          "ackMs": 1.14,
+          "peerMs": 1.19,
+          "payload": 2511,
+          "serverTiming": {
+            "queueMs": 0.03,
+            "validateMs": 0.01,
+            "applyMs": 0.04,
+            "stateMs": 0.01,
+            "persistMs": 0.21,
+            "broadcastMs": 0.19,
+            "totalMs": 0.5
+          }
+        },
+        {
+          "i": 5,
+          "move": "h5→g5",
+          "ackMs": 1.15,
+          "peerMs": 0.96,
+          "payload": 2853,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.04,
+            "stateMs": 0.01,
+            "persistMs": 0.15,
+            "broadcastMs": 0.14,
+            "totalMs": 0.38
+          }
+        }
+      ]
+    },
+    {
+      "kind": "go",
+      "ack": {
+        "n": 6,
+        "p50": 1.11,
+        "p95": 1.66,
+        "p99": 1.66,
+        "max": 1.657699999999977
+      },
+      "peer": {
+        "n": 6,
+        "p50": 1.15,
+        "p95": 1.55,
+        "p99": 1.55,
+        "max": 1.5470000000000255
+      },
+      "serverAvg": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.18,
+        "persistMs": 0.17,
+        "stateMs": 0.01,
+        "broadcastMs": 0.16,
+        "totalMs": 0.58
+      },
+      "rows": [
+        {
+          "i": 0,
+          "move": "a1",
+          "ackMs": 1.66,
+          "peerMs": 1.55,
+          "payload": 908,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.44,
+            "stateMs": 0.01,
+            "persistMs": 0.19,
+            "broadcastMs": 0.12,
+            "totalMs": 0.8
+          }
+        },
+        {
+          "i": 1,
+          "move": "a2",
+          "ackMs": 1.59,
+          "peerMs": 1.49,
+          "payload": 1176,
+          "serverTiming": {
+            "queueMs": 0.06,
+            "validateMs": 0.01,
+            "applyMs": 0.22,
+            "stateMs": 0.01,
+            "persistMs": 0.2,
+            "broadcastMs": 0.31,
+            "totalMs": 0.82
+          }
+        },
+        {
+          "i": 2,
+          "move": "a3",
+          "ackMs": 1.11,
+          "peerMs": 1.15,
+          "payload": 1451,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.13,
+            "stateMs": 0.01,
+            "persistMs": 0.23,
+            "broadcastMs": 0.13,
+            "totalMs": 0.55
+          }
+        },
+        {
+          "i": 3,
+          "move": "a4",
+          "ackMs": 1.04,
+          "peerMs": 0.94,
+          "payload": 1733,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.09,
+            "stateMs": 0.01,
+            "persistMs": 0.14,
+            "broadcastMs": 0.13,
+            "totalMs": 0.42
+          }
+        },
+        {
+          "i": 4,
+          "move": "a5",
+          "ackMs": 0.86,
+          "peerMs": 0.9,
+          "payload": 2021,
+          "serverTiming": {
+            "queueMs": 0.03,
+            "validateMs": 0,
+            "applyMs": 0.11,
+            "stateMs": 0.01,
+            "persistMs": 0.14,
+            "broadcastMs": 0.12,
+            "totalMs": 0.42
+          }
+        },
+        {
+          "i": 5,
+          "move": "a6",
+          "ackMs": 1.48,
+          "peerMs": 1.21,
+          "payload": 2315,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.11,
+            "stateMs": 0.01,
+            "persistMs": 0.14,
+            "broadcastMs": 0.14,
+            "totalMs": 0.45
+          }
+        }
+      ]
+    },
+    {
+      "kind": "gomoku",
+      "ack": {
+        "n": 6,
+        "p50": 0.97,
+        "p95": 1.28,
+        "p99": 1.28,
+        "max": 1.284599999999955
+      },
+      "peer": {
+        "n": 6,
+        "p50": 0.9,
+        "p95": 1.33,
+        "p99": 1.33,
+        "max": 1.332999999999629
+      },
+      "serverAvg": {
+        "queueMs": 0.04,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "persistMs": 0.16,
+        "stateMs": 0.01,
+        "broadcastMs": 0.2,
+        "totalMs": 0.43
+      },
+      "rows": [
+        {
+          "i": 0,
+          "move": "a1",
+          "ackMs": 0.98,
+          "peerMs": 1.02,
+          "payload": 710,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0,
+            "applyMs": 0.01,
+            "stateMs": 0,
+            "persistMs": 0.13,
+            "broadcastMs": 0.18,
+            "totalMs": 0.37
+          }
+        },
+        {
+          "i": 1,
+          "move": "a2",
+          "ackMs": 0.84,
+          "peerMs": 0.78,
+          "payload": 895,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0,
+            "applyMs": 0.01,
+            "stateMs": 0,
+            "persistMs": 0.18,
+            "broadcastMs": 0.12,
+            "totalMs": 0.36
+          }
+        },
+        {
+          "i": 2,
+          "move": "a3",
+          "ackMs": 0.97,
+          "peerMs": 0.93,
+          "payload": 1087,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0,
+            "applyMs": 0.02,
+            "stateMs": 0.01,
+            "persistMs": 0.14,
+            "broadcastMs": 0.17,
+            "totalMs": 0.38
+          }
+        },
+        {
+          "i": 3,
+          "move": "a4",
+          "ackMs": 0.91,
+          "peerMs": 0.84,
+          "payload": 1286,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0,
+            "applyMs": 0.02,
+            "stateMs": 0.01,
+            "persistMs": 0.14,
+            "broadcastMs": 0.13,
+            "totalMs": 0.34
+          }
+        },
+        {
+          "i": 4,
+          "move": "a5",
+          "ackMs": 1.28,
+          "peerMs": 1.33,
+          "payload": 1491,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0.01,
+            "applyMs": 0.02,
+            "stateMs": 0.01,
+            "persistMs": 0.23,
+            "broadcastMs": 0.25,
+            "totalMs": 0.56
+          }
+        },
+        {
+          "i": 5,
+          "move": "a6",
+          "ackMs": 1.14,
+          "peerMs": 0.9,
+          "payload": 1702,
+          "serverTiming": {
+            "queueMs": 0.04,
+            "validateMs": 0,
+            "applyMs": 0.02,
+            "stateMs": 0,
+            "persistMs": 0.15,
+            "broadcastMs": 0.36,
+            "totalMs": 0.58
+          }
+        }
+      ]
+    }
+  ],
+  "ranAt": "2026-11-05T05:06:11.499Z"
+}

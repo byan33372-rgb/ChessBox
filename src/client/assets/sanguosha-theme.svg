@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" role="img" aria-label="三国杀自由混战主题：暗铜金框武将卡牌（自由混战）">
+  <defs>
+    <linearGradient id="sgBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b1518"/>
+      <stop offset=".45" stop-color="#4a2226"/>
+      <stop offset="1" stop-color="#1a0d0f"/>
+    </linearGradient>
+    <linearGradient id="sgGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5d78e"/>
+      <stop offset=".5" stop-color="#c9962e"/>
+      <stop offset="1" stop-color="#8a6520"/>
+    </linearGradient>
+    <linearGradient id="sgHero" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3a6b4a" stop-opacity=".85"/>
+      <stop offset=".5" stop-color="#8f231c" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#2d4a6b" stop-opacity=".85"/>
+    </linearGradient>
+    <radialGradient id="sgGlow" cx=".35" cy=".3" r=".8">
+      <stop offset="0" stop-color="#ffd475"/>
+      <stop offset="1" stop-color="#ffd47500"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="260" rx="12" fill="url(#sgBg)"/>
+  <rect width="400" height="260" rx="12" fill="url(#sgGlow)"/>
+
+  <!-- 金色华丽边框（双线 + 角饰） -->
+  <rect x="4" y="4" width="392" height="252" rx="10" fill="none" stroke="url(#sgGold)" stroke-width="2.5"/>
+  <rect x="9" y="9" width="382" height="242" rx="7" fill="none" stroke="#8a6520" stroke-width="1" opacity=".6"/>
+  <path d="M4 22 Q4 4 22 4" fill="none" stroke="url(#sgGold)" stroke-width="3"/>
+  <path d="M378 4 Q396 4 396 22" fill="none" stroke="url(#sgGold)" stroke-width="3"/>
+  <path d="M4 238 Q4 256 22 256" fill="none" stroke="url(#sgGold)" stroke-width="3"/>
+  <path d="M378 256 Q396 256 396 238" fill="none" stroke="url(#sgGold)" stroke-width="3"/>
+  <circle cx="22" cy="22" r="2.5" fill="#f5d78e"/>
+  <circle cx="378" cy="22" r="2.5" fill="#f5d78e"/>
+  <circle cx="22" cy="238" r="2.5" fill="#f5d78e"/>
+  <circle cx="378" cy="238" r="2.5" fill="#f5d78e"/>
+
+  <!-- 武将剪影（三员大将） -->
+  <g opacity=".88">
+    <!-- 左将（绿袍，关羽意象） -->
+    <path d="M60 200 Q55 165 70 140 Q80 122 92 120 Q100 118 108 125 Q118 135 122 150 Q128 175 125 200 Z" fill="#3a6b4a" opacity=".7"/>
+    <path d="M82 120 Q78 108 86 102 Q94 98 100 104 Q106 110 104 120 Q96 128 82 120 Z" fill="#c9a570" opacity=".8"/>
+    <path d="M76 128 Q70 118 76 110 Q84 102 96 106 Q108 112 106 124" fill="none" stroke="#2a5238" stroke-width="4" opacity=".7"/>
+    <!-- 中将（红袍，主角意象） -->
+    <path d="M130 205 Q120 150 145 118 Q162 98 182 96 Q200 95 215 108 Q235 125 242 155 Q250 185 248 205 Z" fill="#8f231c" opacity=".82"/>
+    <path d="M168 96 Q162 80 174 72 Q188 65 200 72 Q212 80 210 96 Q200 108 168 96 Z" fill="#d4a574" opacity=".85"/>
+    <path d="M158 100 Q148 85 158 72 Q172 60 190 64 Q210 70 212 92 Q206 108 190 112 Q170 116 158 100 Z" fill="#6b1522" opacity=".6"/>
+    <!-- 右将（蓝袍，军师意象） -->
+    <path d="M240 200 Q240 165 255 145 Q268 130 282 130 Q296 132 305 145 Q318 168 318 200 Z" fill="#2d4a6b" opacity=".7"/>
+    <path d="M270 130 Q266 118 274 112 Q282 108 290 114 Q296 122 292 130 Q282 138 270 130 Z" fill="#c9a570" opacity=".8"/>
+    <!-- 武器剪影 -->
+    <path d="M50 200 L48 130 Q48 125 52 125 Q56 125 56 130 L58 200 Z" fill="#c9962e" opacity=".5"/>
+    <path d="M44 130 Q50 118 56 130" fill="none" stroke="#c9962e" stroke-width="3" opacity=".5"/>
+    <path d="M310 200 L318 140 Q320 134 324 136 Q328 138 326 144 L320 200 Z" fill="#8a6520" opacity=".5"/>
+  </g>
+
+  <!-- 「杀」字印章 -->
+  <circle cx="62" cy="48" r="34" fill="#1a0d0f" stroke="url(#sgGold)" stroke-width="3"/>
+  <circle cx="62" cy="48" r="29" fill="none" stroke="#c9962e" stroke-width="1" opacity=".5"/>
+  <text x="62" y="62" text-anchor="middle" font-family="'KaiTi','STKaiti',serif" font-size="40" font-weight="bold" fill="url(#sgGold)">杀</text>
+
+  <!-- 标题 -->
+  <text x="112" y="42" font-family="'KaiTi','STKaiti','SimHei',serif" font-size="26" font-weight="bold" fill="url(#sgGold)" letter-spacing="1">三国杀 · 自由混战</text>
+  <text x="112" y="64" font-family="'Microsoft YaHei',sans-serif" font-size="11" fill="#c9a570" letter-spacing="2">3-4 人 · 无身份 · 自由对战</text>
+
+  <!-- 标语 -->
+  <text x="200" y="222" text-anchor="middle" font-family="'KaiTi','STKaiti',serif" font-size="15" font-weight="bold" fill="#f5d78e" opacity=".9">智谋对决，谁与争锋！</text>
+
+  <!-- 底部信息徽章 -->
+  <g font-family="'Microsoft YaHei',sans-serif" font-size="10">
+    <rect x="14" y="236" width="58" height="18" rx="9" fill="#1a0d0f" stroke="#c9962e" stroke-width="1"/>
+    <text x="43" y="248" text-anchor="middle" fill="#e8d4a6">👥 3-4 人</text>
+    <rect x="78" y="236" width="70" height="18" rx="9" fill="#1a0d0f" stroke="#c9962e" stroke-width="1"/>
+    <text x="113" y="248" text-anchor="middle" fill="#e8d4a6">⚔️ 160 张牌</text>
+    <rect x="270" y="232" width="112" height="24" rx="12" fill="url(#sgGold)"/>
+    <text x="326" y="248" text-anchor="middle" fill="#1a0d0f" font-weight="bold" font-size="12">创建房间 ›</text>
+  </g>
+
+  <!-- 暗角 -->
+  <rect width="400" height="260" rx="12" fill="transparent" stroke="#000" stroke-width="30" stroke-opacity=".15"/>
+</svg>

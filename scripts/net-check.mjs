@@ -195,6 +195,10 @@ await step(13, 'A 请求悔棋 → B 卡片同意 → 双端回到 0 步', async
   await card.waitFor({ timeout: 8000 });
   await card.locator('.btn', { hasText: '同意' }).click();
   await pageA.locator('.move-btn').nth(0).waitFor({ state: 'detached', timeout: 8000 }).catch(() => {});
+  // 广播到达 B 可能比 A 的 ack 晚几毫秒：等 B 也回到 0 步再断言（避免测试竞态）
+  await pB
+    .waitForFunction(() => document.querySelectorAll('.move-btn').length === 0, null, { timeout: 8000 })
+    .catch(() => {});
   const nA = await pageA.locator('.move-btn').count();
   const nB = await pB.locator('.move-btn').count();
   if (nA !== 0 || nB !== 0) throw new Error(`悔棋后步数异常: A=${nA} B=${nB}`);

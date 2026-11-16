@@ -63,17 +63,23 @@ const KINDS = ['xiangqi', 'chess', 'checkers', 'go', 'gomoku'];
 let kindIdx = 0;
 
 while (Date.now() < deadline) {
-  const kind = KINDS[kindIdx++ % 3];
+  const kind = KINDS[kindIdx++ % KINDS.length];
   try {
     const A = connect();
     const created = await emit(A, 'room:create', { kind, name: `soakA${seq}`, ...(kind === 'checkers' ? { seatCount: 2 } : {}), ...(kind === 'go' ? { boardSize: 9 } : {}) });
+    if (!created.ok) {
+      // 建房限流（2 突发 + 每 5 s 补 1）是预期保护；退避后重试，不计错误
+      if (created.error?.code === 'RATE_LIMITED') {
+        A.disconnect();
+        await sleep(3000);
+        continue;
+      }
+      throw new Error(`create failed: ${JSON.stringify(created.error)}`);
+    }
     if (kind === 'checkers') {
       // 自由选座：创建者/加入者先观战，各自 take-seat 后才开局
-      const st = await new Promise((r) => A.on('room:state', (p) => !r.state && r(p.state)));
-      void st;
       await emit(A, 'room:take-seat', { seat: 'a' });
     }
-    if (!created.ok) throw new Error('create failed');
     const seat = created.seat;
     const statesA = collect(A);
     const B = connect();
@@ -126,6 +132,7 @@ while (Date.now() < deadline) {
     stats.cycles++;
     log({ t: new Date().toISOString(), kind, seq, ...{ movesOk: stats.movesOk, movesRejected: stats.movesRejected }, latP50: p(stats.latencies, 0.5) });
     seq++;
+    await sleep(1200); // 控制建房频率，避免触发限流
   } catch (e) {
     stats.errors++;
     log({ t: new Date().toISOString(), kind, seq, error: String(e && e.message ? e.message : e) });

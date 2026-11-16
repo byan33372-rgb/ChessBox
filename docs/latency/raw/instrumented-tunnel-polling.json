@@ -1,0 +1,188 @@
+{
+  "label": "tunnel-polling",
+  "url": "https://accessibility-consumption-attacked-mirror.trycloudflare.com",
+  "kind": "gomoku",
+  "moves": 8,
+  "transportMode": "polling",
+  "transportA": "polling",
+  "transportB": "polling",
+  "ack": {
+    "n": 8,
+    "p50": 2805.8958000000002,
+    "p95": 6439.636399999999,
+    "p99": 6439.636399999999,
+    "max": 6439.636399999999,
+    "min": 2141.097099999999,
+    "mean": 3289.7,
+    "gt300": 8,
+    "gt500": 8,
+    "gt1000": 8,
+    "gt2000": 8
+  },
+  "peer": {
+    "n": 8,
+    "p50": 1321.9636000000028,
+    "p95": 3665.7278000000006,
+    "p99": 3665.7278000000006,
+    "max": 3665.7278000000006,
+    "min": 1115.1944999999996,
+    "mean": 1756.16,
+    "gt300": 8,
+    "gt500": 8,
+    "gt1000": 8,
+    "gt2000": 2
+  },
+  "payloadBytes": {
+    "first": 714,
+    "last": 2182,
+    "mean": 1420
+  },
+  "errors": [],
+  "rows": [
+    {
+      "i": 0,
+      "from": "a1",
+      "to": "a1",
+      "ackMs": 3620.66,
+      "peerMs": 2300.85,
+      "selfMs": 1653.49,
+      "payload": 714,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0,
+        "applyMs": 0.01,
+        "stateMs": 0,
+        "persistMs": 0.16,
+        "broadcastMs": 0.13,
+        "totalMs": 0.35
+      }
+    },
+    {
+      "i": 1,
+      "from": "a8",
+      "to": "a8",
+      "ackMs": 2141.1,
+      "peerMs": 1115.19,
+      "selfMs": 1008.69,
+      "payload": 899,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0,
+        "applyMs": 0.01,
+        "stateMs": 0,
+        "persistMs": 0.14,
+        "broadcastMs": 0.16,
+        "totalMs": 0.37
+      }
+    },
+    {
+      "i": 2,
+      "from": "b3",
+      "to": "b3",
+      "ackMs": 2301.54,
+      "peerMs": 1314.59,
+      "selfMs": 1289.36,
+      "payload": 1091,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "stateMs": 0,
+        "persistMs": 0.14,
+        "broadcastMs": 0.25,
+        "totalMs": 0.45
+      }
+    },
+    {
+      "i": 3,
+      "from": "b10",
+      "to": "b10",
+      "ackMs": 2805.9,
+      "peerMs": 1855.26,
+      "selfMs": 1808.59,
+      "payload": 1299,
+      "serverTiming": {
+        "queueMs": 0.03,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "stateMs": 0,
+        "persistMs": 0.14,
+        "broadcastMs": 0.19,
+        "totalMs": 0.39
+      }
+    },
+    {
+      "i": 4,
+      "from": "c5",
+      "to": "c5",
+      "ackMs": 3808.08,
+      "peerMs": 1135.21,
+      "selfMs": 2785.02,
+      "payload": 1504,
+      "serverTiming": {
+        "queueMs": 0.03,
+        "validateMs": 0,
+        "applyMs": 0.02,
+        "stateMs": 0,
+        "persistMs": 0.14,
+        "broadcastMs": 0.15,
+        "totalMs": 0.35
+      }
+    },
+    {
+      "i": 5,
+      "from": "c12",
+      "to": "c12",
+      "ackMs": 6439.64,
+      "peerMs": 3665.73,
+      "selfMs": 3666.83,
+      "payload": 1726,
+      "serverTiming": {
+        "queueMs": 0.05,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0,
+        "persistMs": 0.14,
+        "broadcastMs": 0.21,
+        "totalMs": 0.43
+      }
+    },
+    {
+      "i": 6,
+      "from": "d7",
+      "to": "d7",
+      "ackMs": 2363.99,
+      "peerMs": 1340.49,
+      "selfMs": 1122.72,
+      "payload": 1945,
+      "serverTiming": {
+        "queueMs": 0.03,
+        "validateMs": 0.01,
+        "applyMs": 0.03,
+        "stateMs": 0,
+        "persistMs": 0.14,
+        "broadcastMs": 0.18,
+        "totalMs": 0.4
+      }
+    },
+    {
+      "i": 7,
+      "from": "d14",
+      "to": "d14",
+      "ackMs": 2836.71,
+      "peerMs": 1321.96,
+      "selfMs": 1032.94,
+      "payload": 2182,
+      "serverTiming": {
+        "queueMs": 0.04,
+        "validateMs": 0.01,
+        "applyMs": 0.02,
+        "stateMs": 0,
+        "persistMs": 0.16,
+        "broadcastMs": 0.15,
+        "totalMs": 0.38
+      }
+    }
+  ],
+  "ranAt": "2026-11-05T04:58:28.700Z"
+}

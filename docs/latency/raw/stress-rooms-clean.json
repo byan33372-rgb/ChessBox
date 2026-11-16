@@ -1,0 +1,89 @@
+{
+  "url": "http://127.0.0.1:3003",
+  "rooms": 8,
+  "seconds": 30,
+  "gapMs": 150,
+  "durationMs": 30203,
+  "totalMoves": 709,
+  "totalRejected": 446,
+  "ack": {
+    "n": 1155,
+    "p50": 1.48,
+    "p95": 3.95,
+    "p99": 5.91,
+    "max": 10.311000000000035
+  },
+  "queue": {
+    "n": 709,
+    "p50": 0.01,
+    "p95": 0.04,
+    "p99": 0.05,
+    "max": 0.08
+  },
+  "persist": {
+    "n": 709,
+    "p50": 0.09,
+    "p95": 0.23,
+    "p99": 0.51,
+    "max": 3.65
+  },
+  "rooms_detail": [
+    {
+      "idx": 0,
+      "kind": "xiangqi",
+      "moves": 26,
+      "rejected": 0,
+      "lastErr": null
+    },
+    {
+      "idx": 1,
+      "kind": "chess",
+      "moves": 61,
+      "rejected": 0,
+      "lastErr": null
+    },
+    {
+      "idx": 2,
+      "kind": "checkers",
+      "moves": 158,
+      "rejected": 148,
+      "lastErr": "RATE_LIMITED"
+    },
+    {
+      "idx": 3,
+      "kind": "go",
+      "moves": 158,
+      "rejected": 150,
+      "lastErr": "RATE_LIMITED"
+    },
+    {
+      "idx": 4,
+      "kind": "gomoku",
+      "moves": 61,
+      "rejected": 0,
+      "lastErr": null
+    },
+    {
+      "idx": 5,
+      "kind": "xiangqi",
+      "moves": 26,
+      "rejected": 0,
+      "lastErr": null
+    },
+    {
+      "idx": 6,
+      "kind": "chess",
+      "moves": 61,
+      "rejected": 0,
+      "lastErr": null
+    },
+    {
+      "idx": 7,
+      "kind": "checkers",
+      "moves": 158,
+      "rejected": 148,
+      "lastErr": "RATE_LIMITED"
+    }
+  ],
+  "ranAt": "2026-11-05T05:13:08.981Z"
+}

@@ -8,6 +8,8 @@ import chessArt from '../assets/chess-theme.svg';
 import checkersArt from '../assets/checkers-theme.svg';
 import goArt from '../assets/go-theme.svg';
 import gomokuArt from '../assets/gomoku-theme.svg';
+import sanguoshaArt from '../assets/sanguosha-theme.svg';
+import unoArt from '../assets/uno-theme.svg';
 
 export interface HomeProps {
   onEnter(roomId: string): void;
@@ -53,6 +55,20 @@ const PROMPTS: Record<
     art: checkersArt,
     alt: '中国跳棋主题：六角星棋盘与彩色棋子（深紫夜色，连跳路径示意）',
   },
+  uno: {
+    title: 'UNO 图片提示词',
+    text: '请设计一张精美的 UNO 对局界面图，保持与整体相同的深色风格。要点：中央弃牌堆与抽牌堆、四色数字/行动牌手牌（红黄绿蓝）、当前颜色指示、方向指示、队友传牌与 UNO 喊牌提示；界面简洁、清晰、易读；适配桌面端与移动端。',
+    reqs: ['四色卡牌', '数字/行动牌', '当前颜色指示', 'UNO 喊牌', '战报', '房间信息', '响应式设计'],
+    art: unoArt,
+    alt: 'UNO 主题：四色卡牌欢乐牌桌（原创设计）',
+  },
+  sanguosha: {
+    title: '三国杀·自由混战图片提示词',
+    text: '请设计一张精美的三国杀自由混战对弈界面图，保持与整体相同的深色风格。要点：中央牌桌、每位玩家一张武将牌与体力值（阴阳鱼）、手牌（基本牌/锦囊牌/装备牌）扇形展开；界面显示牌堆与弃牌堆数量、当前阶段、响应窗口提示；采用暗红鎏金的水墨主题风格；界面简洁、清晰、易读；适配桌面端与移动端。',
+    reqs: ['3~4 人混战', '武将技能', '隐藏手牌', '响应窗口', '濒死救援', '战报复盘', '房间信息', '响应式设计'],
+    art: sanguoshaArt,
+    alt: '三国杀自由混战主题：暗铜金框武将卡牌（自由混战）',
+  },
 };
 
 const CARDS: Array<{ kind: GameKind; icon: string; title: string; sub: string }> = [
@@ -61,6 +77,8 @@ const CARDS: Array<{ kind: GameKind; icon: string; title: string; sub: string }>
   { kind: 'checkers', icon: '⬡', title: '中国跳棋', sub: '六角星盘 · 六色营地 · 2~6 人' },
   { kind: 'go', icon: '碁', title: '围棋', sub: '交叉点博弈 · 9/13/19 路 · 贴目 7.5' },
   { kind: 'gomoku', icon: '五', title: '五子棋', sub: '15 路 · 自由规则 · 先成五连者胜' },
+  { kind: 'sanguosha', icon: '杀', title: '三国杀·自由混战', sub: '3~4 人 · 无身份乱斗 · 最后存活者胜' },
+  { kind: 'uno', icon: 'U', title: 'UNO', sub: '3~4 人 · 经典规则 · 先出完者胜' },
 ];
 
 const CHECKER_SEAT_COUNTS = [2, 3, 4, 6] as const;
@@ -105,6 +123,7 @@ export function Home({ onEnter }: HomeProps) {
   const [creating, setCreating] = useState<GameKind | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [checkerSeats, setCheckerSeats] = useState<2 | 3 | 4 | 6>(2);
+  const [sgSeats, setSgSeats] = useState<3 | 4>(4);
   const [goSize, setGoSize] = useState<9 | 13 | 19>(19);
 
 
@@ -116,7 +135,7 @@ export function Home({ onEnter }: HomeProps) {
       const ack = await createRoomViaSocket(
         kind,
         name.trim() || undefined,
-        kind === 'checkers' ? checkerSeats : undefined,
+        kind === 'checkers' ? checkerSeats : kind === 'sanguosha' || kind === 'uno' ? sgSeats : undefined,
         kind === 'go' ? goSize : undefined,
       );
       if (ack.ok && ack.roomId) {
@@ -149,7 +168,7 @@ export function Home({ onEnter }: HomeProps) {
           <span className="brand-mark">弈</span>
           <div>
             <h1>脆饼的棋盒</h1>
-            <p className="brand-sub">中国象棋 · 国际象棋 · 中国跳棋 · 围棋 · 五子棋 · 打开链接即玩</p>
+            <p className="brand-sub">中国象棋 · 国际象棋 · 中国跳棋 · 围棋 · 五子棋 · 三国杀 · UNO · 打开链接即玩</p>
           </div>
         </div>
       </header>
@@ -173,7 +192,13 @@ export function Home({ onEnter }: HomeProps) {
                 </header>
                 {/* 真实引擎沙盒：可交互试玩；点击棋盘不会误创建房间 */}
                 <div className="gc-preview practice" onClick={(e) => e.stopPropagation()}>
-                  <LazyPractice kind={kind} />
+                  {kind === 'sanguosha' ? (
+                    <img src={sanguoshaArt} alt="三国杀自由混战封面" className="sg-cover-img" draggable={false} />
+                  ) : kind === 'uno' ? (
+                    <img src={unoArt} alt="UNO 封面" className="sg-cover-img" draggable={false} />
+                  ) : (
+                    <LazyPractice kind={kind} />
+                  )}
                 </div>
                 <footer className="gc-foot">
                   {kind === 'checkers' && (
@@ -190,6 +215,40 @@ export function Home({ onEnter }: HomeProps) {
                           {n}人
                         </button>
                       ))}
+                    </div>
+                  )}
+                  {kind === 'uno' && (
+                    <div className="seat-count-row" role="radiogroup" aria-label="UNO 人数">
+                      {[3, 4].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          role="radio"
+                          aria-checked={sgSeats === n}
+                          className={`seat-count-btn sg-seat-btn ${sgSeats === n ? 'on' : ''}`}
+                          onClick={() => setSgSeats(n as 3 | 4)}
+                        >
+                          {n}人
+                        </button>
+                      ))}
+                      <span className="go-komi-note">经典 108 张 · 个人混战</span>
+                    </div>
+                  )}
+                  {kind === 'sanguosha' && (
+                    <div className="seat-count-row" role="radiogroup" aria-label="三国杀人数">
+                      {[3, 4].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          role="radio"
+                          aria-checked={sgSeats === n}
+                          className={`seat-count-btn sg-seat-btn ${sgSeats === n ? 'on' : ''}`}
+                          onClick={() => setSgSeats(n as 3 | 4)}
+                        >
+                          {n}人
+                        </button>
+                      ))}
+                      <span className="go-komi-note">160 张牌堆（标准+军争）</span>
                     </div>
                   )}
                   {kind === 'go' && (
@@ -212,7 +271,11 @@ export function Home({ onEnter }: HomeProps) {
                   <span className="card-desc">
                     {kind === 'checkers'
                     ? '六色营地沙盒（6 人演示）· 建房后在右侧面板自由选择六色阵营'
-                    : '本地规则沙盒 · 点击棋子试走 · 建房后在右侧面板选择阵营'}
+                    : kind === 'sanguosha'
+                      ? '自由混战：无身份无队友，所有其他存活玩家皆为敌；濒死时任何人可用桃救援'
+                      : kind === 'uno'
+                        ? '经典 UNO：颜色/数字/符号匹配；万能牌变色；先出完手牌者获胜'
+                        : '本地规则沙盒 · 点击棋子试走 · 建房后在右侧面板选择阵营'}
                   </span>
                   <button
                     type="button"

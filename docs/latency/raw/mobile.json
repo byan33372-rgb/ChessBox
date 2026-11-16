@@ -1,0 +1,155 @@
+{
+  "url": "http://127.0.0.1:3001",
+  "moves": 6,
+  "cpuThrottle": 4,
+  "results": [
+    {
+      "device": "iPhone SE",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "dpr": 2,
+      "cpuThrottle": 4,
+      "homeReadyMs": 753,
+      "roomReadyMs": 2414,
+      "home": {
+        "scrollW": 320,
+        "clientW": 320,
+        "dpr": 2,
+        "cards": 5,
+        "nav": {
+          "dcl": 124,
+          "load": 125,
+          "transfer": 439
+        }
+      },
+      "room": {
+        "scrollW": 320,
+        "clientW": 320,
+        "boardW": 268
+      },
+      "moverVisibleMs": {
+        "n": 6,
+        "p50": 2.2,
+        "p95": 15.1,
+        "max": 15.099853515625
+      },
+      "ackMs": {
+        "n": 6,
+        "p50": 5.7,
+        "p95": 103.7
+      },
+      "longTasks": {
+        "count": 0,
+        "max": null,
+        "list": []
+      },
+      "fps": {
+        "fps": 165,
+        "frames": 165,
+        "over33": 0
+      },
+      "overflowX": false
+    },
+    {
+      "device": "Pixel 7",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "dpr": 2.625,
+      "cpuThrottle": 4,
+      "homeReadyMs": 781,
+      "roomReadyMs": 2368,
+      "home": {
+        "scrollW": 412,
+        "clientW": 412,
+        "dpr": 2.625,
+        "cards": 5,
+        "nav": {
+          "dcl": 129,
+          "load": 130,
+          "transfer": 439
+        }
+      },
+      "room": {
+        "scrollW": 412,
+        "clientW": 412,
+        "boardW": 392
+      },
+      "moverVisibleMs": {
+        "n": 6,
+        "p50": 2.7,
+        "p95": 13.1,
+        "max": 13.10009765625
+      },
+      "ackMs": {
+        "n": 6,
+        "p50": 5.5,
+        "p95": 103.7
+      },
+      "longTasks": {
+        "count": 0,
+        "max": null,
+        "list": []
+      },
+      "fps": {
+        "fps": 165,
+        "frames": 165,
+        "over33": 0
+      },
+      "overflowX": false
+    },
+    {
+      "device": "iPhone 13",
+      "viewport": {
+        "width": 390,
+        "height": 664
+      },
+      "dpr": 3,
+      "cpuThrottle": 4,
+      "homeReadyMs": 775,
+      "roomReadyMs": 2242,
+      "home": {
+        "scrollW": 390,
+        "clientW": 390,
+        "dpr": 3,
+        "cards": 5,
+        "nav": {
+          "dcl": 126,
+          "load": 126,
+          "transfer": 439
+        }
+      },
+      "room": {
+        "scrollW": 390,
+        "clientW": 390,
+        "boardW": 364
+      },
+      "moverVisibleMs": {
+        "n": 6,
+        "p50": 2.1,
+        "p95": 13.6,
+        "max": 13.599853515625
+      },
+      "ackMs": {
+        "n": 6,
+        "p50": 5.8,
+        "p95": 104
+      },
+      "longTasks": {
+        "count": 0,
+        "max": null,
+        "list": []
+      },
+      "fps": {
+        "fps": 165,
+        "frames": 165,
+        "over33": 0
+      },
+      "overflowX": false
+    }
+  ],
+  "ranAt": "2026-11-05T05:15:30.512Z"
+}

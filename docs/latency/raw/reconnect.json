@@ -1,0 +1,22 @@
+{
+  "roomId": "tdjjmm7kfg",
+  "proxy": {
+    "port": 3202,
+    "delayMs": 80
+  },
+  "offlineMs": 3462,
+  "reconnectMs": 3706,
+  "before": {
+    "a": 1,
+    "b": 1
+  },
+  "after": {
+    "a": 2,
+    "b": 2
+  },
+  "turnOk": true,
+  "expectedNetworkErrors": 4,
+  "consoleErrors": [],
+  "ok": true,
+  "ranAt": "2026-11-05T05:11:22.425Z"
+}

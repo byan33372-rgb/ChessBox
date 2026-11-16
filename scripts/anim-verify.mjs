@@ -125,9 +125,14 @@ async function moveAndWatch(p, other, from, to, kind, label, expectCapture = fal
 // —— 5. 动效开关：关闭后无飞行层、走棋正常 ——
 {
   const { ctxA, ctxB, pA, pB } = await newRoom('chess');
-  await pA.locator('.replay-controls .btn', { hasText: '动效' }).click();
-  const label = (await pA.locator('.replay-controls .btn', { hasText: '动效' }).textContent()) ?? '';
-  check('ANIM-V14 动效开关切换（开→关）', label.includes('关'), `label=${label}`);
+  // 三档：普通→快速→关闭。连续点击直到「关」。
+  let label = '';
+  for (let i = 0; i < 3; i++) {
+    await pA.locator('.replay-controls .btn', { hasText: '动效' }).click();
+    label = (await pA.locator('.replay-controls .btn', { hasText: '动效' }).textContent()) ?? '';
+    if (label.includes('关')) break;
+  }
+  check('ANIM-V14 动效三档切换（普通→快速→关）', label.includes('关'), `label=${label}`);
   await click(pA, 'e2');
   await click(pA, 'e4');
   await pB.locator('.move-btn >> nth=0').waitFor({ timeout: 8000 });

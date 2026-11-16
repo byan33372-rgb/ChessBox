@@ -24,10 +24,16 @@ export interface RoomPersist {
   offers: OffersState;
   /** 键为该房间有效座位字母（中象/国象 a,b；跳棋 a..f 中前 N 个）；缺失 = 未占用 */
   seats: Partial<Record<Side, SeatPersist | null>>;
-  /** 跳棋 2/3/4/6；其余缺省 2 */
+  /** 跳棋 2/3/4/6；三国杀 3/4；其余缺省 2 */
   seatCount?: number;
   createdAt: number;
   updatedAt: number;
+  /** 三国杀对局（命令历史，重放式恢复）；其余 null */
+  sgJson?: string | null;
+  /** UNO 对局（命令历史）；其余 null */
+  unoJson?: string | null;
+  /** 三国杀牌堆配置 */
+  sgDeck?: 'standard_only' | 'standard_plus_military' | null;
 }
 
 export interface SessionPersist {
@@ -117,14 +123,16 @@ export class Store {
       }
     };
     migrate('ALTER TABLE rooms ADD COLUMN seat_count INTEGER');
+    migrate('ALTER TABLE rooms ADD COLUMN sg_json TEXT');
+    migrate('ALTER TABLE rooms ADD COLUMN uno_json TEXT');
     migrate('ALTER TABLE moves ADD COLUMN captured_sq TEXT');
     migrate('ALTER TABLE moves ADD COLUMN path_json TEXT');
     migrate('ALTER TABLE moves ADD COLUMN extra_json TEXT');
     this.stmtUpsertRoom = this.db.prepare(
-      `INSERT INTO rooms (room_id, kind, fen, revision, phase, outcome_json, offers_json, seats_json, seat_count, created_at, updated_at)
-       VALUES (@roomId, @kind, @fen, @revision, @phase, @outcomeJson, @offersJson, @seatsJson, @seatCount, @createdAt, @updatedAt)
+      `INSERT INTO rooms (room_id, kind, fen, revision, phase, outcome_json, offers_json, seats_json, seat_count, sg_json, uno_json, created_at, updated_at)
+       VALUES (@roomId, @kind, @fen, @revision, @phase, @outcomeJson, @offersJson, @seatsJson, @seatCount, @sgJson, @unoJson, @createdAt, @updatedAt)
        ON CONFLICT(room_id) DO UPDATE SET kind=@kind, fen=@fen, revision=@revision, phase=@phase,
-         outcome_json=@outcomeJson, offers_json=@offersJson, seats_json=@seatsJson, seat_count=@seatCount, updated_at=@updatedAt`,
+         outcome_json=@outcomeJson, offers_json=@offersJson, seats_json=@seatsJson, seat_count=@seatCount, sg_json=@sgJson, uno_json=@unoJson, updated_at=@updatedAt`,
     );
     this.stmtLoadRooms = this.db.prepare('SELECT * FROM rooms ORDER BY created_at');
     this.stmtDeleteRoom = this.db.prepare('DELETE FROM rooms WHERE room_id = ?');
@@ -160,6 +168,8 @@ export class Store {
       offersJson: JSON.stringify(r.offers),
       seatsJson: JSON.stringify(r.seats),
       seatCount: r.seatCount ?? null,
+      sgJson: r.sgJson ?? null,
+      unoJson: r.unoJson ?? null,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
     });
@@ -180,6 +190,8 @@ export class Store {
           offers: JSON.parse(String(row.offers_json)) as OffersState,
           seats: JSON.parse(String(row.seats_json)) as RoomPersist['seats'],
           seatCount: row.seat_count != null ? Number(row.seat_count) : undefined,
+          sgJson: (row.sg_json as string | null) ?? null,
+          unoJson: (row.uno_json as string | null) ?? null,
           createdAt: Number(row.created_at),
           updatedAt: Number(row.updated_at),
         });

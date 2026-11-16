@@ -1,0 +1,200 @@
+{
+  "label": "tunnel-baseline",
+  "url": "https://accessibility-consumption-attacked-mirror.trycloudflare.com",
+  "kind": "gomoku",
+  "moves": 20,
+  "transportA": "websocket",
+  "transportB": "websocket",
+  "ack": {
+    "n": 16,
+    "p50": 423.42379999999866,
+    "p95": 1481.4318000000003,
+    "p99": 1481.4318000000003,
+    "max": 1481.4318000000003,
+    "min": 394.79769999999917,
+    "mean": 655.25,
+    "gt300": 16,
+    "gt500": 6,
+    "gt1000": 4,
+    "gt2000": 0
+  },
+  "peer": {
+    "n": 16,
+    "p50": 423.58870000000024,
+    "p95": 1481.3754,
+    "p99": 1481.3754,
+    "max": 1481.3754,
+    "min": 394.7745999999988,
+    "mean": 612.27,
+    "gt300": 16,
+    "gt500": 6,
+    "gt1000": 3,
+    "gt2000": 0
+  },
+  "payloadBytes": {
+    "first": 714,
+    "last": 4260,
+    "mean": 2366
+  },
+  "errors": [
+    {
+      "move": 6,
+      "from": "d7",
+      "to": "d7",
+      "error": "STALE_REVISION",
+      "msg": "局面版本不一致，已为你同步最新局面"
+    },
+    {
+      "move": 7,
+      "from": "d14",
+      "to": "d14",
+      "error": "NOT_YOUR_TURN",
+      "msg": "还没轮到你走棋"
+    },
+    {
+      "move": 10,
+      "from": "f11",
+      "to": "f11",
+      "error": "STALE_REVISION",
+      "msg": "局面版本不一致，已为你同步最新局面"
+    },
+    {
+      "move": 11,
+      "from": "f3",
+      "to": "f3",
+      "error": "NOT_YOUR_TURN",
+      "msg": "还没轮到你走棋"
+    }
+  ],
+  "rows": [
+    {
+      "i": 0,
+      "from": "a1",
+      "to": "a1",
+      "ackMs": 396.27,
+      "peerMs": 396.78,
+      "payload": 714
+    },
+    {
+      "i": 1,
+      "from": "a8",
+      "to": "a8",
+      "ackMs": 429.07,
+      "peerMs": 429.03,
+      "payload": 899
+    },
+    {
+      "i": 2,
+      "from": "b3",
+      "to": "b3",
+      "ackMs": 395.64,
+      "peerMs": 396.44,
+      "payload": 1091
+    },
+    {
+      "i": 3,
+      "from": "b10",
+      "to": "b10",
+      "ackMs": 1481.43,
+      "peerMs": 1481.38,
+      "payload": 1299
+    },
+    {
+      "i": 4,
+      "from": "c5",
+      "to": "c5",
+      "ackMs": 526.88,
+      "peerMs": 512.26,
+      "payload": 1504
+    },
+    {
+      "i": 5,
+      "from": "c12",
+      "to": "c12",
+      "ackMs": 1111.75,
+      "peerMs": 1111.67,
+      "payload": 1726
+    },
+    {
+      "i": 8,
+      "from": "e9",
+      "to": "e9",
+      "ackMs": 758.78,
+      "peerMs": 507.87,
+      "payload": 1945
+    },
+    {
+      "i": 9,
+      "from": "e1",
+      "to": "e1",
+      "ackMs": 464.28,
+      "peerMs": 464.19,
+      "payload": 2173
+    },
+    {
+      "i": 12,
+      "from": "g13",
+      "to": "g13",
+      "ackMs": 412.48,
+      "peerMs": 412.36,
+      "payload": 2415
+    },
+    {
+      "i": 13,
+      "from": "g5",
+      "to": "g5",
+      "ackMs": 1367.87,
+      "peerMs": 1367.84,
+      "payload": 2656
+    },
+    {
+      "i": 14,
+      "from": "h15",
+      "to": "h15",
+      "ackMs": 416.03,
+      "peerMs": 412.88,
+      "payload": 2913
+    },
+    {
+      "i": 15,
+      "from": "h7",
+      "to": "h7",
+      "ackMs": 396.73,
+      "peerMs": 396.68,
+      "payload": 3167
+    },
+    {
+      "i": 16,
+      "from": "i2",
+      "to": "i2",
+      "ackMs": 422.22,
+      "peerMs": 665.23,
+      "payload": 3429
+    },
+    {
+      "i": 17,
+      "from": "i9",
+      "to": "i9",
+      "ackMs": 394.8,
+      "peerMs": 394.77,
+      "payload": 3697
+    },
+    {
+      "i": 18,
+      "from": "j4",
+      "to": "j4",
+      "ackMs": 1086.37,
+      "peerMs": 423.59,
+      "payload": 3971
+    },
+    {
+      "i": 19,
+      "from": "j11",
+      "to": "j11",
+      "ackMs": 423.42,
+      "peerMs": 423.39,
+      "payload": 4260
+    }
+  ],
+  "ranAt": "2026-11-05T04:53:42.482Z"
+}

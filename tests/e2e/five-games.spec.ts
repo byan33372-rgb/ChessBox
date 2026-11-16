@@ -31,11 +31,11 @@ const clickPt = (page: Page, pt: string) =>
   })()`);
 
 test.describe('五棋升级验收', () => {
-  test('站点名「脆饼的棋盒」、首页五入口、房间内选阵营', async ({ page, browser }) => {
+  test('站点名「脆饼的棋盒」、首页七入口、房间内选阵营', async ({ page, browser }) => {
     await page.goto('/');
     await expect(page).toHaveTitle('脆饼的棋盒');
     await expect(page.locator('.brand h1')).toHaveText('脆饼的棋盒');
-    await expect(page.locator('.create-card')).toHaveCount(5);
+    await expect(page.locator('.create-card')).toHaveCount(7); // 五棋 + 三国杀 + UNO
     // 首页无阵营按钮（阵营改在房间内选择）
     await expect(page.locator('.seat-side-btn')).toHaveCount(0);
     // 创建后：等待阶段点击空位选阵营（房主先选红方）
